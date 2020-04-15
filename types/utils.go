@@ -1,6 +1,8 @@
 package types
 
-import "strings"
+import (
+	"strings"
+)
 
 // Findable is an interface for iterable types that allows the FindUtil function to work
 type Findable interface {

@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/types"
 
 	"github.com/gorilla/mux"
 )

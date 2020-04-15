@@ -30,18 +30,12 @@ const (
 var (
 	CollectionsKeyPrefix = []byte{0x00} // key for NFT collections
 	OwnersKeyPrefix      = []byte{0x01} // key for balance of NFTs held by an address
+	NFTPrefix            = []byte{0x02}
 )
 
 // GetCollectionKey gets the key of a collection
 func GetCollectionKey(denom string) []byte {
-	h := tmhash.New()
-	_, err := h.Write([]byte(denom))
-	if err != nil {
-		panic(err)
-	}
-	bs := h.Sum(nil)
-
-	return append(CollectionsKeyPrefix, bs...)
+	return append(CollectionsKeyPrefix, []byte(denom)...)
 }
 
 // SplitOwnerKey gets an address and denom from an owner key

@@ -8,7 +8,7 @@ import (
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/irisnet/modules/incubator/nft/exported"
+	"github.com/irismod/nft/exported"
 )
 
 // Collection of non fungible tokens

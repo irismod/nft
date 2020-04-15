@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/types"
 )
 
 // IterateCollections iterates over collections and performs a function

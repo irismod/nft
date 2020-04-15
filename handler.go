@@ -1,17 +1,15 @@
 package nft
 
 import (
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/irisnet/modules/incubator/nft/internal/keeper"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/keeper"
+	"github.com/irismod/nft/types"
 )
 
-// GenericHandler routes the messages to the handlers
-func GenericHandler(k keeper.Keeper) sdk.Handler {
+// NewHandler routes the messages to the handlers
+func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
 		case types.MsgTransferNFT:
@@ -157,9 +155,4 @@ func HandleMsgBurnNFT(ctx sdk.Context, msg types.MsgBurnNFT, k keeper.Keeper,
 		),
 	})
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
-}
-
-// EndBlocker is run at the end of the block
-func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
-	return nil
 }

@@ -44,7 +44,7 @@ func TestMsgTransferNFTValidateBasicMethod(t *testing.T) {
 func TestMsgTransferNFTGetSignBytesMethod(t *testing.T) {
 	newMsgTransferNFT := NewMsgTransferNFT(address, address2, denom, id, tokenURI)
 	sortedBytes := newMsgTransferNFT.GetSignBytes()
-	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"cosmos-sdk/MsgTransferNFT","value":{"Denom":"%s","ID":"%s","Recipient":"%s","Sender":"%s","TokenURI":"%s"}}`,
+	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgTransferNFT","value":{"Denom":"%s","ID":"%s","Recipient":"%s","Sender":"%s","TokenURI":"%s"}}`,
 		denom, id, address2, address, tokenURI,
 	))
 }
@@ -90,7 +90,7 @@ func TestMsgEditNFTMetadataValidateBasicMethod(t *testing.T) {
 func TestMsgEditNFTMetadataGetSignBytesMethod(t *testing.T) {
 	newMsgEditNFTMetadata := NewMsgEditNFTMetadata(address, id, denom, tokenURI)
 	sortedBytes := newMsgEditNFTMetadata.GetSignBytes()
-	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"cosmos-sdk/MsgEditNFTMetadata","value":{"Denom":"%s","ID":"%s","Sender":"%s","TokenURI":"%s"}}`,
+	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgEditNFTMetadata","value":{"Denom":"%s","ID":"%s","Sender":"%s","TokenURI":"%s"}}`,
 		denom, id, address.String(), tokenURI,
 	))
 }
@@ -140,7 +140,7 @@ func TestMsgMsgMintNFTValidateBasicMethod(t *testing.T) {
 func TestMsgMintNFTGetSignBytesMethod(t *testing.T) {
 	newMsgMintNFT := NewMsgMintNFT(address, address2, id, denom, tokenURI)
 	sortedBytes := newMsgMintNFT.GetSignBytes()
-	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"cosmos-sdk/MsgMintNFT","value":{"Denom":"%s","ID":"%s","Recipient":"%s","Sender":"%s","TokenURI":"%s"}}`,
+	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgMintNFT","value":{"Denom":"%s","ID":"%s","Recipient":"%s","Sender":"%s","TokenURI":"%s"}}`,
 		denom, id, address2.String(), address.String(), tokenURI,
 	))
 }
@@ -183,7 +183,7 @@ func TestMsgMsgBurnNFTValidateBasicMethod(t *testing.T) {
 func TestMsgBurnNFTGetSignBytesMethod(t *testing.T) {
 	newMsgBurnNFT := NewMsgBurnNFT(address, id, denom)
 	sortedBytes := newMsgBurnNFT.GetSignBytes()
-	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"cosmos-sdk/MsgBurnNFT","value":{"Denom":"%s","ID":"%s","Sender":"%s"}}`,
+	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgBurnNFT","value":{"Denom":"%s","ID":"%s","Sender":"%s"}}`,
 		denom, id, address.String(),
 	))
 }

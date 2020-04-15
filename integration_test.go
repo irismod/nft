@@ -7,9 +7,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft"
-	simapp "github.com/irisnet/modules/incubator/nft/app"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft"
+	simapp "github.com/irismod/nft/app"
+	"github.com/irismod/nft/types"
 )
 
 // nolint: deadcode unused

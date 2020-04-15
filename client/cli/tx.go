@@ -16,7 +16,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/types"
 )
 
 // Edit metadata flags

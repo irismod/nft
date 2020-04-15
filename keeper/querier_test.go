@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
-	"github.com/irisnet/modules/incubator/nft/exported"
-	keep "github.com/irisnet/modules/incubator/nft/internal/keeper"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/exported"
+	keep "github.com/irismod/nft/keeper"
+	"github.com/irismod/nft/types"
 )
 
 func TestNewQuerier(t *testing.T) {

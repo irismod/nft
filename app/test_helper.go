@@ -4,8 +4,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
-
 	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto"
@@ -24,7 +22,7 @@ import (
 // Setup initializes a new SimApp. A Nop logger is set in SimApp.
 func Setup(isCheckTx bool) *SimApp {
 	db := dbm.NewMemDB()
-	app := NewSimApp(log.NewNopLogger(), db, nil, true, 0)
+	app := NewSimApp(log.NewNopLogger(), db, nil, true, map[int64]bool{}, 0)
 	if !isCheckTx {
 		// init chain must be called to stop deliverState from being nil
 		genesisState := NewDefaultGenesisState()
@@ -49,7 +47,7 @@ func Setup(isCheckTx bool) *SimApp {
 // genesis accounts.
 func SetupWithGenesisAccounts(genAccs []authexported.GenesisAccount) *SimApp {
 	db := dbm.NewMemDB()
-	app := NewSimApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, 0)
+	app := NewSimApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, 0)
 
 	// initialize the chain with the passed in genesis accounts
 	genesisState := NewDefaultGenesisState()
@@ -144,16 +142,7 @@ func SignCheckDeliver(
 	t *testing.T, cdc *codec.Codec, app *bam.BaseApp, header abci.Header, msgs []sdk.Msg,
 	accNums, seq []uint64, expSimPass, expPass bool, priv ...crypto.PrivKey,
 ) (sdk.GasInfo, *sdk.Result, error) {
-
-	tx := helpers.GenTx(
-		msgs,
-		sdk.Coins{sdk.NewInt64Coin(sdk.DefaultBondDenom, 0)},
-		helpers.DefaultGenTxGas,
-		"",
-		accNums,
-		seq,
-		priv...,
-	)
+	tx := GenTx(msgs, accNums, seq, priv...)
 
 	txBytes, err := cdc.MarshalBinaryLengthPrefixed(tx)
 	require.Nil(t, err)

@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/types"
 )
 
 const (
@@ -21,7 +21,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 	var ownerships []types.Owner
 	for _, acc := range simState.Accounts {
 		// 10% of accounts own an NFT
-		if simState.Rand.Intn(100) < 10 {
+		if simState.Rand.Intn(100) < 2 {
 			baseNFT := types.NewBaseNFT(
 				simulation.RandStringOfLength(simState.Rand, 10), // id
 				acc.Address,

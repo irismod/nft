@@ -8,7 +8,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft/exported"
+	"github.com/irismod/nft/exported"
 )
 
 var _ exported.NFT = (*BaseNFT)(nil)
@@ -125,7 +125,7 @@ func (nfts NFTs) Empty() bool {
 }
 
 func (nfts NFTs) find(id string) int {
-	return FindUtil(nfts, id)
+	return FindUtil(nfts.Sort(), id)
 }
 
 // ----------------------------------------------------------------------------

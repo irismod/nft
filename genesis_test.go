@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/irisnet/modules/incubator/nft"
+	"github.com/irismod/nft"
 )
 
 func TestInitGenesis(t *testing.T) {

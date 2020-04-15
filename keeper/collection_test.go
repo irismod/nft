@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/irisnet/modules/incubator/nft/internal/keeper"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/keeper"
+	"github.com/irismod/nft/types"
 )
 
 func TestSetCollection(t *testing.T) {

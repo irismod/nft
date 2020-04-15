@@ -9,8 +9,8 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft"
+	"github.com/irismod/nft/types"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 
 func TestInvalidMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 	res, err := h(ctx, sdk.NewTestMsg())
 	require.Error(t, err)
 	require.Nil(t, res)
@@ -33,7 +33,7 @@ func TestInvalidMsg(t *testing.T) {
 
 func TestTransferNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// An NFT to be transferred
 	nft := types.NewBaseNFT(id, address, "TokenURI")
@@ -107,7 +107,7 @@ func TestTransferNFTMsg(t *testing.T) {
 
 func TestEditNFTMetadataMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// An NFT to be edited
 	nft := types.NewBaseNFT(id, address, tokenURI)
@@ -158,7 +158,7 @@ func TestEditNFTMetadataMsg(t *testing.T) {
 
 func TestMintNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// Define MsgMintNFT
 	mintNFT := types.NewMsgMintNFT(address, address, id, denom, tokenURI)
@@ -206,7 +206,7 @@ func TestMintNFTMsg(t *testing.T) {
 
 func TestBurnNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// An NFT to be burned
 	nft := types.NewBaseNFT(id, address, tokenURI)

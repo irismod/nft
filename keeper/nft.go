@@ -4,8 +4,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/irisnet/modules/incubator/nft/exported"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/exported"
+	"github.com/irismod/nft/types"
 )
 
 // IsNFT returns whether an NFT exists
