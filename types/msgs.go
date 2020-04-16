@@ -70,22 +70,22 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 }
 
 /* --------------------------------------------------------------------------- */
-// MsgEditNFTMetadata
+// MsgEditNFT
 /* --------------------------------------------------------------------------- */
 
-// MsgEditNFTMetadata edits an NFT's metadata
-type MsgEditNFTMetadata struct {
+// MsgEditNFT edits an NFT's metadata
+type MsgEditNFT struct {
 	Sender   sdk.AccAddress
 	ID       string
 	Denom    string
 	TokenURI string
 }
 
-// NewMsgEditNFTMetadata is a constructor function for MsgSetName
-func NewMsgEditNFTMetadata(sender sdk.AccAddress, id,
+// NewMsgEditNFT is a constructor function for MsgSetName
+func NewMsgEditNFT(sender sdk.AccAddress, id,
 	denom, tokenURI string,
-) MsgEditNFTMetadata {
-	return MsgEditNFTMetadata{
+) MsgEditNFT {
+	return MsgEditNFT{
 		Sender:   sender,
 		ID:       strings.TrimSpace(id),
 		Denom:    strings.TrimSpace(denom),
@@ -94,13 +94,13 @@ func NewMsgEditNFTMetadata(sender sdk.AccAddress, id,
 }
 
 // Route Implements Msg
-func (msg MsgEditNFTMetadata) Route() string { return RouterKey }
+func (msg MsgEditNFT) Route() string { return RouterKey }
 
 // Type Implements Msg
-func (msg MsgEditNFTMetadata) Type() string { return "edit_nft_metadata" }
+func (msg MsgEditNFT) Type() string { return "edit_nft_metadata" }
 
 // ValidateBasic Implements Msg.
-func (msg MsgEditNFTMetadata) ValidateBasic() error {
+func (msg MsgEditNFT) ValidateBasic() error {
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
@@ -114,13 +114,13 @@ func (msg MsgEditNFTMetadata) ValidateBasic() error {
 }
 
 // GetSignBytes Implements Msg.
-func (msg MsgEditNFTMetadata) GetSignBytes() []byte {
+func (msg MsgEditNFT) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
 // GetSigners Implements Msg.
-func (msg MsgEditNFTMetadata) GetSigners() []sdk.AccAddress {
+func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 

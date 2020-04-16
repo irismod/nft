@@ -21,7 +21,7 @@ import (
 
 // Edit metadata flags
 const (
-	flagTokenURI = "tokenURI"
+	flagTokenURI = "token-uri"
 )
 
 // GetTxCmd returns the transaction commands for this module
@@ -116,7 +116,7 @@ $ %s tx %s edit-metadata crypto-kitties d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd42
 			tokenID := args[1]
 			tokenURI := viper.GetString(flagTokenURI)
 
-			msg := types.NewMsgEditNFTMetadata(cliCtx.GetFromAddress(), tokenID, denom, tokenURI)
+			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI)
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}

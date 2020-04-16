@@ -125,7 +125,7 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulati
 			return simulation.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		msg := types.NewMsgEditNFTMetadata(
+		msg := types.NewMsgEditNFT(
 			ownerAddr,
 			nftID,
 			denom,

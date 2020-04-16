@@ -32,8 +32,6 @@ var (
 	NewQuerier               = keeper.NewQuerier
 	RegisterCodec            = types.RegisterCodec
 	NewCollection            = types.NewCollection
-	EmptyCollection          = types.EmptyCollection
-	NewCollections           = types.NewCollections
 	ErrInvalidCollection     = types.ErrInvalidCollection
 	ErrUnknownCollection     = types.ErrUnknownCollection
 	ErrInvalidNFT            = types.ErrInvalidNFT
@@ -41,14 +39,9 @@ var (
 	ErrUnknownNFT            = types.ErrUnknownNFT
 	ErrEmptyMetadata         = types.ErrEmptyMetadata
 	NewGenesisState          = types.NewGenesisState
-	DefaultGenesisState      = types.DefaultGenesisState
-	ValidateGenesis          = types.ValidateGenesis
-	GetCollectionKey         = types.GetCollectionKey
-	SplitOwnerKey            = types.SplitOwnerKey
-	GetOwnersKey             = types.GetOwnersKey
-	GetOwnerKey              = types.GetOwnerKey
+	GetOwnerKey              = types.KeyOwner
 	NewMsgTransferNFT        = types.NewMsgTransferNFT
-	NewMsgEditNFTMetadata    = types.NewMsgEditNFTMetadata
+	NewMsgEditNFTMetadata    = types.NewMsgEditNFT
 	NewMsgMintNFT            = types.NewMsgMintNFT
 	NewMsgBurnNFT            = types.NewMsgBurnNFT
 	NewBaseNFT               = types.NewBaseNFT
@@ -72,23 +65,20 @@ var (
 	AttributeKeyNFTID        = types.AttributeKeyNFTID
 	AttributeKeyNFTTokenURI  = types.AttributeKeyNFTTokenURI
 	AttributeKeyDenom        = types.AttributeKeyDenom
-	CollectionsKeyPrefix     = types.CollectionsKeyPrefix
-	OwnersKeyPrefix          = types.OwnersKeyPrefix
+	OwnersKeyPrefix          = types.PrefixOwners
 )
 
 type (
 	Keeper                = keeper.Keeper
 	Collection            = types.Collection
 	Collections           = types.Collections
-	CollectionJSON        = types.CollectionJSON
 	GenesisState          = types.GenesisState
 	MsgTransferNFT        = types.MsgTransferNFT
-	MsgEditNFTMetadata    = types.MsgEditNFTMetadata
+	MsgEditNFTMetadata    = types.MsgEditNFT
 	MsgMintNFT            = types.MsgMintNFT
 	MsgBurnNFT            = types.MsgBurnNFT
 	BaseNFT               = types.BaseNFT
 	NFTs                  = types.NFTs
-	NFTJSON               = types.NFTJSON
 	IDCollection          = types.IDCollection
 	IDCollections         = types.IDCollections
 	Owner                 = types.Owner

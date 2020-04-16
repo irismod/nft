@@ -117,14 +117,14 @@ func TestEditNFTMetadataMsg(t *testing.T) {
 	require.Nil(t, err)
 
 	// Define MsgTransferNft
-	failingEditNFTMetadata := types.NewMsgEditNFTMetadata(address, id, denom2, tokenURI2)
+	failingEditNFTMetadata := types.NewMsgEditNFT(address, id, denom2, tokenURI2)
 
 	res, err := h(ctx, failingEditNFTMetadata)
 	require.Error(t, err)
 	require.Nil(t, res)
 
 	// Define MsgTransferNft
-	editNFTMetadata := types.NewMsgEditNFTMetadata(address, id, denom, tokenURI2)
+	editNFTMetadata := types.NewMsgEditNFT(address, id, denom, tokenURI2)
 
 	res, err = h(ctx, editNFTMetadata)
 	require.NoError(t, err)

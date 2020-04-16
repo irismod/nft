@@ -2,9 +2,7 @@ package keeper_test
 
 import (
 	"encoding/binary"
-	"testing"
 
-	"github.com/stretchr/testify/require"
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/irismod/nft/exported"
@@ -12,26 +10,23 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-func TestNewQuerier(t *testing.T) {
-	app, ctx := createTestApp(false)
-	querier := keep.NewQuerier(app.NFTKeeper)
+func (suite *KeeperSuite) TestNewQuerier() {
+	querier := keep.NewQuerier(suite.keeper)
 	query := abci.RequestQuery{
 		Path: "",
 		Data: []byte{},
 	}
-	_, err := querier(ctx, []string{"foo", "bar"}, query)
-	require.Error(t, err)
+	_, err := querier(suite.ctx, []string{"foo", "bar"}, query)
+	suite.Error(err)
 }
 
-func TestQuerySupply(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestQuerySupply() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
-	querier := keep.NewQuerier(app.NFTKeeper)
+	querier := keep.NewQuerier(suite.keeper)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -41,40 +36,39 @@ func TestQuerySupply(t *testing.T) {
 	query.Path = "/custom/nft/supply"
 	query.Data = []byte("?")
 
-	res, err := querier(ctx, []string{"supply"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err := querier(suite.ctx, []string{"supply"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	queryCollectionParams := types.NewQueryCollectionParams(denom2)
-	bz, errRes := app.Codec().MarshalJSON(queryCollectionParams)
-	require.Nil(t, errRes)
+	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
+	suite.Nil(errRes)
 	query.Data = bz
-	res, err = querier(ctx, []string{"supply"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err = querier(suite.ctx, []string{"supply"}, query)
+	suite.Nil(errRes)
+	supplyResp := binary.LittleEndian.Uint64(res)
+	suite.Equal(0, int(supplyResp))
 
 	queryCollectionParams = types.NewQueryCollectionParams(denom)
-	bz, errRes = app.Codec().MarshalJSON(queryCollectionParams)
-	require.Nil(t, errRes)
+	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
+	suite.Nil(errRes)
 	query.Data = bz
 
-	res, err = querier(ctx, []string{"supply"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"supply"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
-	supplyResp := binary.LittleEndian.Uint64(res)
-	require.Equal(t, 1, int(supplyResp))
+	supplyResp = binary.LittleEndian.Uint64(res)
+	suite.Equal(1, int(supplyResp))
 }
 
-func TestQueryCollection(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestQueryCollection() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
-	querier := keep.NewQuerier(app.NFTKeeper)
+	querier := keep.NewQuerier(suite.keeper)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -84,47 +78,44 @@ func TestQueryCollection(t *testing.T) {
 	query.Path = "/custom/nft/collection"
 
 	query.Data = []byte("?")
-	res, err := querier(ctx, []string{"collection"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err := querier(suite.ctx, []string{"collection"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	queryCollectionParams := types.NewQueryCollectionParams(denom2)
-	bz, errRes := app.Codec().MarshalJSON(queryCollectionParams)
-	require.Nil(t, errRes)
+	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
+	suite.Nil(errRes)
 
 	query.Data = bz
-	res, err = querier(ctx, []string{"collection"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err = querier(suite.ctx, []string{"collection"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	queryCollectionParams = types.NewQueryCollectionParams(denom)
-	bz, errRes = app.Codec().MarshalJSON(queryCollectionParams)
-	require.Nil(t, errRes)
+	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
+	suite.Nil(errRes)
 
 	query.Data = bz
-	res, err = querier(ctx, []string{"collection"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"collection"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
-	var collections types.Collections
-	types.ModuleCdc.MustUnmarshalJSON(res, &collections)
-	require.Len(t, collections, 1)
-	require.Len(t, collections[0].NFTs, 1)
+	var collection types.Collection
+	types.ModuleCdc.MustUnmarshalJSON(res, &collection)
+	suite.Len(collection.NFTs, 1)
 }
 
-func TestQueryOwner(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestQueryOwner() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	denom2 := "test_denom2"
-	err = app.NFTKeeper.MintNFT(ctx, denom2, &nft)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom2, &nft)
+	suite.NoError(err)
 
-	querier := keep.NewQuerier(app.NFTKeeper)
+	querier := keep.NewQuerier(suite.keeper)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -133,62 +124,60 @@ func TestQueryOwner(t *testing.T) {
 	query.Path = "/custom/nft/ownerByDenom"
 
 	query.Data = []byte("?")
-	res, err := querier(ctx, []string{"ownerByDenom"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err := querier(suite.ctx, []string{"ownerByDenom"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	// query the balance using the first denom
 	params := types.NewQueryBalanceParams(address, denom)
-	bz, err2 := app.Codec().MarshalJSON(params)
-	require.Nil(t, err2)
+	bz, err2 := suite.cdc.MarshalJSON(params)
+	suite.Nil(err2)
 	query.Data = bz
 
-	res, err = querier(ctx, []string{"ownerByDenom"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"ownerByDenom"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
 	var out types.Owner
-	app.Codec().MustUnmarshalJSON(res, &out)
+	suite.cdc.MustUnmarshalJSON(res, &out)
 
 	// build the owner using only the first denom
 	idCollection1 := types.NewIDCollection(denom, []string{id})
 	owner := types.NewOwner(address, idCollection1)
 
-	require.Equal(t, out.String(), owner.String())
+	suite.Equal(out.String(), owner.String())
 
 	// query the balance using no denom so that all denoms will be returns
 	params = types.NewQueryBalanceParams(address, "")
-	bz, err2 = app.Codec().MarshalJSON(params)
-	require.Nil(t, err2)
+	bz, err2 = suite.cdc.MarshalJSON(params)
+	suite.Nil(err2)
 
 	query.Path = "/custom/nft/owner"
 	query.Data = []byte("?")
-	_, err = querier(ctx, []string{"owner"}, query)
-	require.Error(t, err)
+	_, err = querier(suite.ctx, []string{"owner"}, query)
+	suite.Error(err)
 
 	query.Data = bz
-	res, err = querier(ctx, []string{"owner"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"owner"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
-	app.Codec().MustUnmarshalJSON(res, &out)
+	suite.cdc.MustUnmarshalJSON(res, &out)
 
-	// build the owner using both denoms TODO: add sorting to ensure the objects are the same
+	// build the owner using both denoms
 	idCollection2 := types.NewIDCollection(denom2, []string{id})
-	owner = types.NewOwner(address, idCollection2, idCollection1)
+	owner = types.NewOwner(address, idCollection1, idCollection2)
 
-	require.Equal(t, out.String(), owner.String())
+	suite.Equal(out.String(), owner.String())
 }
 
-func TestQueryNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestQueryNFT() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
-	querier := keep.NewQuerier(app.NFTKeeper)
+	querier := keep.NewQuerier(suite.keeper)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -198,46 +187,44 @@ func TestQueryNFT(t *testing.T) {
 	var res []byte
 
 	query.Data = []byte("?")
-	res, err = querier(ctx, []string{"nft"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err = querier(suite.ctx, []string{"nft"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	params := types.NewQueryNFTParams(denom2, id2)
-	bz, err2 := app.Codec().MarshalJSON(params)
-	require.Nil(t, err2)
+	bz, err2 := suite.cdc.MarshalJSON(params)
+	suite.Nil(err2)
 
 	query.Data = bz
-	res, err = querier(ctx, []string{"nft"}, query)
-	require.Error(t, err)
-	require.Nil(t, res)
+	res, err = querier(suite.ctx, []string{"nft"}, query)
+	suite.Error(err)
+	suite.Nil(res)
 
 	params = types.NewQueryNFTParams(denom, id)
-	bz, err2 = app.Codec().MarshalJSON(params)
-	require.Nil(t, err2)
+	bz, err2 = suite.cdc.MarshalJSON(params)
+	suite.Nil(err2)
 
 	query.Data = bz
-	res, err = querier(ctx, []string{"nft"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"nft"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
 	var out exported.NFT
-	app.Codec().MustUnmarshalJSON(res, &out)
+	suite.cdc.MustUnmarshalJSON(res, &out)
 
-	require.Equal(t, out.String(), nft.String())
+	suite.Equal(out.String(), nft.String())
 }
 
-func TestQueryDenoms(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestQueryDenoms() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
-	err = app.NFTKeeper.MintNFT(ctx, denom2, &nft)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom2, &nft)
+	suite.NoError(err)
 
-	querier := keep.NewQuerier(app.NFTKeeper)
+	querier := keep.NewQuerier(suite.keeper)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -246,16 +233,16 @@ func TestQueryDenoms(t *testing.T) {
 	var res []byte
 	query.Path = "/custom/nft/denoms"
 
-	res, err = querier(ctx, []string{"denoms"}, query)
-	require.NoError(t, err)
-	require.NotNil(t, res)
+	res, err = querier(suite.ctx, []string{"denoms"}, query)
+	suite.NoError(err)
+	suite.NotNil(res)
 
 	denoms := []string{denom, denom2}
 
 	var out []string
-	app.Codec().MustUnmarshalJSON(res, &out)
+	suite.cdc.MustUnmarshalJSON(res, &out)
 
 	for key, denomInQuestion := range out {
-		require.Equal(t, denomInQuestion, denoms[key])
+		suite.Equal(denomInQuestion, denoms[key])
 	}
 }

@@ -1,81 +1,64 @@
 package keeper_test
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/irismod/nft/keeper"
 	"github.com/irismod/nft/types"
 )
 
-func TestSetCollection(t *testing.T) {
-	app, ctx := createTestApp(false)
-
-	// create a new nft with id = "id" and owner = "address"
-	// MintNFT shouldn't fail when collection does not exist
+func (suite *KeeperSuite) TestSetCollection() {
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
-
-	// collection should exist
-	collection, exists := app.NFTKeeper.GetCollection(ctx, denom)
-	require.True(t, exists)
-
 	// create a new NFT and add it to the collection created with the NFT mint
 	nft2 := types.NewBaseNFT(id2, address, tokenURI)
-	collection2, err2 := collection.AddNFT(&nft2)
-	require.NoError(t, err2)
-	app.NFTKeeper.SetCollection(ctx, denom, collection2)
 
-	collection2, exists = app.NFTKeeper.GetCollection(ctx, denom)
-	require.True(t, exists)
-	require.Len(t, collection2.NFTs, 2)
+	collection2 := types.Collection{
+		Denom: denom,
+		NFTs:  types.NFTs{&nft2, &nft},
+	}
+	err := suite.keeper.SetCollection(suite.ctx, collection2)
+	suite.Nil(err)
 
-	// reset collection for invariant sanity
-	app.NFTKeeper.SetCollection(ctx, denom, collection)
+	collection2, err = suite.keeper.GetCollection(suite.ctx, denom)
+	suite.NoError(err)
+	suite.Len(collection2.NFTs, 2)
 
-	msg, fail := keeper.SupplyInvariant(app.NFTKeeper)(ctx)
-	require.False(t, fail, msg)
+	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
+	suite.False(fail, msg)
 }
-func TestGetCollection(t *testing.T) {
-	app, ctx := createTestApp(false)
 
-	// collection shouldn't exist
-	collection, exists := app.NFTKeeper.GetCollection(ctx, denom)
-	require.Empty(t, collection)
-	require.False(t, exists)
+func (suite *KeeperSuite) TestGetCollection() {
+	collection, err := suite.keeper.GetCollection(suite.ctx, denom)
+	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// collection should exist
-	collection, exists = app.NFTKeeper.GetCollection(ctx, denom)
-	require.True(t, exists)
-	require.NotEmpty(t, collection)
+	collection, err = suite.keeper.GetCollection(suite.ctx, denom)
+	suite.NoError(err)
+	suite.NotEmpty(collection)
 
-	msg, fail := keeper.SupplyInvariant(app.NFTKeeper)(ctx)
-	require.False(t, fail, msg)
+	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
+	suite.False(fail, msg)
 }
-func TestGetCollections(t *testing.T) {
-	app, ctx := createTestApp(false)
+
+func (suite *KeeperSuite) TestGetCollections() {
 
 	// collections should be empty
-	collections := app.NFTKeeper.GetCollections(ctx)
-	require.Empty(t, collections)
+	collections := suite.keeper.GetCollections(suite.ctx)
+	suite.Empty(collections)
 
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// collections should equal 1
-	collections = app.NFTKeeper.GetCollections(ctx)
-	require.NotEmpty(t, collections)
-	require.Equal(t, len(collections), 1)
+	collections = suite.keeper.GetCollections(suite.ctx)
+	suite.NotEmpty(collections)
+	suite.Equal(len(collections), 1)
 
-	msg, fail := keeper.SupplyInvariant(app.NFTKeeper)(ctx)
-	require.False(t, fail, msg)
+	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
+	suite.False(fail, msg)
 }

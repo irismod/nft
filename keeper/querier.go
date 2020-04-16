@@ -26,42 +26,36 @@ func NewQuerier(k Keeper) sdk.Querier {
 	return func(ctx sdk.Context, path []string, req abci.RequestQuery) (res []byte, err error) {
 		switch path[0] {
 		case QuerySupply:
-			return querySupply(ctx, path[1:], req, k)
+			return querySupply(ctx, req, k)
 		case QueryOwner:
-			return queryOwner(ctx, path[1:], req, k)
+			return queryOwner(ctx, req, k)
 		case QueryOwnerByDenom:
-			return queryOwnerByDenom(ctx, path[1:], req, k)
+			return queryOwnerByDenom(ctx, req, k)
 		case QueryCollection:
-			return queryCollection(ctx, path[1:], req, k)
+			return queryCollection(ctx, req, k)
 		case QueryDenoms:
-			return queryDenoms(ctx, path[1:], req, k)
+			return queryDenoms(ctx, req, k)
 		case QueryNFT:
-			return queryNFT(ctx, path[1:], req, k)
+			return queryNFT(ctx, req, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown query path: %s", path[0])
 		}
 	}
 }
 
-func querySupply(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func querySupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryCollectionParams
 
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-
-	collection, found := k.GetCollection(ctx, params.Denom)
-	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "unknown denom %s", params.Denom)
-	}
-
 	bz := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bz, uint64(collection.Supply()))
+	binary.LittleEndian.PutUint64(bz, k.GetSupply(ctx, params.Denom))
 	return bz, nil
 }
 
-func queryOwner(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func queryOwner(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryBalanceParams
 
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
@@ -78,7 +72,7 @@ func queryOwner(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper)
 	return bz, nil
 }
 
-func queryOwnerByDenom(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func queryOwnerByDenom(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryBalanceParams
 
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
@@ -86,11 +80,11 @@ func queryOwnerByDenom(ctx sdk.Context, path []string, req abci.RequestQuery, k 
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	var owner types.Owner
-
-	idCollection, _ := k.GetOwnerByDenom(ctx, params.Owner, params.Denom)
-	owner.Address = params.Owner
-	owner.IDCollections = append(owner.IDCollections, idCollection).Sort()
+	idCollection := k.GetOwnerByDenom(ctx, params.Owner, params.Denom)
+	owner := types.Owner{
+		Address:       params.Owner,
+		IDCollections: types.IDCollections{idCollection},
+	}
 
 	bz, err := types.ModuleCdc.MarshalJSON(owner)
 	if err != nil {
@@ -100,7 +94,7 @@ func queryOwnerByDenom(ctx sdk.Context, path []string, req abci.RequestQuery, k 
 	return bz, nil
 }
 
-func queryCollection(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func queryCollection(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryCollectionParams
 
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
@@ -108,14 +102,12 @@ func queryCollection(ctx sdk.Context, path []string, req abci.RequestQuery, k Ke
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	collection, found := k.GetCollection(ctx, params.Denom)
-	if !found {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "unknown denom %s", params.Denom)
+	collection, err := k.GetCollection(ctx, params.Denom)
+	if err != nil {
+		return nil, err
 	}
 
-	// use Collections custom JSON to make the denom the key of the object
-	collections := types.NewCollections(collection)
-	bz, err := types.ModuleCdc.MarshalJSON(collections)
+	bz, err := types.ModuleCdc.MarshalJSON(collection)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -123,7 +115,7 @@ func queryCollection(ctx sdk.Context, path []string, req abci.RequestQuery, k Ke
 	return bz, nil
 }
 
-func queryDenoms(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func queryDenoms(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	denoms := k.GetDenoms(ctx)
 
 	bz, err := types.ModuleCdc.MarshalJSON(denoms)
@@ -134,7 +126,7 @@ func queryDenoms(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 	return bz, nil
 }
 
-func queryNFT(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) ([]byte, error) {
+func queryNFT(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	var params types.QueryNFTParams
 
 	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
@@ -144,7 +136,7 @@ func queryNFT(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper) (
 
 	nft, err := k.GetNFT(ctx, params.Denom, params.TokenID)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid NFT #%s from collection %s", params.TokenID, params.Denom)
+		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid NFT %s from collection %s", params.TokenID, params.Denom)
 	}
 
 	bz, err := types.ModuleCdc.MarshalJSON(nft)

@@ -162,7 +162,7 @@ $ %s query %s collection crypto-kitties
 				return err
 			}
 
-			var out types.Collections
+			var out types.Collection
 			err = cdc.UnmarshalJSON(res, &out)
 			if err != nil {
 				return err
@@ -198,7 +198,7 @@ func GetCmdQueryDenoms(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return err
 			}
 
-			var out types.SortedStringArray
+			var out []string
 			err = cdc.UnmarshalJSON(res, &out)
 			if err != nil {
 				return err

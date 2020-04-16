@@ -33,9 +33,8 @@ func SupplyInvariant(k Keeper) sdk.Invariant {
 		var msg string
 		count := 0
 
-		k.IterateCollections(ctx, func(collection types.Collection) bool {
+		k.IterateCollections(ctx, func(collection types.Collection) {
 			collectionsSupply[collection.Denom] = collection.Supply()
-			return false
 		})
 
 		for _, owner := range k.GetOwners(ctx) {

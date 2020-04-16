@@ -13,14 +13,3 @@ func NewGenesisState(owners []Owner, collections Collections) GenesisState {
 		Collections: collections,
 	}
 }
-
-// DefaultGenesisState returns a default genesis state
-func DefaultGenesisState() GenesisState {
-	return NewGenesisState([]Owner{}, NewCollections())
-}
-
-// ValidateGenesis performs basic validation of nfts genesis data returning an
-// error for any failed validation criteria.
-func ValidateGenesis(data GenesisState) error {
-	return nil
-}

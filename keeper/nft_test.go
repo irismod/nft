@@ -1,137 +1,112 @@
 package keeper_test
 
 import (
-	"testing"
-
-	"github.com/stretchr/testify/require"
-
 	"github.com/irismod/nft/keeper"
 	"github.com/irismod/nft/types"
 )
 
-func TestMintNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestMintNFT() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// MintNFT shouldn't fail when collection exists
 	nft2 := types.NewBaseNFT(id2, address, tokenURI)
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft2)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom, &nft2)
+	suite.NoError(err)
 }
 
-func TestGetNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestGetNFT() {
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// GetNFT should get the NFT
-	receivedNFT, err := app.NFTKeeper.GetNFT(ctx, denom, id)
-	require.NoError(t, err)
-	require.Equal(t, receivedNFT.GetID(), id)
-	require.True(t, receivedNFT.GetOwner().Equals(address))
-	require.Equal(t, receivedNFT.GetTokenURI(), tokenURI)
+	receivedNFT, err := suite.keeper.GetNFT(suite.ctx, denom, id)
+	suite.NoError(err)
+	suite.Equal(receivedNFT.GetID(), id)
+	suite.True(receivedNFT.GetOwner().Equals(address))
+	suite.Equal(receivedNFT.GetTokenURI(), tokenURI)
 
 	// MintNFT shouldn't fail when collection exists
 	nft2 := types.NewBaseNFT(id2, address, tokenURI)
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft2)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom, &nft2)
+	suite.NoError(err)
 
 	// GetNFT should get the NFT when collection exists
-	receivedNFT2, err := app.NFTKeeper.GetNFT(ctx, denom, id2)
-	require.NoError(t, err)
-	require.Equal(t, receivedNFT2.GetID(), id2)
-	require.True(t, receivedNFT2.GetOwner().Equals(address))
-	require.Equal(t, receivedNFT2.GetTokenURI(), tokenURI)
+	receivedNFT2, err := suite.keeper.GetNFT(suite.ctx, denom, id2)
+	suite.NoError(err)
+	suite.Equal(receivedNFT2.GetID(), id2)
+	suite.True(receivedNFT2.GetOwner().Equals(address))
+	suite.Equal(receivedNFT2.GetTokenURI(), tokenURI)
 
-	msg, fail := keeper.SupplyInvariant(app.NFTKeeper)(ctx)
-	require.False(t, fail, msg)
+	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
+	suite.False(fail, msg)
 }
 
-func TestUpdateNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestUpdateNFT() {
 	nft := types.NewBaseNFT(id, address, tokenURI)
 
 	// UpdateNFT should fail when NFT doesn't exists
-	err := app.NFTKeeper.UpdateNFT(ctx, denom, &nft)
-	require.Error(t, err)
+	err := suite.keeper.UpdateNFT(suite.ctx, denom, &nft)
+	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err = suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	nonnft := types.NewBaseNFT(id2, address, tokenURI)
 	// UpdateNFT should fail when NFT doesn't exists
-	err = app.NFTKeeper.UpdateNFT(ctx, denom, &nonnft)
-	require.Error(t, err)
+	err = suite.keeper.UpdateNFT(suite.ctx, denom, &nonnft)
+	suite.Error(err)
 
 	// UpdateNFT shouldn't fail when NFT exists
 	nft2 := types.NewBaseNFT(id, address, tokenURI2)
-	err = app.NFTKeeper.UpdateNFT(ctx, denom, &nft2)
-	require.NoError(t, err)
+	err = suite.keeper.UpdateNFT(suite.ctx, denom, &nft2)
+	suite.NoError(err)
 
 	// UpdateNFT shouldn't fail when NFT exists
 	nft2 = types.NewBaseNFT(id, address2, tokenURI2)
-	err = app.NFTKeeper.UpdateNFT(ctx, denom, &nft2)
-	require.NoError(t, err)
+	err = suite.keeper.UpdateNFT(suite.ctx, denom, &nft2)
+	suite.NoError(err)
 
 	// GetNFT should get the NFT with new tokenURI
-	receivedNFT, err := app.NFTKeeper.GetNFT(ctx, denom, id)
-	require.NoError(t, err)
-	require.Equal(t, receivedNFT.GetTokenURI(), tokenURI2)
+	receivedNFT, err := suite.keeper.GetNFT(suite.ctx, denom, id)
+	suite.NoError(err)
+	suite.Equal(receivedNFT.GetTokenURI(), tokenURI2)
 }
 
-func TestDeleteNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
-	// DeleteNFT should fail when NFT doesn't exist and collection doesn't exist
-	err := app.NFTKeeper.DeleteNFT(ctx, denom, id)
-	require.Error(t, err)
+func (suite *KeeperSuite) TestDeleteNFT() {
+	nft := types.NewBaseNFT(id, address, tokenURI)
 
 	// MintNFT should not fail when collection does not exist
-	nft := types.NewBaseNFT(id, address, tokenURI)
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// DeleteNFT should fail when NFT doesn't exist but collection does exist
-	err = app.NFTKeeper.DeleteNFT(ctx, denom, id2)
-	require.Error(t, err)
-
-	// DeleteNFT should not fail when NFT and collection exist
-	err = app.NFTKeeper.DeleteNFT(ctx, denom, id)
-	require.NoError(t, err)
+	suite.keeper.DeleteNFT(suite.ctx, denom, &nft)
 
 	// NFT should no longer exist
-	isNFT := app.NFTKeeper.IsNFT(ctx, denom, id)
-	require.False(t, isNFT)
+	isNFT := suite.keeper.HasNFT(suite.ctx, denom, id)
+	suite.False(isNFT)
 
-	owner := app.NFTKeeper.GetOwner(ctx, address)
-	require.Equal(t, 0, owner.Supply())
-
-	msg, fail := keeper.SupplyInvariant(app.NFTKeeper)(ctx)
-	require.False(t, fail, msg)
+	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
+	suite.False(fail, msg)
 }
 
-func TestIsNFT(t *testing.T) {
-	app, ctx := createTestApp(false)
-
+func (suite *KeeperSuite) TestHasNFT() {
 	// IsNFT should return false
-	isNFT := app.NFTKeeper.IsNFT(ctx, denom, id)
-	require.False(t, isNFT)
+	isNFT := suite.keeper.HasNFT(suite.ctx, denom, id)
+	suite.False(isNFT)
 
 	// MintNFT shouldn't fail when collection does not exist
 	nft := types.NewBaseNFT(id, address, tokenURI)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
-	require.NoError(t, err)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
+	suite.NoError(err)
 
 	// IsNFT should return true
-	isNFT = app.NFTKeeper.IsNFT(ctx, denom, id)
-	require.True(t, isNFT)
+	isNFT = suite.keeper.HasNFT(suite.ctx, denom, id)
+	suite.True(isNFT)
 }

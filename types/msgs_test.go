@@ -57,7 +57,7 @@ func TestMsgTransferNFTGetSignersMethod(t *testing.T) {
 }
 
 func TestNewMsgEditNFTMetadata(t *testing.T) {
-	newMsgEditNFTMetadata := NewMsgEditNFTMetadata(address,
+	newMsgEditNFTMetadata := NewMsgEditNFT(address,
 		fmt.Sprintf("     %s     ", id),
 		fmt.Sprintf("     %s     ", denom),
 		fmt.Sprintf("     %s     ", tokenURI))
@@ -69,34 +69,34 @@ func TestNewMsgEditNFTMetadata(t *testing.T) {
 }
 
 func TestMsgEditNFTMetadataValidateBasicMethod(t *testing.T) {
-	newMsgEditNFTMetadata := NewMsgEditNFTMetadata(nil, id, denom, tokenURI)
+	newMsgEditNFTMetadata := NewMsgEditNFT(nil, id, denom, tokenURI)
 
 	err := newMsgEditNFTMetadata.ValidateBasic()
 	require.Error(t, err)
 
-	newMsgEditNFTMetadata = NewMsgEditNFTMetadata(address, "", denom, tokenURI)
+	newMsgEditNFTMetadata = NewMsgEditNFT(address, "", denom, tokenURI)
 	err = newMsgEditNFTMetadata.ValidateBasic()
 	require.Error(t, err)
 
-	newMsgEditNFTMetadata = NewMsgEditNFTMetadata(address, id, "", tokenURI)
+	newMsgEditNFTMetadata = NewMsgEditNFT(address, id, "", tokenURI)
 	err = newMsgEditNFTMetadata.ValidateBasic()
 	require.Error(t, err)
 
-	newMsgEditNFTMetadata = NewMsgEditNFTMetadata(address, id, denom, tokenURI)
+	newMsgEditNFTMetadata = NewMsgEditNFT(address, id, denom, tokenURI)
 	err = newMsgEditNFTMetadata.ValidateBasic()
 	require.NoError(t, err)
 }
 
 func TestMsgEditNFTMetadataGetSignBytesMethod(t *testing.T) {
-	newMsgEditNFTMetadata := NewMsgEditNFTMetadata(address, id, denom, tokenURI)
+	newMsgEditNFTMetadata := NewMsgEditNFT(address, id, denom, tokenURI)
 	sortedBytes := newMsgEditNFTMetadata.GetSignBytes()
-	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgEditNFTMetadata","value":{"Denom":"%s","ID":"%s","Sender":"%s","TokenURI":"%s"}}`,
+	require.Equal(t, string(sortedBytes), fmt.Sprintf(`{"type":"irismod/nft/MsgEditNFT","value":{"Denom":"%s","ID":"%s","Sender":"%s","TokenURI":"%s"}}`,
 		denom, id, address.String(), tokenURI,
 	))
 }
 
 func TestMsgEditNFTMetadataGetSignersMethod(t *testing.T) {
-	newMsgEditNFTMetadata := NewMsgEditNFTMetadata(address, id, denom, tokenURI)
+	newMsgEditNFTMetadata := NewMsgEditNFT(address, id, denom, tokenURI)
 	signers := newMsgEditNFTMetadata.GetSigners()
 	require.Equal(t, 1, len(signers))
 	require.Equal(t, address.String(), signers[0].String())
