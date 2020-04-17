@@ -90,7 +90,7 @@ crypto-kitties d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa 
 	return cmd
 }
 
-// GetCmdEditNFTMetadata is the CLI command for sending an EditMetadata transaction
+// GetCmdEditNFTMetadata is the CLI command for sending an SetTokenURI transaction
 func GetCmdEditNFTMetadata(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "edit-metadata [denom] [tokenID]",

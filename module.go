@@ -151,7 +151,7 @@ func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Valid
 
 // RegisterStoreDecoder registers a decoder for nft module's types
 func (AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	//sdr[StoreKey] = simulation.DecodeStore
+	sdr[StoreKey] = simulation.DecodeStore
 }
 
 // GenerateGenesisState creates a randomized GenState of the nft module.

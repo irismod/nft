@@ -9,7 +9,12 @@ import (
 // SetCollection save all NFT and panic if existed
 func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) error {
 	for _, nft := range collection.NFTs {
-		if err := k.MintNFT(ctx, collection.Denom, nft); err != nil {
+		if err := k.MintNFT(ctx,
+			collection.Denom,
+			nft.GetID(),
+			nft.GetTokenURI(),
+			nft.GetOwner(),
+		); err != nil {
 			return err
 		}
 	}

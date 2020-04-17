@@ -32,6 +32,7 @@ var (
 	NewQuerier               = keeper.NewQuerier
 	RegisterCodec            = types.RegisterCodec
 	NewCollection            = types.NewCollection
+	NewCollections           = types.NewCollections
 	ErrInvalidCollection     = types.ErrInvalidCollection
 	ErrUnknownCollection     = types.ErrUnknownCollection
 	ErrInvalidNFT            = types.ErrInvalidNFT
@@ -48,6 +49,7 @@ var (
 	NewNFTs                  = types.NewNFTs
 	NewIDCollection          = types.NewIDCollection
 	NewOwner                 = types.NewOwner
+	NewOwners                = types.NewOwners
 	NewQueryCollectionParams = types.NewQueryCollectionParams
 	NewQueryBalanceParams    = types.NewQueryBalanceParams
 	NewQueryNFTParams        = types.NewQueryNFTParams

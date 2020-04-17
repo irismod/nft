@@ -34,16 +34,16 @@ func SplitKeyOwner(key []byte) (address sdk.AccAddress, denom, id string, err er
 
 	switch len(keys) {
 	case 3:
-		address = sdk.AccAddress(keys[0])
+		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
 		denom = string(keys[1])
 		id = string(keys[2])
 		return
 	case 2:
-		address = sdk.AccAddress(keys[0])
+		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
 		denom = string(keys[1])
 		return
 	case 1:
-		address = sdk.AccAddress(keys[0])
+		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
 		return
 	default:
 		return address, denom, id, errors.New("wrong KeyOwner")
@@ -55,15 +55,16 @@ func KeyOwner(address sdk.AccAddress, denom, id string) []byte {
 	key := append(PrefixOwners, delimiter...)
 	if address != nil {
 		key = append(key, []byte(address.String())...)
+		key = append(key, delimiter...)
 	}
 
 	if address != nil && len(denom) > 0 {
-		key = append(key, delimiter...)
 		key = append(key, []byte(denom)...)
+		key = append(key, delimiter...)
 	}
 
 	if address != nil && len(denom) > 0 && len(id) > 0 {
-		key = append(key, delimiter...)
+
 		key = append(key, []byte(id)...)
 	}
 	return key
@@ -74,10 +75,10 @@ func KeyNFT(denom, id string) []byte {
 	key := append(PrefixNFT, delimiter...)
 	if len(denom) > 0 {
 		key = append(key, []byte(denom)...)
+		key = append(key, delimiter...)
 	}
 
 	if len(denom) > 0 && len(id) > 0 {
-		key = append(key, delimiter...)
 		key = append(key, []byte(id)...)
 	}
 	return key

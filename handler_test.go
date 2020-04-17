@@ -35,9 +35,6 @@ func TestTransferNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
 	h := nft.NewHandler(app.NFTKeeper)
 
-	// An NFT to be transferred
-	nft := types.NewBaseNFT(id, address, "TokenURI")
-
 	// Define MsgTransferNft
 	transferNftMsg := types.NewMsgTransferNFT(address, address2, denom, id, tokenURI)
 
@@ -47,7 +44,7 @@ func TestTransferNFTMsg(t *testing.T) {
 	require.Nil(t, res)
 
 	// Create token (collection and owner)
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err = app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
@@ -92,7 +89,7 @@ func TestTransferNFTMsg(t *testing.T) {
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
 	// Create token (collection and owner)
-	err = app.NFTKeeper.MintNFT(ctx, denom2, &nft)
+	err = app.NFTKeeper.MintNFT(ctx, denom2, id, tokenURI, address)
 	require.Nil(t, err)
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
@@ -109,11 +106,8 @@ func TestEditNFTMetadataMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
 	h := nft.NewHandler(app.NFTKeeper)
 
-	// An NFT to be edited
-	nft := types.NewBaseNFT(id, address, tokenURI)
-
 	// Create token (collection and address)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err := app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 
 	// Define MsgTransferNft
@@ -208,14 +202,11 @@ func TestBurnNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
 	h := nft.NewHandler(app.NFTKeeper)
 
-	// An NFT to be burned
-	nft := types.NewBaseNFT(id, address, tokenURI)
-
 	// Create token (collection and address)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err := app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 
-	exists := app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists := app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.True(t, exists)
 
 	// burning a non-existent NFT should fail
@@ -225,7 +216,7 @@ func TestBurnNFTMsg(t *testing.T) {
 	require.Nil(t, res)
 
 	// NFT should still exist
-	exists = app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists = app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.True(t, exists)
 
 	// burning the NFt should succeed
@@ -255,11 +246,11 @@ func TestBurnNFTMsg(t *testing.T) {
 	}
 
 	// the NFT should not exist after burn
-	exists = app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists = app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.False(t, exists)
 
 	ownerReturned := app.NFTKeeper.GetOwner(ctx, address)
-	require.Equal(t, 0, ownerReturned.Supply())
+	require.Equal(t, 0, len(ownerReturned.IDCollections))
 
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 }
