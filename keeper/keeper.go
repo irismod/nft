@@ -42,6 +42,7 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 	nft := types.NewBaseNFT(id, owner, tokenURI)
 	k.setNFT(ctx, denom, &nft)
 	k.setOwner(ctx, denom, id, owner)
+	k.increaseSupply(ctx, denom)
 	return nil
 }
 
@@ -89,5 +90,6 @@ func (k Keeper) BurnNFT(ctx sdk.Context,
 
 	k.deleteNFT(ctx, denom, nft)
 	k.deleteOwner(ctx, denom, id, owner)
+	k.decreaseSupply(ctx, denom)
 	return nil
 }

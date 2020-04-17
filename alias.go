@@ -11,16 +11,15 @@ import (
 )
 
 const (
-	QuerySupply       = keeper.QuerySupply
-	QueryOwner        = keeper.QueryOwner
-	QueryOwnerByDenom = keeper.QueryOwnerByDenom
-	QueryCollection   = keeper.QueryCollection
-	QueryDenoms       = keeper.QueryDenoms
-	QueryNFT          = keeper.QueryNFT
-	ModuleName        = types.ModuleName
-	StoreKey          = types.StoreKey
-	QuerierRoute      = types.QuerierRoute
-	RouterKey         = types.RouterKey
+	QuerySupply     = types.QuerySupply
+	QueryOwner      = types.QueryOwner
+	QueryCollection = types.QueryCollection
+	QueryDenoms     = types.QueryDenoms
+	QueryNFT        = types.QueryNFT
+	ModuleName      = types.ModuleName
+	StoreKey        = types.StoreKey
+	QuerierRoute    = types.QuerierRoute
+	RouterKey       = types.RouterKey
 )
 
 var (
@@ -50,8 +49,8 @@ var (
 	NewIDCollection          = types.NewIDCollection
 	NewOwner                 = types.NewOwner
 	NewOwners                = types.NewOwners
+	NewQuerySupplyParams     = types.NewQuerySupplyParams
 	NewQueryCollectionParams = types.NewQueryCollectionParams
-	NewQueryBalanceParams    = types.NewQueryBalanceParams
 	NewQueryNFTParams        = types.NewQueryNFTParams
 
 	// variable aliases
@@ -84,7 +83,7 @@ type (
 	IDCollection          = types.IDCollection
 	IDCollections         = types.IDCollections
 	Owner                 = types.Owner
+	QuerySupplyParams     = types.QuerySupplyParams
 	QueryCollectionParams = types.QueryCollectionParams
-	QueryBalanceParams    = types.QueryBalanceParams
 	QueryNFTParams        = types.QueryNFTParams
 )

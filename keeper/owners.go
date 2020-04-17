@@ -7,9 +7,14 @@ import (
 
 // GetOwner gets all the ID Collections owned by an address
 func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress) (owner types.Owner) {
+	return k.GetOwnerOfDenom(ctx, address, "")
+}
+
+// GetOwner gets all the ID Collections owned by an address and denom
+func (k Keeper) GetOwnerOfDenom(ctx sdk.Context, address sdk.AccAddress, denom string) types.Owner {
 	idCs := make(map[string]types.IDCollection)
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, "", ""))
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, denom, ""))
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
 		_, denom, id, _ := types.SplitKeyOwner(iterator.Key())
@@ -58,19 +63,6 @@ func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 		owners = append(owners, owner)
 	}
 	return owners
-}
-
-// GetOwnerByDenom gets the ID Collection owned by an address of a specific denom
-func (k Keeper) GetOwnerByDenom(ctx sdk.Context, owner sdk.AccAddress, denom string) (idc types.IDCollection) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(owner, denom, ""))
-	defer iterator.Close()
-	for ; iterator.Valid(); iterator.Next() {
-		_, _, id, _ := types.SplitKeyOwner(iterator.Key())
-		idc.IDs = append(idc.IDs, id)
-	}
-	idc.Denom = denom
-	return idc
 }
 
 func (k Keeper) deleteOwner(ctx sdk.Context,

@@ -22,8 +22,9 @@ const (
 )
 
 var (
-	PrefixNFT    = []byte{0x01}
-	PrefixOwners = []byte{0x02} // key for balance of NFTs held by an address
+	PrefixNFT        = []byte{0x01}
+	PrefixOwners     = []byte{0x02} // key for balance of NFTs held by an address
+	PrefixCollection = []byte{0x03} // key for balance of NFTs held by an address
 
 	delimiter = []byte("/")
 )
@@ -98,4 +99,15 @@ func SplitKeyNFT(key []byte) (denom, id string, err error) {
 	default:
 		return denom, id, errors.New("wrong KeyNFT")
 	}
+}
+
+// KeyNFT gets the NFT by an ID
+func KeyCollection(denom string) []byte {
+	key := append(PrefixCollection, delimiter...)
+	return append(key, []byte(denom)...)
+}
+
+func SplitKeyCollection(key []byte) (denom string) {
+	key = key[len(PrefixCollection)+len(delimiter):]
+	return string(key)
 }

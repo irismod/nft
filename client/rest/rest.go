@@ -12,3 +12,9 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 	registerQueryRoutes(cliCtx, r, cdc, queryRoute)
 	registerTxRoutes(cliCtx, r, cdc, queryRoute)
 }
+
+const (
+	RestParamDenom   = "denom"
+	RestParamTokenID = "token-id"
+	RestParamOwner   = "owner"
+)

@@ -39,7 +39,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	suite.Error(err)
 	suite.Nil(res)
 
-	queryCollectionParams := types.NewQueryCollectionParams(denom2)
+	queryCollectionParams := types.NewQuerySupplyParams(denom2, nil)
 	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 	query.Data = bz
@@ -48,7 +48,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	supplyResp := binary.LittleEndian.Uint64(res)
 	suite.Equal(0, int(supplyResp))
 
-	queryCollectionParams = types.NewQueryCollectionParams(denom)
+	queryCollectionParams = types.NewQuerySupplyParams(denom, nil)
 	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 	query.Data = bz
@@ -80,7 +80,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	suite.Error(err)
 	suite.Nil(res)
 
-	queryCollectionParams := types.NewQueryCollectionParams(denom2)
+	queryCollectionParams := types.NewQuerySupplyParams(denom2, nil)
 	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 
@@ -89,7 +89,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	suite.Error(err)
 	suite.Nil(res)
 
-	queryCollectionParams = types.NewQueryCollectionParams(denom)
+	queryCollectionParams = types.NewQuerySupplyParams(denom, nil)
 	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 
@@ -126,7 +126,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	suite.Nil(res)
 
 	// query the balance using the first denom
-	params := types.NewQueryBalanceParams(address, denom)
+	params := types.NewQuerySupplyParams(denom, address)
 	bz, err2 := suite.cdc.MarshalJSON(params)
 	suite.Nil(err2)
 	query.Data = bz
@@ -145,7 +145,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	suite.Equal(out.String(), owner.String())
 
 	// query the balance using no denom so that all denoms will be returns
-	params = types.NewQueryBalanceParams(address, "")
+	params = types.NewQuerySupplyParams("", address)
 	bz, err2 = suite.cdc.MarshalJSON(params)
 	suite.Nil(err2)
 

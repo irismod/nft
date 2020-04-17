@@ -55,6 +55,19 @@ func (k Keeper) HasNFT(ctx sdk.Context, denom, id string) bool {
 	return store.Has(types.KeyNFT(denom, id))
 }
 
+// GetTokenIDsOfDenom gets the ID Collection owned by an address of a specific denom
+func (k Keeper) GetTokenIDsOfDenom(ctx sdk.Context, owner sdk.AccAddress, denom string) (idc types.IDCollection) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(owner, denom, ""))
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		_, _, id, _ := types.SplitKeyOwner(iterator.Key())
+		idc.IDs = append(idc.IDs, id)
+	}
+	idc.Denom = denom
+	return idc
+}
+
 func (k Keeper) setNFT(ctx sdk.Context, denom string, nft exported.NFT) {
 	store := ctx.KVStore(k.storeKey)
 
