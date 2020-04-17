@@ -17,11 +17,11 @@ func TestInitGenesis(t *testing.T) {
 	ids := []string{id, id2, id3}
 	idCollection := nft.NewIDCollection(denom, ids)
 	idCollection2 := nft.NewIDCollection(denom2, ids)
-
 	owner := nft.NewOwner(address, idCollection)
+
 	owner2 := nft.NewOwner(address2, idCollection2)
 
-	owners := nft.NewOwners(owner, owner2)
+	owners := []nft.Owner{owner, owner2}
 
 	nft1 := nft.NewBaseNFT(id, address, tokenURI1)
 	nft2 := nft.NewBaseNFT(id2, address, tokenURI1)
@@ -35,9 +35,7 @@ func TestInitGenesis(t *testing.T) {
 	nftsx := nft.NewNFTs(&nftx, &nft2x, &nft3x)
 	collection2 := nft.NewCollection(denom2, nftsx)
 
-	collections := nft.Collections{
-		collection, collection2,
-	}
+	collections := nft.NewCollections(collection, collection2)
 
 	genesisState = nft.NewGenesisState(owners, collections)
 
@@ -45,16 +43,20 @@ func TestInitGenesis(t *testing.T) {
 
 	returnedOwners := app.NFTKeeper.GetOwners(ctx)
 	require.Equal(t, 2, len(owners))
-	require.Equal(t, returnedOwners.String(), owners.String())
+	require.Equal(t, returnedOwners[0].String(), owners[0].String())
+	require.Equal(t, returnedOwners[1].String(), owners[1].String())
 
 	returnedCollections := app.NFTKeeper.GetCollections(ctx)
 	require.Equal(t, 2, len(returnedCollections))
-	require.Equal(t, returnedCollections.String(), collections.String())
+	require.Equal(t, returnedCollections[0].String(), collections[0].String())
+	require.Equal(t, returnedCollections[1].String(), collections[1].String())
 
 	exportedGenesisState := nft.ExportGenesis(ctx, app.NFTKeeper)
 	require.Equal(t, len(genesisState.Owners), len(exportedGenesisState.Owners))
-	require.Equal(t, genesisState.Owners.String(), exportedGenesisState.Owners.String())
+	require.Equal(t, genesisState.Owners[0].String(), exportedGenesisState.Owners[0].String())
+	require.Equal(t, genesisState.Owners[1].String(), exportedGenesisState.Owners[1].String())
 
 	require.Equal(t, len(genesisState.Collections), len(exportedGenesisState.Collections))
-	require.Equal(t, genesisState.Collections.String(), exportedGenesisState.Collections.String())
+	require.Equal(t, genesisState.Collections[0].String(), exportedGenesisState.Collections[0].String())
+	require.Equal(t, genesisState.Collections[1].String(), exportedGenesisState.Collections[1].String())
 }

@@ -28,8 +28,8 @@ func NewMsgTransferNFT(sender, recipient sdk.AccAddress, denom, id, tokenURI str
 	return MsgTransferNFT{
 		Sender:    sender,
 		Recipient: recipient,
-		Denom:     strings.ToLower(strings.TrimSpace(denom)),
-		ID:        strings.ToLower(strings.TrimSpace(id)),
+		Denom:     strings.TrimSpace(denom),
+		ID:        strings.TrimSpace(id),
 		TokenURI:  strings.TrimSpace(tokenURI),
 	}
 }
@@ -69,13 +69,6 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
-// Format Implements Msg.
-func (msg MsgTransferNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
-}
-
 /* --------------------------------------------------------------------------- */
 // MsgEditNFT
 /* --------------------------------------------------------------------------- */
@@ -94,8 +87,8 @@ func NewMsgEditNFT(sender sdk.AccAddress, id,
 ) MsgEditNFT {
 	return MsgEditNFT{
 		Sender:   sender,
-		Denom:    strings.ToLower(strings.TrimSpace(denom)),
-		ID:       strings.ToLower(strings.TrimSpace(id)),
+		ID:       strings.TrimSpace(id),
+		Denom:    strings.TrimSpace(denom),
 		TokenURI: strings.TrimSpace(tokenURI),
 	}
 }
@@ -131,13 +124,6 @@ func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
-// Format Implements Msg.
-func (msg MsgEditNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
-}
-
 /* --------------------------------------------------------------------------- */
 // MsgMintNFT
 /* --------------------------------------------------------------------------- */
@@ -156,8 +142,8 @@ func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI string)
 	return MsgMintNFT{
 		Sender:    sender,
 		Recipient: recipient,
-		Denom:     strings.ToLower(strings.TrimSpace(denom)),
-		ID:        strings.ToLower(strings.TrimSpace(id)),
+		ID:        strings.TrimSpace(id),
+		Denom:     strings.TrimSpace(denom),
 		TokenURI:  strings.TrimSpace(tokenURI),
 	}
 }
@@ -196,13 +182,6 @@ func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
-// Format Implements Msg.
-func (msg MsgMintNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
-}
-
 /* --------------------------------------------------------------------------- */
 // MsgBurnNFT
 /* --------------------------------------------------------------------------- */
@@ -218,8 +197,8 @@ type MsgBurnNFT struct {
 func NewMsgBurnNFT(sender sdk.AccAddress, id string, denom string) MsgBurnNFT {
 	return MsgBurnNFT{
 		Sender: sender,
-		Denom:  strings.ToLower(strings.TrimSpace(denom)),
-		ID:     strings.ToLower(strings.TrimSpace(id)),
+		ID:     strings.TrimSpace(id),
+		Denom:  strings.TrimSpace(denom),
 	}
 }
 
@@ -252,10 +231,4 @@ func (msg MsgBurnNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgBurnNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-// Format Implements Msg.
-func (msg *MsgBurnNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
 }

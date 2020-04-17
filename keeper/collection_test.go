@@ -30,7 +30,8 @@ func (suite *KeeperSuite) TestGetCollection() {
 	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, address)
+	nft := types.NewBaseNFT(id, address, tokenURI)
+	err = suite.keeper.MintNFT(suite.ctx, denom, &nft)
 	suite.NoError(err)
 
 	// collection should exist
@@ -49,7 +50,8 @@ func (suite *KeeperSuite) TestGetCollections() {
 	suite.Empty(collections)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, address)
+	nft := types.NewBaseNFT(id, address, tokenURI)
+	err := suite.keeper.MintNFT(suite.ctx, denom, &nft)
 	suite.NoError(err)
 
 	// collections should equal 1

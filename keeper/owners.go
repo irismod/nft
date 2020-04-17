@@ -34,7 +34,7 @@ func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress) (owner types.O
 }
 
 // GetOwner gets all the ID Collections
-func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
+func (k Keeper) GetOwners(ctx sdk.Context) (owners []types.Owner) {
 	ownerMap := make(map[string]types.Owner)
 
 	store := ctx.KVStore(k.storeKey)
@@ -51,7 +51,12 @@ func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 			}
 		}
 		owner := ownerMap[address.String()]
-		owner.IDCollections = owner.IDCollections.Add(denom, id)
+		idCs := owner.IDCollections
+		idCs = append(idCs, types.IDCollection{
+			Denom: denom,
+			IDs:   []string{id},
+		})
+		owner.IDCollections = idCs
 		ownerMap[address.String()] = owner
 	}
 	for _, owner := range ownerMap {
@@ -71,30 +76,4 @@ func (k Keeper) GetOwnerByDenom(ctx sdk.Context, owner sdk.AccAddress, denom str
 	}
 	idc.Denom = denom
 	return idc
-}
-
-func (k Keeper) deleteOwner(ctx sdk.Context,
-	denom, id string,
-	owner sdk.AccAddress) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.KeyOwner(owner, denom, id))
-}
-
-func (k Keeper) setOwner(ctx sdk.Context,
-	denom, id string,
-	owner sdk.AccAddress) {
-	store := ctx.KVStore(k.storeKey)
-	bzID := k.cdc.MustMarshalBinaryLengthPrefixed(id)
-	store.Set(types.KeyOwner(owner, denom, id), bzID)
-}
-
-func (k Keeper) swapOwner(ctx sdk.Context,
-	denom, id string,
-	srcOwner, dstOwner sdk.AccAddress) {
-
-	//delete old owner key
-	k.deleteOwner(ctx, denom, id, srcOwner)
-
-	//set new owner key
-	k.setOwner(ctx, denom, id, dstOwner)
 }

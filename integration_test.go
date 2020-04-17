@@ -39,8 +39,9 @@ func CheckInvariants(k nft.Keeper, ctx sdk.Context) bool {
 	collectionsSupply := make(map[string]int)
 	ownersCollectionsSupply := make(map[string]int)
 
-	k.IterateCollections(ctx, func(collection types.Collection) {
+	k.IterateCollections(ctx, func(collection types.Collection) bool {
 		collectionsSupply[collection.Denom] = collection.Supply()
+		return false
 	})
 
 	owners := k.GetOwners(ctx)

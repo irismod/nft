@@ -1,9 +1,7 @@
 package types
 
 import (
-	"bytes"
 	"fmt"
-	"sort"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,7 +21,7 @@ type BaseNFT struct {
 // NewBaseNFT creates a new NFT instance
 func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI string) BaseNFT {
 	return BaseNFT{
-		ID:       strings.ToLower(strings.TrimSpace(id)),
+		ID:       id,
 		Owner:    owner,
 		TokenURI: strings.TrimSpace(tokenURI),
 	}
@@ -43,8 +41,8 @@ func (bnft *BaseNFT) SetOwner(address sdk.AccAddress) {
 // GetTokenURI returns the path to optional extra properties
 func (bnft BaseNFT) GetTokenURI() string { return bnft.TokenURI }
 
-// SetTokenURI edits metadata of an nft
-func (bnft *BaseNFT) SetTokenURI(tokenURI string) {
+// EditMetadata edits metadata of an nft
+func (bnft *BaseNFT) EditMetadata(tokenURI string) {
 	bnft.TokenURI = tokenURI
 }
 
@@ -71,11 +69,6 @@ func NewNFTs(nfts ...exported.NFT) NFTs {
 	}
 	return NFTs(nfts)
 }
-func (nfts NFTs) Len() int           { return len(nfts) }
-func (nfts NFTs) Swap(i, j int)      { nfts[i], nfts[j] = nfts[j], nfts[i] }
-func (nfts NFTs) Less(i, j int) bool { return nfts[i].GetID() < nfts[j].GetID() }
-func (nfts NFTs) Asc()               { sort.Sort(nfts) }
-func (nfts NFTs) Dsc()               { sort.Sort(sort.Reverse(nfts)) }
 
 // String follows stringer interface
 func (nfts NFTs) String() string {
@@ -83,11 +76,9 @@ func (nfts NFTs) String() string {
 		return ""
 	}
 
-	nfts.Asc()
-	var buf bytes.Buffer
+	out := ""
 	for _, nft := range nfts {
-		buf.WriteString(nft.String())
-		buf.WriteString("\n")
+		out += fmt.Sprintf("%v\n", nft.String())
 	}
-	return buf.String()
+	return out[:len(out)-1]
 }
