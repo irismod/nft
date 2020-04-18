@@ -113,57 +113,32 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	suite.NoError(err)
 
 	querier := keep.NewQuerier(suite.keeper)
-
 	query := abci.RequestQuery{
-		Path: "",
+		Path: "/custom/nft/owner",
 		Data: []byte{},
 	}
-	query.Path = "/custom/nft/ownerByDenom"
 
-	query.Data = []byte("?")
-	res, err := querier(suite.ctx, []string{"ownerByDenom"}, query)
-	suite.Error(err)
-	suite.Nil(res)
-
-	// query the balance using the first denom
-	params := types.NewQuerySupplyParams(denom, address)
-	bz, err2 := suite.cdc.MarshalJSON(params)
-	suite.Nil(err2)
-	query.Data = bz
-
-	res, err = querier(suite.ctx, []string{"ownerByDenom"}, query)
-	suite.NoError(err)
-	suite.NotNil(res)
-
-	var out types.Owner
-	suite.cdc.MustUnmarshalJSON(res, &out)
-
-	// build the owner using only the first denom
-	idCollection1 := types.NewIDCollection(denom, []string{id})
-	owner := types.NewOwner(address, idCollection1)
-
-	suite.Equal(out.String(), owner.String())
-
-	// query the balance using no denom so that all denoms will be returns
-	params = types.NewQuerySupplyParams("", address)
-	bz, err2 = suite.cdc.MarshalJSON(params)
-	suite.Nil(err2)
-
-	query.Path = "/custom/nft/owner"
 	query.Data = []byte("?")
 	_, err = querier(suite.ctx, []string{"owner"}, query)
 	suite.Error(err)
 
+	// query the balance using no denom so that all denoms will be returns
+	params := types.NewQuerySupplyParams("", address)
+	bz, err2 := suite.cdc.MarshalJSON(params)
+	suite.Nil(err2)
 	query.Data = bz
-	res, err = querier(suite.ctx, []string{"owner"}, query)
+
+	var out types.Owner
+	res, err := querier(suite.ctx, []string{"owner"}, query)
 	suite.NoError(err)
 	suite.NotNil(res)
 
 	suite.cdc.MustUnmarshalJSON(res, &out)
 
 	// build the owner using both denoms
+	idCollection1 := types.NewIDCollection(denom, []string{id})
 	idCollection2 := types.NewIDCollection(denom2, []string{id})
-	owner = types.NewOwner(address, idCollection1, idCollection2)
+	owner := types.NewOwner(address, idCollection1, idCollection2)
 
 	suite.EqualValues(out.String(), owner.String())
 }

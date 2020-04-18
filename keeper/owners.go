@@ -40,27 +40,26 @@ func (k Keeper) GetOwnerOfDenom(ctx sdk.Context, address sdk.AccAddress, denom s
 
 // GetOwner gets all the ID Collections
 func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
-	ownerMap := make(map[string]types.Owner)
-
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(nil, "", ""))
+	iterator := sdk.KVStoreReversePrefixIterator(store, types.KeyOwner(nil, "", ""))
 	defer iterator.Close()
 
+	idcsMap := make(map[string]types.IDCollections)
 	for ; iterator.Valid(); iterator.Next() {
 		key := iterator.Key()
 		address, denom, id, _ := types.SplitKeyOwner(key)
-		if _, ok := ownerMap[address.String()]; !ok {
-			ownerMap[address.String()] = types.Owner{
-				Address:       address,
-				IDCollections: []types.IDCollection{},
-			}
+		if _, ok := idcsMap[address.String()]; !ok {
+			idcsMap[address.String()] = types.IDCollections{}
+			owners = append(owners, types.Owner{
+				Address: address,
+			})
 		}
-		owner := ownerMap[address.String()]
-		owner.IDCollections = owner.IDCollections.Add(denom, id)
-		ownerMap[address.String()] = owner
+		idcs := idcsMap[address.String()]
+		idcs = idcs.Add(denom, id)
+		idcsMap[address.String()] = idcs
 	}
-	for _, owner := range ownerMap {
-		owners = append(owners, owner)
+	for i, owner := range owners {
+		owners[i].IDCollections = idcsMap[owner.Address.String()]
 	}
 	return owners
 }

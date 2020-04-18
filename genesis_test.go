@@ -11,7 +11,6 @@ import (
 func TestInitGenesis(t *testing.T) {
 	app, ctx := createTestApp(false)
 	genesisState := nft.DefaultGenesisState()
-	require.Equal(t, 0, len(genesisState.Owners))
 	require.Equal(t, 0, len(genesisState.Collections))
 
 	ids := []string{id, id2, id3}
@@ -39,7 +38,7 @@ func TestInitGenesis(t *testing.T) {
 		collection, collection2,
 	}
 
-	genesisState = nft.NewGenesisState(owners, collections)
+	genesisState = nft.NewGenesisState(collections)
 
 	nft.InitGenesis(ctx, app.NFTKeeper, genesisState)
 
@@ -52,9 +51,6 @@ func TestInitGenesis(t *testing.T) {
 	require.Equal(t, returnedCollections.String(), collections.String())
 
 	exportedGenesisState := nft.ExportGenesis(ctx, app.NFTKeeper)
-	require.Equal(t, len(genesisState.Owners), len(exportedGenesisState.Owners))
-	require.Equal(t, genesisState.Owners.String(), exportedGenesisState.Owners.String())
-
 	require.Equal(t, len(genesisState.Collections), len(exportedGenesisState.Collections))
 	require.Equal(t, genesisState.Collections.String(), exportedGenesisState.Collections.String())
 }

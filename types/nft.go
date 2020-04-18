@@ -15,7 +15,7 @@ var _ exported.NFT = (*BaseNFT)(nil)
 
 // BaseNFT non fungible token definition
 type BaseNFT struct {
-	ID       string         `json:"id,omitempty" yaml:"id"`     // id of the token; not exported to clients
+	ID       string         `json:"id" yaml:"id"`               // id of the token; not exported to clients
 	Owner    sdk.AccAddress `json:"owner" yaml:"owner"`         // account address that owns the NFT
 	TokenURI string         `json:"token_uri" yaml:"token_uri"` // optional extra properties available for querying
 }

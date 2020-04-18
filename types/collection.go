@@ -61,7 +61,6 @@ func (cs Collections) String() string {
 	if len(cs) == 0 {
 		return ""
 	}
-	cs.Asc()
 	var buf bytes.Buffer
 	for _, collection := range cs {
 		buf.WriteString(collection.String())

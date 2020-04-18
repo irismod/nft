@@ -84,22 +84,6 @@ func KeyNFT(denom, id string) []byte {
 	}
 	return key
 }
-func SplitKeyNFT(key []byte) (denom, id string, err error) {
-	key = key[len(PrefixNFT)+len(delimiter):]
-	keys := bytes.Split(key, delimiter)
-
-	switch len(keys) {
-	case 2:
-		denom = string(keys[0])
-		id = string(keys[1])
-		return
-	case 1:
-		denom = string(keys[0])
-		return
-	default:
-		return denom, id, errors.New("wrong KeyNFT")
-	}
-}
 
 // KeyNFT gets the NFT by an ID
 func KeyCollection(denom string) []byte {

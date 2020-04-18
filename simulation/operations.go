@@ -55,22 +55,22 @@ func WeightedOperations(
 	)
 
 	return simulation.WeightedOperations{
-		//simulation.NewWeightedOperation(
-		//	weightMint,
-		//	SimulateMsgMintNFT(k, ak),
-		//),
+		simulation.NewWeightedOperation(
+			weightMint,
+			SimulateMsgMintNFT(k, ak),
+		),
 		simulation.NewWeightedOperation(
 			weightEdit,
 			SimulateMsgEditNFTMetadata(k, ak),
 		),
-		//simulation.NewWeightedOperation(
-		//	weightTransfer,
-		//	SimulateMsgTransferNFT(k, ak),
-		//),
-		//simulation.NewWeightedOperation(
-		//	weightBurn,
-		//	SimulateMsgBurnNFT(k, ak),
-		//),
+		simulation.NewWeightedOperation(
+			weightTransfer,
+			SimulateMsgTransferNFT(k, ak),
+		),
+		simulation.NewWeightedOperation(
+			weightBurn,
+			SimulateMsgBurnNFT(k, ak),
+		),
 	}
 }
 
@@ -83,16 +83,21 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.O
 			return simulation.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		simAccount, _ := simulation.RandomAcc(r, accs)
-
+		recipientAccount, _ := simulation.RandomAcc(r, accs)
 		msg := types.NewMsgTransferNFT(
-			ownerAddr,          // sender
-			simAccount.Address, // recipient
+			ownerAddr,                // sender
+			recipientAccount.Address, // recipient
 			denom,
 			nftID,
 			"",
 		)
 		account := ak.GetAccount(ctx, msg.Sender)
+
+		ownerAccount, found := simulation.FindAccount(accs, msg.Sender)
+		if !found {
+			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
+		}
+
 		fees, err := simulation.RandomFees(r, ctx, account.SpendableCoins(ctx.BlockTime()))
 		if err != nil {
 			return simulation.NoOpMsg(types.ModuleName), nil, err
@@ -105,7 +110,7 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.O
 			chainID,
 			[]uint64{account.GetAccountNumber()},
 			[]uint64{account.GetSequence()},
-			simAccount.PrivKey,
+			ownerAccount.PrivKey,
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
@@ -138,7 +143,7 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulati
 			return simulation.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		simAccount, found := simulation.FindAccount(accs, ownerAddr)
+		ownerAccount, found := simulation.FindAccount(accs, msg.Sender)
 		if !found {
 			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", ownerAddr)
 		}
@@ -150,7 +155,7 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulati
 			chainID,
 			[]uint64{account.GetAccountNumber()},
 			[]uint64{account.GetSequence()},
-			simAccount.PrivKey,
+			ownerAccount.PrivKey,
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {

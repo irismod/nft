@@ -12,8 +12,19 @@ import (
 // IDCollection defines a set of nft ids that belong to a specific
 // collection
 type IDCollection struct {
-	Denom string   `json:"denom" yaml:"denom"`
-	IDs   []string `json:"ids" yaml:"ids"`
+	Denom string            `json:"denom" yaml:"denom"`
+	IDs   SortedStringArray `json:"ids" yaml:"ids"`
+}
+
+type SortedStringArray []string
+
+func (ssa SortedStringArray) Len() int               { return len(ssa) }
+func (ssa SortedStringArray) Swap(i, j int)          { ssa[i], ssa[j] = ssa[j], ssa[i] }
+func (ssa SortedStringArray) Less(i, j int) bool     { return ssa[i] < ssa[j] }
+func (ssa SortedStringArray) Asc() SortedStringArray { sort.Sort(ssa); return ssa }
+func (ssa SortedStringArray) Dsc() SortedStringArray {
+	sort.Sort(sort.Reverse(ssa))
+	return ssa
 }
 
 // NewIDCollection creates a new IDCollection instance
@@ -39,7 +50,7 @@ func (idc IDCollection) String() string {
 	return fmt.Sprintf(`Denom: 			%s
 IDs:        	%s`,
 		idc.Denom,
-		strings.Join(idc.IDs, ","),
+		strings.Join(idc.IDs.Asc(), ","),
 	)
 }
 
@@ -76,7 +87,7 @@ func (idcs IDCollections) String() string {
 	}
 
 	out := ""
-	sort.Sort(idcs)
+	//sort.Sort(idcs)
 	for _, idCollection := range idcs {
 		out += fmt.Sprintf("%v\n", idCollection.String())
 	}
@@ -125,7 +136,6 @@ func (owners Owners) Dsc() { sort.Sort(sort.Reverse(owners)) }
 
 // String follows stringer interface
 func (owners Owners) String() string {
-	owners.Asc()
 	var buf bytes.Buffer
 	for _, owner := range owners {
 		buf.WriteString(owner.String())
