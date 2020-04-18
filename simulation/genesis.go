@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	kitties = "crypto-kitties"
-	doggos  = "crypto-doggos"
+	kitties = "kitties"
+	doggos  = "doggos"
 )
 
 // RandomizedGenState generates a random GenesisState for nft
@@ -21,7 +21,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 		// 10% of accounts own an NFT
 		if simState.Rand.Intn(100) < 10 {
 			baseNFT := types.NewBaseNFT(
-				simulation.RandStringOfLength(simState.Rand, 10), // id
+				simulation.RandStringOfLength(simState.Rand, 5), // id
 				acc.Address,
 				simulation.RandStringOfLength(simState.Rand, 45), // tokenURI
 			)

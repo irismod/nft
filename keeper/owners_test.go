@@ -33,14 +33,3 @@ func (suite *KeeperSuite) TestGetOwners() {
 	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
 	suite.False(fail, msg)
 }
-
-func (suite *KeeperSuite) TestGetOwner() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, address)
-	suite.NoError(err)
-
-	owner := suite.keeper.GetOwner(suite.ctx, address)
-	suite.Len(owner.IDCollections, 1)
-	suite.Len(owner.IDCollections[0].IDs, 1)
-	suite.Equal(owner.IDCollections[0].IDs[0], id)
-	suite.Equal(owner.Address, address)
-}

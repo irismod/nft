@@ -177,8 +177,8 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Opera
 		msg := types.NewMsgMintNFT(
 			randomSender.Address,                 // sender
 			randomRecipient.Address,              // recipient
-			simulation.RandStringOfLength(r, 10), // nft ID
-			simulation.RandStringOfLength(r, 10), // denom
+			simulation.RandStringOfLength(r, 5),  // nft ID
+			simulation.RandStringOfLength(r, 5),  // denom
 			simulation.RandStringOfLength(r, 45), // tokenURI
 		)
 

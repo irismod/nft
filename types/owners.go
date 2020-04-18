@@ -9,22 +9,22 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// IDCollection defines a set of nft ids that belong to a specific
-// collection
-type IDCollection struct {
-	Denom string            `json:"denom" yaml:"denom"`
-	IDs   SortedStringArray `json:"ids" yaml:"ids"`
-}
+// SortedStrArray defines a sortable string array
+type SortedStrArray []string
 
-type SortedStringArray []string
-
-func (ssa SortedStringArray) Len() int               { return len(ssa) }
-func (ssa SortedStringArray) Swap(i, j int)          { ssa[i], ssa[j] = ssa[j], ssa[i] }
-func (ssa SortedStringArray) Less(i, j int) bool     { return ssa[i] < ssa[j] }
-func (ssa SortedStringArray) Asc() SortedStringArray { sort.Sort(ssa); return ssa }
-func (ssa SortedStringArray) Dsc() SortedStringArray {
+func (ssa SortedStrArray) Len() int            { return len(ssa) }
+func (ssa SortedStrArray) Swap(i, j int)       { ssa[i], ssa[j] = ssa[j], ssa[i] }
+func (ssa SortedStrArray) Less(i, j int) bool  { return ssa[i] < ssa[j] }
+func (ssa SortedStrArray) Asc() SortedStrArray { sort.Sort(ssa); return ssa }
+func (ssa SortedStrArray) Dsc() SortedStrArray {
 	sort.Sort(sort.Reverse(ssa))
 	return ssa
+}
+
+// IDCollection defines a set of nft ids that belong to a specific
+type IDCollection struct {
+	Denom string         `json:"denom" yaml:"denom"`
+	IDs   SortedStrArray `json:"ids" yaml:"ids"`
 }
 
 // NewIDCollection creates a new IDCollection instance
@@ -35,6 +35,7 @@ func NewIDCollection(denom string, ids []string) IDCollection {
 	}
 }
 
+// Supply return the amount of the denom
 func (idc IDCollection) Supply() int {
 	return len(idc.IDs)
 }
@@ -55,12 +56,10 @@ IDs:        	%s`,
 }
 
 // ----------------------------------------------------------------------------
-// Owners
-
-// IDCollections is an array of ID Collections whose sole purpose is for find
+// IDCollections is an array of ID Collections
 type IDCollections []IDCollection
 
-// AddID adds an ID to the idCollection
+// Add adds an ID to the idCollection
 func (idcs IDCollections) Add(denom, id string) IDCollections {
 	for i, idc := range idcs {
 		if idc.Denom == denom {
@@ -97,7 +96,7 @@ func (idcs IDCollections) String() string {
 // Owner of non fungible tokens
 type Owner struct {
 	Address       sdk.AccAddress `json:"address" yaml:"address"`
-	IDCollections IDCollections  `json:"idCollections" yaml:"idCollections"`
+	IDCollections IDCollections  `json:"id_collections" yaml:"id_collections"`
 }
 
 // NewOwner creates a new Owner

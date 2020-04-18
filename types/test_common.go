@@ -9,17 +9,11 @@ import (
 
 // nolint: deadcode unused
 var (
-	denom     = "denom"
-	denom2    = "test-denom2"
-	denom3    = "test-denom3"
-	id        = "1"
-	id2       = "2"
-	id3       = "3"
-	address   = CreateTestAddrs(1)[0]
-	address2  = CreateTestAddrs(2)[1]
-	address3  = CreateTestAddrs(3)[2]
-	tokenURI  = "https://google.com/token-1.json"
-	tokenURI2 = "https://google.com/token-2.json"
+	denom    = "denom"
+	id       = "id1"
+	address  = CreateTestAddrs(1)[0]
+	address2 = CreateTestAddrs(2)[1]
+	tokenURI = "https://google.com/token-1.json"
 )
 
 // CreateTestAddrs creates test addresses

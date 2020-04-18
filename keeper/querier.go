@@ -39,10 +39,15 @@ func querySupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, erro
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
-	bz := make([]byte, 8)
 
 	denom := strings.ToLower(strings.TrimSpace(params.Denom))
-	binary.LittleEndian.PutUint64(bz, k.GetSupplyOf(ctx, denom, params.Owner))
+	bz := make([]byte, 8)
+
+	if params.Owner.Empty() {
+
+	}
+
+	binary.LittleEndian.PutUint64(bz, k.GetTotalSupplyOfOwner(ctx, params.Owner, denom))
 	return bz, nil
 }
 
@@ -54,7 +59,7 @@ func queryOwner(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	owner := k.GetOwnerOfDenom(ctx, params.Owner, params.Denom)
+	owner := k.GetOwner(ctx, params.Owner, params.Denom)
 	bz, err := types.ModuleCdc.MarshalJSON(owner)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())

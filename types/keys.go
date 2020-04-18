@@ -23,12 +23,13 @@ const (
 
 var (
 	PrefixNFT        = []byte{0x01}
-	PrefixOwners     = []byte{0x02} // key for balance of NFTs held by an address
-	PrefixCollection = []byte{0x03} // key for balance of NFTs held by an address
+	PrefixOwners     = []byte{0x02} // key for a owner
+	PrefixCollection = []byte{0x03} // key for balance of NFTs held by the denom
 
 	delimiter = []byte("/")
 )
 
+// SplitKeyOwner return the address,denom,id from the key of stored owner
 func SplitKeyOwner(key []byte) (address sdk.AccAddress, denom, id string, err error) {
 	key = key[len(PrefixOwners)+len(delimiter):]
 	keys := bytes.Split(key, delimiter)
@@ -71,7 +72,7 @@ func KeyOwner(address sdk.AccAddress, denom, id string) []byte {
 	return key
 }
 
-// KeyNFT gets the NFT by an ID
+// KeyNFT gets the key of nft stored by an denom and id
 func KeyNFT(denom, id string) []byte {
 	key := append(PrefixNFT, delimiter...)
 	if len(denom) > 0 {
@@ -85,12 +86,13 @@ func KeyNFT(denom, id string) []byte {
 	return key
 }
 
-// KeyNFT gets the NFT by an ID
+// KeyCollection gets the storeKey by the denom
 func KeyCollection(denom string) []byte {
 	key := append(PrefixCollection, delimiter...)
 	return append(key, []byte(denom)...)
 }
 
+// SplitKeyCollection return the denom from the storeKey
 func SplitKeyCollection(key []byte) (denom string) {
 	key = key[len(PrefixCollection)+len(delimiter):]
 	return string(key)

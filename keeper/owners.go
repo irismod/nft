@@ -5,37 +5,39 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// GetOwner gets all the ID Collections owned by an address
-func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress) (owner types.Owner) {
-	return k.GetOwnerOfDenom(ctx, address, "")
-}
-
 // GetOwner gets all the ID Collections owned by an address and denom
-func (k Keeper) GetOwnerOfDenom(ctx sdk.Context, address sdk.AccAddress, denom string) types.Owner {
-	idCs := make(map[string]types.IDCollection)
+func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denoms ...string) types.Owner {
+	var denom string
+	if len(denoms) > 0 {
+		denom = denoms[0]
+	}
+
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, denom, ""))
 	defer iterator.Close()
+
+	owner := types.Owner{
+		Address:       address,
+		IDCollections: types.IDCollections{},
+	}
+	idsMap := make(map[string][]string)
+
 	for ; iterator.Valid(); iterator.Next() {
 		_, denom, id, _ := types.SplitKeyOwner(iterator.Key())
-		if idc, ok := idCs[denom]; ok {
-			idc.IDs = append(idc.IDs, id)
+		if ids, ok := idsMap[denom]; ok {
+			idsMap[denom] = append(ids, id)
 		} else {
-			idc := types.IDCollection{
+			idsMap[denom] = []string{id}
+			owner.IDCollections = append(owner.IDCollections, types.IDCollection{
 				Denom: denom,
-				IDs:   []string{id},
-			}
-			idCs[denom] = idc
+			})
 		}
 	}
 
-	idCollections := make([]types.IDCollection, len(idCs))
-	i := 0
-	for _, idc := range idCs {
-		idCollections[i] = idc
-		i++
+	for i := 0; i < len(owner.IDCollections); i++ {
+		owner.IDCollections[i].IDs = idsMap[owner.IDCollections[i].Denom]
 	}
-	return types.NewOwner(address, idCollections...)
+	return owner
 }
 
 // GetOwner gets all the ID Collections

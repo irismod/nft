@@ -4,6 +4,7 @@ import (
 	"fmt"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/tendermint/tendermint/libs/log"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -36,6 +37,10 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 func (k Keeper) MintNFT(ctx sdk.Context,
 	denom, id, tokenURI string,
 	owner sdk.AccAddress) error {
+	denom = strings.ToLower(strings.TrimSpace(denom))
+	id = strings.ToLower(strings.TrimSpace(id))
+	tokenURI = strings.TrimSpace(tokenURI)
+
 	if k.HasNFT(ctx, denom, id) {
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", id, denom)
 	}
@@ -50,6 +55,10 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 func (k Keeper) EditNFT(ctx sdk.Context,
 	denom, id, tokenURI string,
 	owner sdk.AccAddress) error {
+	denom = strings.ToLower(strings.TrimSpace(denom))
+	id = strings.ToLower(strings.TrimSpace(id))
+	tokenURI = strings.TrimSpace(tokenURI)
+
 	nft, err := k.Authorize(ctx, denom, id, owner)
 	if err != nil {
 		return err
@@ -64,6 +73,10 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 func (k Keeper) TransferOwner(ctx sdk.Context,
 	denom, id, tokenURI string,
 	srcOwner, dstOwner sdk.AccAddress) error {
+	denom = strings.ToLower(strings.TrimSpace(denom))
+	id = strings.ToLower(strings.TrimSpace(id))
+	tokenURI = strings.TrimSpace(tokenURI)
+
 	nft, err := k.Authorize(ctx, denom, id, srcOwner)
 	if err != nil {
 		return err
@@ -83,6 +96,9 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 func (k Keeper) BurnNFT(ctx sdk.Context,
 	denom, id string,
 	owner sdk.AccAddress) error {
+	denom = strings.ToLower(strings.TrimSpace(denom))
+	id = strings.ToLower(strings.TrimSpace(id))
+
 	nft, err := k.Authorize(ctx, denom, id, owner)
 	if err != nil {
 		return err

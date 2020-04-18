@@ -1,7 +1,5 @@
 package nft
 
-// DONTCOVER
-
 import (
 	"encoding/json"
 	"math/rand"

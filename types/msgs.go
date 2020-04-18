@@ -1,6 +1,7 @@
 package types
 
 import (
+	"regexp"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -8,7 +9,18 @@ import (
 )
 
 // constant used to indicate that some field should not be updated
-const DoNotModify = "[do-not-modify]"
+const (
+	DoNotModify = "[do-not-modify]"
+	MinDenomLen = 3
+	MaxDenomLen = 8
+
+	MaxTokenURILen = 256
+)
+
+var (
+	IsAlphaNumeric   = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString // only accepts alphanumeric characters
+	IsBeginWithAlpha = regexp.MustCompile(`^[a-zA-Z].*`).MatchString
+)
 
 /* --------------------------------------------------------------------------- */
 // MsgTransferNFT
@@ -42,20 +54,18 @@ func (msg MsgTransferNFT) Type() string { return "transfer_nft" }
 
 // ValidateBasic Implements Msg.
 func (msg MsgTransferNFT) ValidateBasic() error {
-	if strings.TrimSpace(msg.Denom) == "" {
-		return ErrInvalidCollection
+	if err := ValidateDenom(msg.Denom); err != nil {
+		return err
 	}
+
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
+
 	if msg.Recipient.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing recipient address")
 	}
-	if strings.TrimSpace(msg.ID) == "" {
-		return ErrInvalidNFT
-	}
-
-	return nil
+	return ValidateTokenID(msg.ID)
 }
 
 // GetSignBytes Implements Msg.
@@ -67,13 +77,6 @@ func (msg MsgTransferNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-// Format Implements Msg.
-func (msg *MsgTransferNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
 }
 
 /* --------------------------------------------------------------------------- */
@@ -111,13 +114,15 @@ func (msg MsgEditNFT) ValidateBasic() error {
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
-	if strings.TrimSpace(msg.ID) == "" {
-		return ErrInvalidNFT
+
+	if err := ValidateDenom(msg.Denom); err != nil {
+		return err
 	}
-	if strings.TrimSpace(msg.Denom) == "" {
-		return ErrInvalidNFT
+
+	if err := ValidateTokenURI(msg.TokenURI); err != nil {
+		return err
 	}
-	return nil
+	return ValidateTokenID(msg.ID)
 }
 
 // GetSignBytes Implements Msg.
@@ -129,13 +134,6 @@ func (msg MsgEditNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-// Format Implements Msg.
-func (msg *MsgEditNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
 }
 
 /* --------------------------------------------------------------------------- */
@@ -170,19 +168,20 @@ func (msg MsgMintNFT) Type() string { return "mint_nft" }
 
 // ValidateBasic Implements Msg.
 func (msg MsgMintNFT) ValidateBasic() error {
-	if strings.TrimSpace(msg.Denom) == "" {
-		return ErrInvalidNFT
-	}
-	if strings.TrimSpace(msg.ID) == "" {
-		return ErrInvalidNFT
-	}
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
 	if msg.Recipient.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing recipient address")
 	}
-	return nil
+	if err := ValidateDenom(msg.Denom); err != nil {
+		return err
+	}
+
+	if err := ValidateTokenURI(msg.TokenURI); err != nil {
+		return err
+	}
+	return ValidateTokenID(msg.ID)
 }
 
 // GetSignBytes Implements Msg.
@@ -194,13 +193,6 @@ func (msg MsgMintNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-// Format Implements Msg.
-func (msg *MsgMintNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
-	msg.TokenURI = strings.ToLower(strings.TrimSpace(msg.TokenURI))
 }
 
 /* --------------------------------------------------------------------------- */
@@ -231,16 +223,14 @@ func (msg MsgBurnNFT) Type() string { return "burn_nft" }
 
 // ValidateBasic Implements Msg.
 func (msg MsgBurnNFT) ValidateBasic() error {
-	if strings.TrimSpace(msg.ID) == "" {
-		return ErrInvalidNFT
-	}
-	if strings.TrimSpace(msg.Denom) == "" {
-		return ErrInvalidNFT
-	}
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
-	return nil
+
+	if err := ValidateDenom(msg.Denom); err != nil {
+		return err
+	}
+	return ValidateTokenID(msg.ID)
 }
 
 // GetSignBytes Implements Msg.
@@ -254,8 +244,31 @@ func (msg MsgBurnNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
-// Format Implements Msg.
-func (msg *MsgBurnNFT) Format() {
-	msg.Denom = strings.ToLower(strings.TrimSpace(msg.Denom))
-	msg.ID = strings.ToLower(strings.TrimSpace(msg.ID))
+func ValidateDenom(denom string) error {
+	denom = strings.TrimSpace(denom)
+	if len(denom) < MinDenomLen || len(denom) > MaxDenomLen {
+		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
+	}
+	if !IsBeginWithAlpha(denom) || !IsAlphaNumeric(denom) {
+		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts alphanumeric characters,and begin with an english letter", denom)
+	}
+	return nil
+}
+
+func ValidateTokenID(tokenID string) error {
+	tokenID = strings.TrimSpace(tokenID)
+	if len(tokenID) < MinDenomLen || len(tokenID) > MaxDenomLen {
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
+	}
+	if !IsBeginWithAlpha(tokenID) || !IsAlphaNumeric(tokenID) {
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts alphanumeric characters,and begin with an english letter", denom)
+	}
+	return nil
+}
+
+func ValidateTokenURI(tokenURI string) error {
+	if len(tokenURI) > MaxTokenURILen {
+		return sdkerrors.Wrapf(ErrInvalidTokenURI, "invalid tokenURI %s, only accepts value [0, %d]", denom, MaxTokenURILen)
+	}
+	return nil
 }

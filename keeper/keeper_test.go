@@ -16,12 +16,11 @@ import (
 )
 
 var (
-	denom     = "test-denom"
-	denom2    = "test-denom2"
-	denom3    = "test-denom3"
-	id        = "1"
-	id2       = "2"
-	id3       = "3"
+	denom     = "denom"
+	denom2    = "denom2"
+	id        = "id1"
+	id2       = "id2"
+	id3       = "id3"
 	address   = types.CreateTestAddrs(1)[0]
 	address2  = types.CreateTestAddrs(2)[1]
 	address3  = types.CreateTestAddrs(3)[2]

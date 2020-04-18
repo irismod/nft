@@ -44,7 +44,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	suite.Nil(errRes)
 	query.Data = bz
 	res, err = querier(suite.ctx, []string{"supply"}, query)
-	suite.Nil(errRes)
+	suite.NoError(err)
 	supplyResp := binary.LittleEndian.Uint64(res)
 	suite.Equal(0, int(supplyResp))
 

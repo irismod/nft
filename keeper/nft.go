@@ -7,12 +7,12 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// GetNFT gets the entire NFT metadata struct for a uint64
+// GetNFT gets the entire NFT metadata struct
 func (k Keeper) GetNFT(ctx sdk.Context, denom, id string) (nft exported.NFT, err error) {
 	store := ctx.KVStore(k.storeKey)
 
 	bz := store.Get(types.KeyNFT(denom, id))
-	if bz == nil || len(bz) == 0 {
+	if bz == nil {
 		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "not found NFT: %s", denom)
 	}
 
@@ -53,19 +53,6 @@ func (k Keeper) Authorize(ctx sdk.Context,
 func (k Keeper) HasNFT(ctx sdk.Context, denom, id string) bool {
 	store := ctx.KVStore(k.storeKey)
 	return store.Has(types.KeyNFT(denom, id))
-}
-
-// GetTokenIDsOfDenom gets the ID Collection owned by an address of a specific denom
-func (k Keeper) GetTokenIDsOfDenom(ctx sdk.Context, owner sdk.AccAddress, denom string) (idc types.IDCollection) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(owner, denom, ""))
-	defer iterator.Close()
-	for ; iterator.Valid(); iterator.Next() {
-		_, _, id, _ := types.SplitKeyOwner(iterator.Key())
-		idc.IDs = append(idc.IDs, id)
-	}
-	idc.Denom = denom
-	return idc
 }
 
 func (k Keeper) setNFT(ctx sdk.Context, denom string, nft exported.NFT) {

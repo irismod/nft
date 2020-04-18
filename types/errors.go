@@ -12,4 +12,7 @@ var (
 	ErrUnknownNFT        = sdkerrors.Register(ModuleName, 5, "unknown NFT")
 	ErrEmptyMetadata     = sdkerrors.Register(ModuleName, 6, "NFT metadata can't be empty")
 	ErrUnauthorized      = sdkerrors.Register(ModuleName, 7, "unauthorized address")
+	ErrInvalidDenom      = sdkerrors.Register(ModuleName, 8, "invalid denom")
+	ErrInvalidTokenID    = sdkerrors.Register(ModuleName, 9, "invalid tokenID")
+	ErrInvalidTokenURI   = sdkerrors.Register(ModuleName, 10, "invalid tokenURI")
 )

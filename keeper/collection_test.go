@@ -26,7 +26,7 @@ func (suite *KeeperSuite) TestSetCollection() {
 }
 
 func (suite *KeeperSuite) TestGetCollection() {
-	collection, err := suite.keeper.GetCollection(suite.ctx, denom)
+	_, err := suite.keeper.GetCollection(suite.ctx, denom)
 	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
@@ -34,7 +34,7 @@ func (suite *KeeperSuite) TestGetCollection() {
 	suite.NoError(err)
 
 	// collection should exist
-	collection, err = suite.keeper.GetCollection(suite.ctx, denom)
+	collection, err := suite.keeper.GetCollection(suite.ctx, denom)
 	suite.NoError(err)
 	suite.NotEmpty(collection)
 
@@ -74,50 +74,53 @@ func (suite *KeeperSuite) TestGetSupply() {
 	err = suite.keeper.MintNFT(suite.ctx, denom2, id, tokenURI, address2)
 	suite.NoError(err)
 
-	supply := suite.keeper.GetSupply(suite.ctx, denom)
+	supply := suite.keeper.GetTotalSupply(suite.ctx)
+	suite.Equal(uint64(3), supply)
+
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(2), supply)
 
-	supply = suite.keeper.GetSupply(suite.ctx, denom2)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom, address)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address, denom)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom, address2)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address2, denom)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom, nil)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(2), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom2, nil)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, "", address)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, "", address2)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address2)
 	suite.Equal(uint64(2), supply)
 
 	//burn nft
 	err = suite.keeper.BurnNFT(suite.ctx, denom, id, address)
 	suite.NoError(err)
 
-	supply = suite.keeper.GetSupply(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom, nil)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(1), supply)
 
 	//burn nft
 	err = suite.keeper.BurnNFT(suite.ctx, denom, id2, address2)
 	suite.NoError(err)
 
-	supply = suite.keeper.GetSupply(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(0), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, denom, nil)
+	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
 	suite.Equal(uint64(0), supply)
 
-	supply = suite.keeper.GetSupplyOf(suite.ctx, "", address)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address)
 	suite.Equal(uint64(0), supply)
 }
