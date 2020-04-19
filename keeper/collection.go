@@ -92,7 +92,7 @@ func (k Keeper) GetTotalSupplyOfOwner(ctx sdk.Context, owner sdk.AccAddress, den
 
 // IterateCollections iterate all the collection
 func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Collection)) {
-	denoms := k.GetAllDenoms(ctx)
+	denoms := k.GetDenoms(ctx)
 	for _, denom := range denoms {
 		nfts := k.GetNFTs(ctx, denom)
 		fn(types.Collection{
@@ -102,8 +102,8 @@ func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Col
 	}
 }
 
-// GetAllDenoms return the denoms of all the collection
-func (k Keeper) GetAllDenoms(ctx sdk.Context) (denoms []string) {
+// GetDenoms return the denoms of all the collection
+func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []string) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyCollection(""))
 	defer iterator.Close()

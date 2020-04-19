@@ -15,61 +15,38 @@ import (
 )
 
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
-	// Query a single NFT
+	// Get the total supply of a collection or owner
 	r.HandleFunc(
-		fmt.Sprintf("/%s/{%s}/%s", types.ModuleName, RestParamDenom, RestParamTokenID),
-		getNFT(cdc, cliCtx, queryRoute),
-	).Methods("GET")
-	// Get the total supply of a collection
-	r.HandleFunc(
-		fmt.Sprintf("/%s/supply", types.ModuleName),
-		getSupply(cdc, cliCtx, queryRoute),
+		"/nfts/supply",
+		querySupply(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Get the collections of NFTs owned by an address
 	r.HandleFunc(
-		fmt.Sprintf("/%s/owner/%s", types.ModuleName, RestParamOwner),
-		getOwner(cdc, cliCtx, queryRoute),
+		fmt.Sprintf("/nfts/owner/{%s}", RestParamOwner),
+		queryOwner(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Get all the NFT from a given collection
 	r.HandleFunc(
-		fmt.Sprintf("/%s/collection/%s", types.ModuleName, RestParamDenom),
-		getCollection(cdc, cliCtx, queryRoute),
+		fmt.Sprintf("/nfts/collection/{%s}", RestParamDenom),
+		queryCollection(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Query all denoms
 	r.HandleFunc(
-		fmt.Sprintf("/%s/denoms", types.ModuleName),
-		getDenoms(cliCtx, queryRoute),
+		"/nfts/denoms",
+		queryDenoms(cliCtx, queryRoute),
+	).Methods("GET")
+
+	// Query a single NFT
+	r.HandleFunc(
+		fmt.Sprintf("/nfts/{%s}/{%s}", RestParamDenom, RestParamID),
+		queryNFT(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 }
 
-func getNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		denom := vars[RestParamDenom]
-		id := vars[RestParamTokenID]
-
-		params := types.NewQueryNFTParams(denom, id)
-		bz, err := cdc.MarshalJSON(params)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
-			return
-		}
-
-		res, _, err := cliCtx.QueryWithData(
-			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryNFT), bz)
-		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
-
-		rest.PostProcessResponse(w, cliCtx, res)
-	}
-}
-
-func getSupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func querySupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := r.FormValue(RestParamDenom)
 		ownerStr := r.FormValue(RestParamOwner)
@@ -98,7 +75,7 @@ func getSupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) h
 	}
 }
 
-func getOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		address, err := sdk.AccAddressFromBech32(mux.Vars(r)[RestParamOwner])
 		if err != nil {
@@ -107,7 +84,7 @@ func getOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) ht
 		}
 
 		denom := r.FormValue(RestParamDenom)
-		params := types.NewQuerySupplyParams(denom, address)
+		params := types.NewQueryOwnerParams(denom, address)
 		bz, err := cdc.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -125,11 +102,11 @@ func getOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) ht
 	}
 }
 
-func getCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := mux.Vars(r)[RestParamDenom]
 
-		params := types.NewQuerySupplyParams(denom, nil)
+		params := types.NewQueryCollectionParams(denom)
 		bz, err := cdc.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -147,10 +124,31 @@ func getCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute strin
 	}
 }
 
-func getDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		res, _, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenoms), nil)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func queryNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		params := types.NewQueryNFTParams(vars[RestParamDenom], vars[RestParamID])
+		bz, err := cdc.MarshalJSON(params)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		res, _, err := cliCtx.QueryWithData(
+			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryNFT), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return

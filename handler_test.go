@@ -16,7 +16,7 @@ import (
 const (
 	module    = "module"
 	denom     = "denom"
-	nftID     = "nft-id"
+	nftID     = "token-id"
 	sender    = "sender"
 	recipient = "recipient"
 	tokenURI  = "token-uri"

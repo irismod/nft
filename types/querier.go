@@ -34,6 +34,20 @@ func (q QuerySupplyParams) Bytes() []byte {
 	return []byte(q.Denom)
 }
 
+// QueryOwnerParams defines the params for queries:
+type QueryOwnerParams struct {
+	Denom string
+	Owner sdk.AccAddress
+}
+
+// NewQuerySupplyParams creates a new instance of QuerySupplyParams
+func NewQueryOwnerParams(denom string, owner sdk.AccAddress) QueryOwnerParams {
+	return QueryOwnerParams{
+		Denom: denom,
+		Owner: owner,
+	}
+}
+
 // QuerySupplyParams defines the params for queries:
 type QueryCollectionParams struct {
 	Denom string
