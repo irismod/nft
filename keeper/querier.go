@@ -41,8 +41,19 @@ func querySupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, erro
 	}
 
 	denom := strings.ToLower(strings.TrimSpace(params.Denom))
+
+	var supply uint64
+	switch {
+	case params.Owner.Empty() && len(denom) == 0:
+		supply = k.GetTotalSupply(ctx)
+	case params.Owner.Empty() && len(denom) > 0:
+		supply = k.GetTotalSupplyOfDenom(ctx, denom)
+	default:
+		supply = k.GetTotalSupplyOfOwner(ctx, params.Owner, denom)
+	}
+
 	bz := make([]byte, 8)
-	binary.LittleEndian.PutUint64(bz, k.GetTotalSupplyOfOwner(ctx, params.Owner, denom))
+	binary.LittleEndian.PutUint64(bz, supply)
 	return bz, nil
 }
 

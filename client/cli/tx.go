@@ -2,6 +2,7 @@ package cli
 
 import (
 	"bufio"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -41,7 +42,7 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "mint [denom] [tokenID]",
 		Short:   "mint an NFT and set the owner to the recipient",
-		Example: "nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fee=<fee>",
+		Example: "nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -50,13 +51,17 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 
 			denom := args[0]
 			tokenID := args[1]
-
-			recipient, err := sdk.AccAddressFromBech32(args[2])
-			if err != nil {
-				return err
-			}
-
 			tokenURI := viper.GetString(FlagTokenURI)
+
+			var recipient sdk.AccAddress
+			var err error
+			recipientStr := strings.TrimSpace(viper.GetString(FlagRecipient))
+			if len(recipientStr) > 0 {
+				recipient, err = sdk.AccAddressFromBech32(recipientStr)
+				if err != nil {
+					return err
+				}
+			}
 
 			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI)
 			if err := msg.ValidateBasic(); err != nil {
@@ -74,7 +79,7 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "edit [denom] [tokenID]",
 		Short:   "edit the metadata of an NFT",
-		Example: "nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fee=<fee>",
+		Example: "nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -99,27 +104,23 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 // GetCmdTransferNFT is the CLI command for sending a TransferNFT transaction
 func GetCmdTransferNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "transfer [sender] [recipient] [denom] [tokenID]",
+		Use:     "transfer [recipient] [denom] [tokenID]",
 		Short:   "transfer a NFT to a recipient",
-		Example: "nft transfer [sender] [recipient] [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fee=<fee>",
-		Args:    cobra.ExactArgs(4),
+		Example: "nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>",
+		Args:    cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
-			sender, err := sdk.AccAddressFromBech32(args[0])
+			sender := cliCtx.GetFromAddress()
+			recipient, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			recipient, err := sdk.AccAddressFromBech32(args[1])
-			if err != nil {
-				return err
-			}
-
-			denom := args[2]
-			tokenID := args[3]
+			denom := args[1]
+			tokenID := args[2]
 			tokenURI := viper.GetString(FlagTokenURI)
 
 			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI)
@@ -138,7 +139,7 @@ func GetCmdBurnNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "burn [denom] [tokenID]",
 		Short:   "burn an NFT",
-		Example: "nft mint [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee=<fee>",
+		Example: "nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fees=<fee>",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())

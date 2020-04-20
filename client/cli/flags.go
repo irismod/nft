@@ -22,12 +22,12 @@ var (
 )
 
 func init() {
-	FsMintNFT.String(FlagTokenURI, "", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsMintNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
 	FsMintNFT.String(FlagRecipient, "", "Receiver of the nft")
 
-	FsEditNFT.String(FlagTokenURI, "", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsEditNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
 
-	FsTransferNFT.String(FlagTokenURI, "", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsTransferNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
 
 	FsQuerySupply.String(FlagOwner, "", "the owner of a nft")
 	FsQuerySupply.String(FlagDenom, "", "the name of a collection")

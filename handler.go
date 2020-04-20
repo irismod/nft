@@ -85,14 +85,19 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 // HandleMsgMintNFT handles MsgMintNFT
 func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.MintNFT(ctx, msg.Denom, msg.ID, msg.TokenURI, msg.Recipient); err != nil {
+	owner := msg.Recipient
+	if owner.Empty() {
+		owner = msg.Sender
+	}
+
+	if err := k.MintNFT(ctx, msg.Denom, msg.ID, msg.TokenURI, owner); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeMintNFT,
-			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient.String()),
+			sdk.NewAttribute(types.AttributeKeyRecipient, owner.String()),
 			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
 			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
 			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.TokenURI),

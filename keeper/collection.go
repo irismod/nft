@@ -69,19 +69,10 @@ func (k Keeper) GetTotalSupplyOfDenom(ctx sdk.Context, denom string) uint64 {
 
 // GetTotalSupplyOfOwner returns the amount of nft by the specified conditions
 func (k Keeper) GetTotalSupplyOfOwner(ctx sdk.Context, owner sdk.AccAddress, denoms ...string) (supply uint64) {
-	if owner.Empty() && len(denoms) == 0 {
-		return k.GetTotalSupply(ctx)
-	}
-
 	var denom string
 	if len(denoms) > 0 {
 		denom = denoms[0]
 	}
-
-	if owner.Empty() && len(denom) > 0 {
-		return k.GetTotalSupplyOfDenom(ctx, denom)
-	}
-
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(owner, denom, ""))
 	defer iterator.Close()

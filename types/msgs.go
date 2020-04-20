@@ -171,9 +171,6 @@ func (msg MsgMintNFT) ValidateBasic() error {
 	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
-	if msg.Recipient.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing recipient address")
-	}
 	if err := ValidateDenom(msg.Denom); err != nil {
 		return err
 	}

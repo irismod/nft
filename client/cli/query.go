@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/binary"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/viper"
 
@@ -45,13 +46,19 @@ func GetCmdQuerySupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			ownerStr := viper.GetString(FlagOwner)
-			owner, err := sdk.AccAddressFromBech32(ownerStr)
-			if err != nil {
-				return err
+			var owner sdk.AccAddress
+			var err error
+
+			ownerStr := strings.TrimSpace(viper.GetString(FlagOwner))
+			if len(ownerStr) > 0 {
+				owner, err = sdk.AccAddressFromBech32(ownerStr)
+				if err != nil {
+					return err
+				}
 			}
 
-			denom := viper.GetString(FlagDenom)
+			denom := strings.TrimSpace(viper.GetString(FlagDenom))
+
 			params := types.NewQuerySupplyParams(denom, owner)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
@@ -173,7 +180,7 @@ func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "token [denom] [tokenID]",
 		Short:   "query a single NFT from a collection",
-		Example: "nft token <denom> [tokenID]",
+		Example: "nft token <denom> <tokenID>",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
