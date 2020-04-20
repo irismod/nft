@@ -3,6 +3,7 @@ package rest
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gorilla/mux"
 
@@ -17,7 +18,7 @@ import (
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
 	// Get the total supply of a collection or owner
 	r.HandleFunc(
-		"/nfts/supply",
+		fmt.Sprintf("/nfts/supply/{%s}", RestParamDenom),
 		querySupply(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
@@ -48,9 +49,12 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Co
 
 func querySupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		denom := r.FormValue(RestParamDenom)
-		ownerStr := r.FormValue(RestParamOwner)
+		denom := strings.TrimSpace(mux.Vars(r)[RestParamDenom])
+		if err := types.ValidateDenom(denom); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		}
 
+		ownerStr := r.FormValue(RestParamOwner)
 		owner, err := sdk.AccAddressFromBech32(ownerStr)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
@@ -77,7 +81,12 @@ func querySupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string)
 
 func queryOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		address, err := sdk.AccAddressFromBech32(mux.Vars(r)[RestParamOwner])
+		ownerStr := mux.Vars(r)[RestParamOwner]
+		if len(ownerStr) == 0 {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "param owner should not be empty")
+		}
+
+		address, err := sdk.AccAddressFromBech32(ownerStr)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -105,6 +114,9 @@ func queryOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) 
 func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := mux.Vars(r)[RestParamDenom]
+		if err := types.ValidateDenom(denom); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		}
 
 		params := types.NewQueryCollectionParams(denom)
 		bz, err := cdc.MarshalJSON(params)
@@ -140,7 +152,18 @@ func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc 
 func queryNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		params := types.NewQueryNFTParams(vars[RestParamDenom], vars[RestParamTokenID])
+
+		denom := vars[RestParamDenom]
+		if err := types.ValidateDenom(denom); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		}
+
+		tokenID := vars[RestParamTokenID]
+		if err := types.ValidateTokenID(tokenID); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		}
+
+		params := types.NewQueryNFTParams(denom, tokenID)
 		bz, err := cdc.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

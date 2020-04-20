@@ -40,9 +40,10 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 // GetCmdQuerySupply queries the supply of a nft collection
 func GetCmdQuerySupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "supply",
+		Use:     "supply [denom]",
 		Short:   "total supply of a collection or owner of NFTs",
 		Example: "nft supply",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
@@ -57,7 +58,10 @@ func GetCmdQuerySupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			denom := strings.TrimSpace(viper.GetString(FlagDenom))
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
 
 			params := types.NewQuerySupplyParams(denom, owner)
 			bz, err := cdc.MarshalJSON(params)
@@ -128,7 +132,13 @@ func GetCmdQueryCollection(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			params := types.NewQueryCollectionParams(args[0])
+
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
+
+			params := types.NewQueryCollectionParams(denom)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
 				return err
@@ -185,7 +195,17 @@ func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			params := types.NewQueryNFTParams(args[0], args[1])
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
+
+			tokenID := strings.TrimSpace(args[1])
+			if err := types.ValidateTokenID(tokenID); err != nil {
+				return err
+			}
+
+			params := types.NewQueryNFTParams(denom, tokenID)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
 				return err
