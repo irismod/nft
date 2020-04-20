@@ -39,7 +39,7 @@ func SupplyInvariant(k Keeper) sdk.Invariant {
 		}
 
 		for denom, supply := range ownersCollectionsSupply {
-			if supply != k.GetTotalSupplyOfDenom(ctx, denom) {
+			if supply != k.GetTotalSupply(ctx, denom) {
 				count++
 				msg += fmt.Sprintf("total %s NFTs supply invariance:\n"+
 					"\ttotal %s NFTs supply: %d\n"+

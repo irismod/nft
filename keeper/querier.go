@@ -45,9 +45,9 @@ func querySupply(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, erro
 	var supply uint64
 	switch {
 	case params.Owner.Empty() && len(denom) > 0:
-		supply = k.GetTotalSupplyOfDenom(ctx, denom)
+		supply = k.GetTotalSupply(ctx, denom)
 	default:
-		supply = k.GetTotalSupplyOfOwnerByDenom(ctx, params.Owner, denom)
+		supply = k.GetTotalSupplyOfOwner(ctx, denom, params.Owner)
 	}
 
 	bz := make([]byte, 8)

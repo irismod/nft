@@ -74,44 +74,41 @@ func (suite *KeeperSuite) TestGetSupply() {
 	err = suite.keeper.MintNFT(suite.ctx, denom2, id, tokenURI, address2)
 	suite.NoError(err)
 
-	supply := suite.keeper.GetTotalSupply(suite.ctx)
-	suite.Equal(uint64(3), supply)
-
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply := suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(2), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfOwnerByDenom(suite.ctx, address, denom)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, denom, address)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfOwnerByDenom(suite.ctx, address2, denom)
+	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, denom, address2)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(2), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
 
 	//burn nft
 	err = suite.keeper.BurnNFT(suite.ctx, denom, id, address)
 	suite.NoError(err)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(1), supply)
 
 	//burn nft
 	err = suite.keeper.BurnNFT(suite.ctx, denom, id2, address2)
 	suite.NoError(err)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(0), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
+	supply = suite.keeper.GetTotalSupply(suite.ctx, denom)
 	suite.Equal(uint64(0), supply)
 }

@@ -39,23 +39,8 @@ func (k Keeper) GetCollections(ctx sdk.Context) (cs types.Collections) {
 	return cs
 }
 
-// GetTotalSupply returns all the number of nft
-func (k Keeper) GetTotalSupply(ctx sdk.Context) (totalSupply uint64) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyCollection(""))
-	defer iterator.Close()
-
-	for ; iterator.Valid(); iterator.Next() {
-		var supply uint64
-		k.cdc.MustUnmarshalBinaryLengthPrefixed(iterator.Value(), &supply)
-
-		totalSupply += supply
-	}
-	return
-}
-
-// GetTotalSupplyOfDenom returns the number of nft by the specified denom
-func (k Keeper) GetTotalSupplyOfDenom(ctx sdk.Context, denom string) uint64 {
+// GetTotalSupply returns the number of nft by the specified denom
+func (k Keeper) GetTotalSupply(ctx sdk.Context, denom string) uint64 {
 	store := ctx.KVStore(k.storeKey)
 	bz := store.Get(types.KeyCollection(denom))
 	if len(bz) == 0 {
@@ -67,8 +52,8 @@ func (k Keeper) GetTotalSupplyOfDenom(ctx sdk.Context, denom string) uint64 {
 	return supply
 }
 
-// GetTotalSupplyOfOwnerByDenom returns the amount of nft by the specified conditions
-func (k Keeper) GetTotalSupplyOfOwnerByDenom(ctx sdk.Context, owner sdk.AccAddress, denom string) (supply uint64) {
+// GetTotalSupplyOfOwner returns the amount of nft by the specified conditions
+func (k Keeper) GetTotalSupplyOfOwner(ctx sdk.Context, denom string, owner sdk.AccAddress) (supply uint64) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(owner, denom, ""))
 	defer iterator.Close()
@@ -109,7 +94,7 @@ func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []string) {
 }
 
 func (k Keeper) increaseSupply(ctx sdk.Context, denom string) {
-	supply := k.GetTotalSupplyOfDenom(ctx, denom)
+	supply := k.GetTotalSupply(ctx, denom)
 	supply++
 
 	bzSupply := k.cdc.MustMarshalBinaryLengthPrefixed(supply)
@@ -118,7 +103,7 @@ func (k Keeper) increaseSupply(ctx sdk.Context, denom string) {
 }
 
 func (k Keeper) decreaseSupply(ctx sdk.Context, denom string) {
-	supply := k.GetTotalSupplyOfDenom(ctx, denom)
+	supply := k.GetTotalSupply(ctx, denom)
 	supply--
 
 	store := ctx.KVStore(k.storeKey)
