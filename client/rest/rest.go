@@ -22,7 +22,7 @@ const (
 )
 
 type mintNFTReq struct {
-	BaseTx    rest.BaseReq   `json:"base_tx"`
+	BaseReq   rest.BaseReq   `json:"base_req"`
 	Recipient sdk.AccAddress `json:"recipient"`
 	Denom     string         `json:"denom"`
 	TokenID   string         `json:"token_id"`
@@ -30,16 +30,16 @@ type mintNFTReq struct {
 }
 
 type editNFTReq struct {
-	BaseTx   rest.BaseReq `json:"base_tx"`
+	BaseReq  rest.BaseReq `json:"base_req"`
 	TokenURI string       `json:"token_uri"`
 }
 
 type transferNFTReq struct {
-	BaseTx    rest.BaseReq `json:"base_tx"`
+	BaseReq   rest.BaseReq `json:"base_req"`
 	Recipient string       `json:"recipient"`
 	TokenURI  string       `json:"token_uri"`
 }
 
 type burnNFTReq struct {
-	BaseTx rest.BaseReq `json:"base_tx"`
+	BaseReq rest.BaseReq `json:"base_req"`
 }

@@ -120,10 +120,6 @@ func TestMsgMsgMintNFTValidateBasicMethod(t *testing.T) {
 	err := newMsgMintNFT.ValidateBasic()
 	require.Error(t, err)
 
-	newMsgMintNFT = NewMsgMintNFT(address, nil, id, denom, tokenURI)
-	err = newMsgMintNFT.ValidateBasic()
-	require.Error(t, err)
-
 	newMsgMintNFT = NewMsgMintNFT(address, address2, "", denom, tokenURI)
 	err = newMsgMintNFT.ValidateBasic()
 	require.Error(t, err)

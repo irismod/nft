@@ -3,7 +3,6 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/irismod/nft/exported"
@@ -51,11 +50,6 @@ type Collections []Collection
 func NewCollections(c ...Collection) Collections {
 	return append([]Collection{}, c...)
 }
-func (cs Collections) Len() int           { return len(cs) }
-func (cs Collections) Swap(i, j int)      { cs[i], cs[j] = cs[j], cs[i] }
-func (cs Collections) Less(i, j int) bool { return cs[i].Denom < cs[j].Denom }
-func (cs Collections) Asc()               { sort.Sort(cs) }
-func (cs Collections) Dsc()               { sort.Sort(sort.Reverse(cs)) }
 
 // String follows stringer interface
 func (cs Collections) String() string {
@@ -64,8 +58,10 @@ func (cs Collections) String() string {
 	}
 	var buf bytes.Buffer
 	for _, collection := range cs {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
 		buf.WriteString(collection.String())
-		buf.WriteString("\n")
 	}
 	return buf.String()
 }

@@ -3,28 +3,15 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"sort"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// SortedStrArray defines a sortable string array
-type SortedStrArray []string
-
-func (ssa SortedStrArray) Len() int            { return len(ssa) }
-func (ssa SortedStrArray) Swap(i, j int)       { ssa[i], ssa[j] = ssa[j], ssa[i] }
-func (ssa SortedStrArray) Less(i, j int) bool  { return ssa[i] < ssa[j] }
-func (ssa SortedStrArray) Asc() SortedStrArray { sort.Sort(ssa); return ssa }
-func (ssa SortedStrArray) Dsc() SortedStrArray {
-	sort.Sort(sort.Reverse(ssa))
-	return ssa
-}
-
 // IDCollection defines a set of nft ids that belong to a specific
 type IDCollection struct {
-	Denom string         `json:"denom" yaml:"denom"`
-	IDs   SortedStrArray `json:"ids" yaml:"ids"`
+	Denom string   `json:"denom" yaml:"denom"`
+	IDs   []string `json:"ids" yaml:"ids"`
 }
 
 // NewIDCollection creates a new IDCollection instance
@@ -51,7 +38,7 @@ func (idc IDCollection) String() string {
 	return fmt.Sprintf(`Denom: 			%s
 IDs:        	%s`,
 		idc.Denom,
-		strings.Join(idc.IDs.Asc(), ","),
+		strings.Join(idc.IDs, ","),
 	)
 }
 
@@ -73,24 +60,20 @@ func (idcs IDCollections) Add(denom, id string) IDCollections {
 	})
 }
 
-func (idcs IDCollections) Len() int           { return len(idcs) }
-func (idcs IDCollections) Swap(i, j int)      { idcs[i], idcs[j] = idcs[j], idcs[i] }
-func (idcs IDCollections) Less(i, j int) bool { return idcs[i].Denom < idcs[j].Denom }
-func (idcs IDCollections) Asc()               { sort.Sort(idcs) }
-func (idcs IDCollections) Dsc()               { sort.Sort(sort.Reverse(idcs)) }
-
 // String follows stringer interface
 func (idcs IDCollections) String() string {
 	if len(idcs) == 0 {
 		return ""
 	}
 
-	out := ""
-	//sort.Sort(idcs)
+	var buf bytes.Buffer
 	for _, idCollection := range idcs {
-		out += fmt.Sprintf("%v\n", idCollection.String())
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
+		buf.WriteString(idCollection.String())
 	}
-	return out[:len(out)-1]
+	return buf.String()
 }
 
 // Owner of non fungible tokens
@@ -109,7 +92,6 @@ func NewOwner(owner sdk.AccAddress, idCollections ...IDCollection) Owner {
 
 // String follows stringer interface
 func (owner Owner) String() string {
-	owner.IDCollections.Asc()
 	return fmt.Sprintf(`
 	Address: 				%s
 	IDCollections:        	%s`,
@@ -125,20 +107,14 @@ func NewOwners(owner ...Owner) Owners {
 	return append([]Owner{}, owner...)
 }
 
-func (owners Owners) Len() int      { return len(owners) }
-func (owners Owners) Swap(i, j int) { owners[i], owners[j] = owners[j], owners[i] }
-func (owners Owners) Less(i, j int) bool {
-	return owners[i].Address.String() < owners[j].Address.String()
-}
-func (owners Owners) Asc() { sort.Sort(owners) }
-func (owners Owners) Dsc() { sort.Sort(sort.Reverse(owners)) }
-
 // String follows stringer interface
 func (owners Owners) String() string {
 	var buf bytes.Buffer
 	for _, owner := range owners {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
 		buf.WriteString(owner.String())
-		buf.WriteString("\n")
 	}
 	return buf.String()
 }

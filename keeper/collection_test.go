@@ -83,10 +83,10 @@ func (suite *KeeperSuite) TestGetSupply() {
 	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address, denom)
+	supply = suite.keeper.GetTotalSupplyOfOwnerByDenom(suite.ctx, address, denom)
 	suite.Equal(uint64(1), supply)
 
-	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address2, denom)
+	supply = suite.keeper.GetTotalSupplyOfOwnerByDenom(suite.ctx, address2, denom)
 	suite.Equal(uint64(1), supply)
 
 	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
@@ -94,12 +94,6 @@ func (suite *KeeperSuite) TestGetSupply() {
 
 	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom2)
 	suite.Equal(uint64(1), supply)
-
-	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address)
-	suite.Equal(uint64(1), supply)
-
-	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address2)
-	suite.Equal(uint64(2), supply)
 
 	//burn nft
 	err = suite.keeper.BurnNFT(suite.ctx, denom, id, address)
@@ -119,8 +113,5 @@ func (suite *KeeperSuite) TestGetSupply() {
 	suite.Equal(uint64(0), supply)
 
 	supply = suite.keeper.GetTotalSupplyOfDenom(suite.ctx, denom)
-	suite.Equal(uint64(0), supply)
-
-	supply = suite.keeper.GetTotalSupplyOfOwner(suite.ctx, address)
 	suite.Equal(uint64(0), supply)
 }

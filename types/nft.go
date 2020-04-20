@@ -3,7 +3,6 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"sort"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -71,11 +70,6 @@ func NewNFTs(nfts ...exported.NFT) NFTs {
 	}
 	return NFTs(nfts)
 }
-func (nfts NFTs) Len() int           { return len(nfts) }
-func (nfts NFTs) Swap(i, j int)      { nfts[i], nfts[j] = nfts[j], nfts[i] }
-func (nfts NFTs) Less(i, j int) bool { return nfts[i].GetID() < nfts[j].GetID() }
-func (nfts NFTs) Asc()               { sort.Sort(nfts) }
-func (nfts NFTs) Dsc()               { sort.Sort(sort.Reverse(nfts)) }
 
 // String follows stringer interface
 func (nfts NFTs) String() string {
@@ -83,11 +77,12 @@ func (nfts NFTs) String() string {
 		return ""
 	}
 
-	nfts.Asc()
 	var buf bytes.Buffer
 	for _, nft := range nfts {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
 		buf.WriteString(nft.String())
-		buf.WriteString("\n")
 	}
 	return buf.String()
 }

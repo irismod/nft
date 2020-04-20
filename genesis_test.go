@@ -13,15 +13,6 @@ func TestInitGenesis(t *testing.T) {
 	genesisState := nft.DefaultGenesisState()
 	require.Equal(t, 0, len(genesisState.Collections))
 
-	ids := []string{id, id2, id3}
-	idCollection := nft.NewIDCollection(denom, ids)
-	idCollection2 := nft.NewIDCollection(denom2, ids)
-
-	owner := nft.NewOwner(address, idCollection)
-	owner2 := nft.NewOwner(address2, idCollection2)
-
-	owners := nft.NewOwners(owner, owner2)
-
 	nft1 := nft.NewBaseNFT(id, address, tokenURI1)
 	nft2 := nft.NewBaseNFT(id2, address, tokenURI1)
 	nft3 := nft.NewBaseNFT(id3, address, tokenURI1)
@@ -43,8 +34,7 @@ func TestInitGenesis(t *testing.T) {
 	nft.InitGenesis(ctx, app.NFTKeeper, genesisState)
 
 	returnedOwners := app.NFTKeeper.GetOwners(ctx)
-	require.Equal(t, 2, len(owners))
-	require.Equal(t, returnedOwners.String(), owners.String())
+	require.Equal(t, 2, len(returnedOwners))
 
 	returnedCollections := app.NFTKeeper.GetCollections(ctx)
 	require.Equal(t, 2, len(returnedCollections))

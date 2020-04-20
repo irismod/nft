@@ -48,7 +48,7 @@ func mintNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
-		baseReq := req.BaseTx.Sanitize()
+		baseReq := req.BaseReq.Sanitize()
 		if !baseReq.ValidateBasic(w) {
 			return
 		}
@@ -70,7 +70,7 @@ func editNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
 			return
 		}
-		baseReq := req.BaseTx.Sanitize()
+		baseReq := req.BaseReq.Sanitize()
 		if !baseReq.ValidateBasic(w) {
 			return
 		}

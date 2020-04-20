@@ -9,8 +9,6 @@ const (
 	FlagRecipient = "recipient"
 	FlagOwner     = "owner"
 	FlagDenom     = "denom"
-	FlagPage      = "page"
-	FlagLimit     = "limit"
 )
 
 var (
@@ -30,7 +28,6 @@ func init() {
 	FsTransferNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
 
 	FsQuerySupply.String(FlagOwner, "", "the owner of a nft")
-	FsQuerySupply.String(FlagDenom, "", "the name of a collection")
 
 	FsQueryOwner.String(FlagDenom, "", "the name of a collection")
 }
