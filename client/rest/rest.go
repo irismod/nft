@@ -16,28 +16,28 @@ func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, 
 }
 
 const (
-	RestParamDenom = "denom"
-	RestParamID    = "id"
-	RestParamOwner = "owner"
+	RestParamDenom   = "denom"
+	RestParamTokenID = "token-id"
+	RestParamOwner   = "owner"
 )
 
 type mintNFTReq struct {
 	BaseTx    rest.BaseReq   `json:"base_tx"`
 	Recipient sdk.AccAddress `json:"recipient"`
 	Denom     string         `json:"denom"`
-	ID        string         `json:"id"`
-	TokenURI  string         `json:"tokenURI"`
+	TokenID   string         `json:"token_id"`
+	TokenURI  string         `json:"token_uri"`
 }
 
 type editNFTReq struct {
 	BaseTx   rest.BaseReq `json:"base_tx"`
-	TokenURI string       `json:"tokenURI"`
+	TokenURI string       `json:"token_uri"`
 }
 
 type transferNFTReq struct {
 	BaseTx    rest.BaseReq `json:"base_tx"`
 	Recipient string       `json:"recipient"`
-	TokenURI  string       `json:"tokenURI"`
+	TokenURI  string       `json:"token_uri"`
 }
 
 type burnNFTReq struct {

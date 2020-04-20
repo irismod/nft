@@ -3,15 +3,16 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/irismod/nft/exported"
 	"github.com/irismod/nft/types"
 )
 
 // GetNFT gets the entire NFT metadata struct
-func (k Keeper) GetNFT(ctx sdk.Context, denom, id string) (nft exported.NFT, err error) {
+func (k Keeper) GetNFT(ctx sdk.Context, denom, tokenID string) (nft exported.NFT, err error) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.KeyNFT(denom, id))
+	bz := store.Get(types.KeyNFT(denom, tokenID))
 	if bz == nil {
 		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "not found NFT: %s", denom)
 	}
@@ -36,9 +37,9 @@ func (k Keeper) GetNFTs(ctx sdk.Context, denom string) (nfts []exported.NFT) {
 
 //Authorize check if the sender is the issuer of nft, if it returns nft, if not, return an error
 func (k Keeper) Authorize(ctx sdk.Context,
-	denom, id string,
+	denom, tokenID string,
 	owner sdk.AccAddress) (exported.NFT, error) {
-	nft, err := k.GetNFT(ctx, denom, id)
+	nft, err := k.GetNFT(ctx, denom, tokenID)
 	if err != nil {
 		return nil, err
 	}
@@ -50,9 +51,9 @@ func (k Keeper) Authorize(ctx sdk.Context,
 }
 
 //HasNFT determine if nft exists
-func (k Keeper) HasNFT(ctx sdk.Context, denom, id string) bool {
+func (k Keeper) HasNFT(ctx sdk.Context, denom, tokenID string) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.KeyNFT(denom, id))
+	return store.Has(types.KeyNFT(denom, tokenID))
 }
 
 func (k Keeper) setNFT(ctx sdk.Context, denom string, nft exported.NFT) {

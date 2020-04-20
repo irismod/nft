@@ -3,9 +3,10 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"github.com/irismod/nft/exported"
 	"sort"
 	"strings"
+
+	"github.com/irismod/nft/exported"
 )
 
 // Collection of non fungible tokens

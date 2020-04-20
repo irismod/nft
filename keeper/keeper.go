@@ -2,9 +2,10 @@ package keeper
 
 import (
 	"fmt"
+	"strings"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/tendermint/tendermint/libs/log"
-	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 
@@ -35,31 +36,31 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 // MintNFT mints an NFT and manages that NFTs existence within Collections and Owners
 func (k Keeper) MintNFT(ctx sdk.Context,
-	denom, id, tokenURI string,
+	denom, tokenID, tokenURI string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
-	id = strings.ToLower(strings.TrimSpace(id))
+	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
 
-	if k.HasNFT(ctx, denom, id) {
-		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", id, denom)
+	if k.HasNFT(ctx, denom, tokenID) {
+		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denom)
 	}
-	nft := types.NewBaseNFT(id, owner, tokenURI)
+	nft := types.NewBaseNFT(tokenID, owner, tokenURI)
 	k.setNFT(ctx, denom, &nft)
-	k.setOwner(ctx, denom, id, owner)
+	k.setOwner(ctx, denom, tokenID, owner)
 	k.increaseSupply(ctx, denom)
 	return nil
 }
 
 // EditNFT updates an already existing NFTs
 func (k Keeper) EditNFT(ctx sdk.Context,
-	denom, id, tokenURI string,
+	denom, tokenID, tokenURI string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
-	id = strings.ToLower(strings.TrimSpace(id))
+	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
 
-	nft, err := k.Authorize(ctx, denom, id, owner)
+	nft, err := k.Authorize(ctx, denom, tokenID, owner)
 	if err != nil {
 		return err
 	}
@@ -69,15 +70,15 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 	return nil
 }
 
-// TransferOwner gets all the ID Collections owned by an address
+// TransferOwner gets all the TokenID Collections owned by an address
 func (k Keeper) TransferOwner(ctx sdk.Context,
-	denom, id, tokenURI string,
+	denom, tokenID, tokenURI string,
 	srcOwner, dstOwner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
-	id = strings.ToLower(strings.TrimSpace(id))
+	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
 
-	nft, err := k.Authorize(ctx, denom, id, srcOwner)
+	nft, err := k.Authorize(ctx, denom, tokenID, srcOwner)
 	if err != nil {
 		return err
 	}
@@ -88,24 +89,24 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 	}
 
 	k.setNFT(ctx, denom, nft)
-	k.swapOwner(ctx, denom, id, srcOwner, dstOwner)
+	k.swapOwner(ctx, denom, tokenID, srcOwner, dstOwner)
 	return nil
 }
 
 // BurnNFT delete a specified nft
 func (k Keeper) BurnNFT(ctx sdk.Context,
-	denom, id string,
+	denom, tokenID string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
-	id = strings.ToLower(strings.TrimSpace(id))
+	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 
-	nft, err := k.Authorize(ctx, denom, id, owner)
+	nft, err := k.Authorize(ctx, denom, tokenID, owner)
 	if err != nil {
 		return err
 	}
 
 	k.deleteNFT(ctx, denom, nft)
-	k.deleteOwner(ctx, denom, id, owner)
+	k.deleteOwner(ctx, denom, tokenID, owner)
 	k.decreaseSupply(ctx, denom)
 	return nil
 }

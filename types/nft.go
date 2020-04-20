@@ -29,7 +29,7 @@ func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI string) BaseNFT {
 	}
 }
 
-// GetID returns the ID of the token
+// GetID returns the TokenID of the token
 func (bnft BaseNFT) GetID() string { return bnft.ID }
 
 // GetOwner returns the account address that owns the NFT
@@ -49,7 +49,7 @@ func (bnft *BaseNFT) SetTokenURI(tokenURI string) {
 }
 
 func (bnft BaseNFT) String() string {
-	return fmt.Sprintf(`ID:				%s
+	return fmt.Sprintf(`TokenID:				%s
 Owner:			%s
 TokenURI:		%s`,
 		bnft.ID,

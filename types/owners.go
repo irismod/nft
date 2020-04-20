@@ -40,7 +40,7 @@ func (idc IDCollection) Supply() int {
 	return len(idc.IDs)
 }
 
-// AddID adds an ID to the idCollection
+// AddID adds an TokenID to the idCollection
 func (idc IDCollection) AddID(id string) IDCollection {
 	idc.IDs = append(idc.IDs, id)
 	return idc
@@ -56,10 +56,10 @@ IDs:        	%s`,
 }
 
 // ----------------------------------------------------------------------------
-// IDCollections is an array of ID Collections
+// IDCollections is an array of TokenID Collections
 type IDCollections []IDCollection
 
-// Add adds an ID to the idCollection
+// Add adds an TokenID to the idCollection
 func (idcs IDCollections) Add(denom, id string) IDCollections {
 	for i, idc := range idcs {
 		if idc.Denom == denom {

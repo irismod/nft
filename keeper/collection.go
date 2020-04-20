@@ -3,6 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
 	"github.com/irismod/nft/types"
 )
 
@@ -134,7 +135,7 @@ func (k Keeper) decreaseSupply(ctx sdk.Context, denom string) {
 	supply--
 
 	store := ctx.KVStore(k.storeKey)
-	if supply <= 0 {
+	if supply == 0 {
 		store.Delete(types.KeyCollection(denom))
 		return
 	}

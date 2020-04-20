@@ -21,7 +21,7 @@ type MsgTransferNFT struct {
 }
 ```
 
-## MsgEditNFTMetadata
+## MsgEditNFT
 
 This message type allows the `TokenURI` to be updated. By default anyone can execute this Message type. **It is highly recommended that a custom handler is made to restrict use of this Message type to prevent unintended use.**
 

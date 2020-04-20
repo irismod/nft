@@ -58,8 +58,8 @@ var (
 	AttributeKeySender       = types.AttributeKeySender
 	AttributeKeyRecipient    = types.AttributeKeyRecipient
 	AttributeKeyOwner        = types.AttributeKeyOwner
-	AttributeKeyNFTID        = types.AttributeKeyNFTTokenID
-	AttributeKeyNFTTokenURI  = types.AttributeKeyNFTTokenURI
+	AttributeKeyNFTID        = types.AttributeKeyTokenID
+	AttributeKeyNFTTokenURI  = types.AttributeKeyTokenURI
 	AttributeKeyDenom        = types.AttributeKeyDenom
 
 	// error

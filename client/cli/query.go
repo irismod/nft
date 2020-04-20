@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/binary"
 	"fmt"
+
 	"github.com/spf13/viper"
 
 	"github.com/spf13/cobra"
@@ -11,6 +12,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/irismod/nft/exported"
 	"github.com/irismod/nft/types"
 )
@@ -169,9 +171,9 @@ func GetCmdQueryDenoms(queryRoute string, cdc *codec.Codec) *cobra.Command {
 // GetCmdQueryNFT queries a single NFTs from a collection
 func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "token [denom] [ID]",
+		Use:     "token [denom] [tokenID]",
 		Short:   "query a single NFT from a collection",
-		Example: "nft token <denom> [ID]",
+		Example: "nft token <denom> [tokenID]",
 		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)

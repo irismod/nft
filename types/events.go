@@ -9,10 +9,10 @@ var (
 
 	AttributeValueCategory = ModuleName
 
-	AttributeKeySender      = "sender"
-	AttributeKeyRecipient   = "recipient"
-	AttributeKeyOwner       = "owner"
-	AttributeKeyNFTTokenID  = "token-id"
-	AttributeKeyNFTTokenURI = "token-uri"
-	AttributeKeyDenom       = "denom"
+	AttributeKeySender    = "sender"
+	AttributeKeyRecipient = "recipient"
+	AttributeKeyOwner     = "owner"
+	AttributeKeyTokenID   = "token-id"
+	AttributeKeyTokenURI  = "token-uri"
+	AttributeKeyDenom     = "denom"
 )

@@ -41,7 +41,7 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Co
 
 	// Query a single NFT
 	r.HandleFunc(
-		fmt.Sprintf("/nfts/{%s}/{%s}", RestParamDenom, RestParamID),
+		fmt.Sprintf("/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
 		queryNFT(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 }
@@ -140,7 +140,7 @@ func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc 
 func queryNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
-		params := types.NewQueryNFTParams(vars[RestParamDenom], vars[RestParamID])
+		params := types.NewQueryNFTParams(vars[RestParamDenom], vars[RestParamTokenID])
 		bz, err := cdc.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

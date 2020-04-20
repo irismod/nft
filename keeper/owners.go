@@ -2,10 +2,11 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	"github.com/irismod/nft/types"
 )
 
-// GetOwner gets all the ID Collections owned by an address and denom
+// GetOwner gets all the TokenID Collections owned by an address and denom
 func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denoms ...string) types.Owner {
 	var denom string
 	if len(denoms) > 0 {
@@ -23,11 +24,11 @@ func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denoms ...stri
 	idsMap := make(map[string][]string)
 
 	for ; iterator.Valid(); iterator.Next() {
-		_, denom, id, _ := types.SplitKeyOwner(iterator.Key())
+		_, denom, tokenID, _ := types.SplitKeyOwner(iterator.Key())
 		if ids, ok := idsMap[denom]; ok {
-			idsMap[denom] = append(ids, id)
+			idsMap[denom] = append(ids, tokenID)
 		} else {
-			idsMap[denom] = []string{id}
+			idsMap[denom] = []string{tokenID}
 			owner.IDCollections = append(owner.IDCollections, types.IDCollection{
 				Denom: denom,
 			})
@@ -40,7 +41,7 @@ func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denoms ...stri
 	return owner
 }
 
-// GetOwner gets all the ID Collections
+// GetOwner gets all the TokenID Collections
 func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStoreReversePrefixIterator(store, types.KeyOwner(nil, "", ""))
@@ -67,27 +68,27 @@ func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 }
 
 func (k Keeper) deleteOwner(ctx sdk.Context,
-	denom, id string,
+	denom, tokenID string,
 	owner sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.KeyOwner(owner, denom, id))
+	store.Delete(types.KeyOwner(owner, denom, tokenID))
 }
 
 func (k Keeper) setOwner(ctx sdk.Context,
-	denom, id string,
+	denom, tokenID string,
 	owner sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
-	bzID := k.cdc.MustMarshalBinaryLengthPrefixed(id)
-	store.Set(types.KeyOwner(owner, denom, id), bzID)
+	bzID := k.cdc.MustMarshalBinaryLengthPrefixed(tokenID)
+	store.Set(types.KeyOwner(owner, denom, tokenID), bzID)
 }
 
 func (k Keeper) swapOwner(ctx sdk.Context,
-	denom, id string,
+	denom, tokenID string,
 	srcOwner, dstOwner sdk.AccAddress) {
 
 	//delete old owner key
-	k.deleteOwner(ctx, denom, id, srcOwner)
+	k.deleteOwner(ctx, denom, tokenID, srcOwner)
 
 	//set new owner key
-	k.setOwner(ctx, denom, id, dstOwner)
+	k.setOwner(ctx, denom, tokenID, dstOwner)
 }

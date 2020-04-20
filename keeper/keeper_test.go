@@ -1,8 +1,9 @@
 package keeper_test
 
 import (
-	"github.com/irismod/nft/types"
 	"testing"
+
+	"github.com/irismod/nft/types"
 
 	"github.com/stretchr/testify/suite"
 
