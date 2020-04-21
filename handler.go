@@ -1,23 +1,23 @@
 package nft
 
 import (
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	"github.com/irisnet/modules/incubator/nft/internal/keeper"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/keeper"
+	"github.com/irismod/nft/types"
 )
 
-// GenericHandler routes the messages to the handlers
-func GenericHandler(k keeper.Keeper) sdk.Handler {
+// NewHandler routes the messages to the handlers
+func NewHandler(k keeper.Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
+		ctx = ctx.WithEventManager(sdk.NewEventManager())
+
 		switch msg := msg.(type) {
 		case types.MsgTransferNFT:
 			return HandleMsgTransferNFT(ctx, msg, k)
-		case types.MsgEditNFTMetadata:
-			return HandleMsgEditNFTMetadata(ctx, msg, k)
+		case types.MsgEditNFT:
+			return HandleMsgEditNFT(ctx, msg, k)
 		case types.MsgMintNFT:
 			return HandleMsgMintNFT(ctx, msg, k)
 		case types.MsgBurnNFT:
@@ -31,21 +31,12 @@ func GenericHandler(k keeper.Keeper) sdk.Handler {
 // HandleMsgTransferNFT handler for MsgTransferNFT
 func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	nft, err := k.GetNFT(ctx, msg.Denom, msg.ID)
-	if err != nil {
-		return nil, err
-	}
-	if !msg.Sender.Equals(nft.GetOwner()) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, msg.Sender.String())
-	}
-	// update NFT owner
-	nft.SetOwner(msg.Recipient)
-	if msg.TokenURI != types.DoNotModify {
-		nft.EditMetadata(msg.TokenURI)
-	}
-	// update the NFT (owners are updated within the keeper)
-	err = k.UpdateNFT(ctx, msg.Denom, nft)
-	if err != nil {
+	if err := k.TransferOwner(ctx,
+		msg.Denom,
+		msg.ID,
+		msg.TokenURI,
+		msg.Sender,
+		msg.Recipient); err != nil {
 		return nil, err
 	}
 
@@ -54,7 +45,7 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 			types.EventTypeTransfer,
 			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient.String()),
 			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyNFTID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -65,31 +56,22 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
-// HandleMsgEditNFTMetadata handler for MsgEditNFTMetadata
-func HandleMsgEditNFTMetadata(ctx sdk.Context, msg types.MsgEditNFTMetadata, k keeper.Keeper,
+// HandleMsgEditNFT handler for MsgEditNFT
+func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	nft, err := k.GetNFT(ctx, msg.Denom, msg.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	if !msg.Sender.Equals(nft.GetOwner()) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, msg.Sender.String())
-	}
-
-	// update NFT
-	nft.EditMetadata(msg.TokenURI)
-	err = k.UpdateNFT(ctx, msg.Denom, nft)
-	if err != nil {
+	if err := k.EditNFT(ctx, msg.Denom,
+		msg.ID,
+		msg.TokenURI,
+		msg.Sender); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
-			types.EventTypeEditNFTMetadata,
+			types.EventTypeEditNFT,
 			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyNFTID, msg.ID),
-			sdk.NewAttribute(types.AttributeKeyNFTTokenURI, msg.TokenURI),
+			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.TokenURI),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -103,19 +85,22 @@ func HandleMsgEditNFTMetadata(ctx sdk.Context, msg types.MsgEditNFTMetadata, k k
 // HandleMsgMintNFT handles MsgMintNFT
 func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	nft := types.NewBaseNFT(msg.ID, msg.Recipient, msg.TokenURI)
-	err := k.MintNFT(ctx, msg.Denom, &nft)
-	if err != nil {
+	owner := msg.Recipient
+	if owner.Empty() {
+		owner = msg.Sender
+	}
+
+	if err := k.MintNFT(ctx, msg.Denom, msg.ID, msg.TokenURI, owner); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeMintNFT,
-			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient.String()),
+			sdk.NewAttribute(types.AttributeKeyRecipient, owner.String()),
 			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyNFTID, msg.ID),
-			sdk.NewAttribute(types.AttributeKeyNFTTokenURI, msg.TokenURI),
+			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.TokenURI),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -129,18 +114,7 @@ func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 // HandleMsgBurnNFT handles MsgBurnNFT
 func HandleMsgBurnNFT(ctx sdk.Context, msg types.MsgBurnNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	nft, err := k.GetNFT(ctx, msg.Denom, msg.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	if !msg.Sender.Equals(nft.GetOwner()) {
-		return nil, sdkerrors.Wrap(types.ErrUnauthorized, msg.Sender.String())
-	}
-
-	// remove NFT
-	err = k.DeleteNFT(ctx, msg.Denom, msg.ID)
-	if err != nil {
+	if err := k.BurnNFT(ctx, msg.Denom, msg.ID, msg.Sender); err != nil {
 		return nil, err
 	}
 
@@ -148,7 +122,7 @@ func HandleMsgBurnNFT(ctx sdk.Context, msg types.MsgBurnNFT, k keeper.Keeper,
 		sdk.NewEvent(
 			types.EventTypeBurnNFT,
 			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyNFTID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -157,9 +131,4 @@ func HandleMsgBurnNFT(ctx sdk.Context, msg types.MsgBurnNFT, k keeper.Keeper,
 		),
 	})
 	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
-}
-
-// EndBlocker is run at the end of the block
-func EndBlocker(ctx sdk.Context, k keeper.Keeper) []abci.ValidatorUpdate {
-	return nil
 }

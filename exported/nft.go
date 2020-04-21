@@ -10,6 +10,6 @@ type NFT interface {
 	GetOwner() sdk.AccAddress
 	SetOwner(address sdk.AccAddress)
 	GetTokenURI() string
-	EditMetadata(tokenURI string)
+	SetTokenURI(tokenURI string)
 	String() string
 }

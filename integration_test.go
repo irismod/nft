@@ -7,19 +7,16 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft"
-	simapp "github.com/irisnet/modules/incubator/nft/app"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft"
+	simapp "github.com/irismod/nft/app"
+	"github.com/irismod/nft/types"
 )
 
-// nolint: deadcode unused
 var (
-	denom1    = "test-denom"
-	denom2    = "test-denom2"
-	denom3    = "test-denom3"
-	id        = "1"
-	id2       = "2"
-	id3       = "3"
+	denom2    = "denom2"
+	id        = "id1"
+	id2       = "id2"
+	id3       = "id3"
 	address   = types.CreateTestAddrs(1)[0]
 	address2  = types.CreateTestAddrs(2)[1]
 	address3  = types.CreateTestAddrs(3)[2]
@@ -39,9 +36,8 @@ func CheckInvariants(k nft.Keeper, ctx sdk.Context) bool {
 	collectionsSupply := make(map[string]int)
 	ownersCollectionsSupply := make(map[string]int)
 
-	k.IterateCollections(ctx, func(collection types.Collection) bool {
+	k.IterateCollections(ctx, func(collection types.Collection) {
 		collectionsSupply[collection.Denom] = collection.Supply()
-		return false
 	})
 
 	owners := k.GetOwners(ctx)

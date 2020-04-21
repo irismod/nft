@@ -1,6 +1,8 @@
 package rest
 
 import (
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/types/rest"
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -11,4 +13,33 @@ import (
 func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
 	registerQueryRoutes(cliCtx, r, cdc, queryRoute)
 	registerTxRoutes(cliCtx, r, cdc, queryRoute)
+}
+
+const (
+	RestParamDenom   = "denom"
+	RestParamTokenID = "token-id"
+	RestParamOwner   = "owner"
+)
+
+type mintNFTReq struct {
+	BaseReq   rest.BaseReq   `json:"base_req"`
+	Recipient sdk.AccAddress `json:"recipient"`
+	Denom     string         `json:"denom"`
+	TokenID   string         `json:"token_id"`
+	TokenURI  string         `json:"token_uri"`
+}
+
+type editNFTReq struct {
+	BaseReq  rest.BaseReq `json:"base_req"`
+	TokenURI string       `json:"token_uri"`
+}
+
+type transferNFTReq struct {
+	BaseReq   rest.BaseReq `json:"base_req"`
+	Recipient string       `json:"recipient"`
+	TokenURI  string       `json:"token_uri"`
+}
+
+type burnNFTReq struct {
+	BaseReq rest.BaseReq `json:"base_req"`
 }

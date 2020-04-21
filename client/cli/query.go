@@ -5,92 +5,91 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/viper"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/irisnet/modules/incubator/nft/exported"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft/exported"
+	"github.com/irismod/nft/types"
 )
 
 // GetQueryCmd returns the cli query commands for this module
 func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
-	nftQueryCmd := &cobra.Command{
-		Use:   types.ModuleName,
-		Short: "Querying commands for the NFT module",
+	queryCmd := &cobra.Command{
+		Use:                types.ModuleName,
+		Short:              "Querying commands for the NFT module",
+		DisableFlagParsing: true,
 	}
 
-	nftQueryCmd.AddCommand(
-		GetCmdQueryCollectionSupply(queryRoute, cdc),
+	queryCmd.AddCommand(flags.GetCommands(
+		GetCmdQuerySupply(queryRoute, cdc),
 		GetCmdQueryOwner(queryRoute, cdc),
 		GetCmdQueryCollection(queryRoute, cdc),
 		GetCmdQueryDenoms(queryRoute, cdc),
 		GetCmdQueryNFT(queryRoute, cdc),
-	)
+	)...)
 
-	return nftQueryCmd
+	return queryCmd
 }
 
-// GetCmdQueryCollectionSupply queries the supply of a nft collection
-func GetCmdQueryCollectionSupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
+// GetCmdQuerySupply queries the supply of a nft collection
+func GetCmdQuerySupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "supply [denom]",
-		Short: "total supply of a collection of NFTs",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Get the total count of NFTs that match a certain denomination.
-
-Example:
-$ %s query %s supply crypto-kitties
-`, version.ClientName, types.ModuleName,
-			),
-		),
-		Args: cobra.ExactArgs(1),
+		Use:     "supply [denom]",
+		Short:   "total supply of a collection or owner of NFTs",
+		Example: "nft supply",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			denom := args[0]
 
-			params := types.NewQueryCollectionParams(denom)
+			var owner sdk.AccAddress
+			var err error
+
+			ownerStr := strings.TrimSpace(viper.GetString(FlagOwner))
+			if len(ownerStr) > 0 {
+				owner, err = sdk.AccAddressFromBech32(ownerStr)
+				if err != nil {
+					return err
+				}
+			}
+
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
+
+			params := types.NewQuerySupplyParams(denom, owner)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
 				return err
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/supply/%s", queryRoute, denom), bz)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf("custom/%s/%s", queryRoute, types.QuerySupply), bz)
 			if err != nil {
 				return err
 			}
 
 			out := binary.LittleEndian.Uint64(res)
-			if err != nil {
-				return err
-			}
-
 			return cliCtx.PrintOutput(out)
 		},
 	}
-
-	return flags.GetCommands(cmd)[0]
+	cmd.Flags().AddFlagSet(FsQuerySupply)
+	return cmd
 }
 
 // GetCmdQueryOwner queries all the NFTs owned by an account
 func GetCmdQueryOwner(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "owner [accountAddress] [denom]",
-		Short: "get the NFTs owned by an account address",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Get the NFTs owned by an account address optionally filtered by the denom of the NFTs.
-
-Example:
-$ %s query %s owner cosmos1gghjut3ccd8ay0zduzj64hwre2fxs9ld75ru9p
-$ %s query %s owner cosmos1gghjut3ccd8ay0zduzj64hwre2fxs9ld75ru9p crypto-kitties
-`, version.ClientName, types.ModuleName, version.ClientName, types.ModuleName,
-			),
-		),
-		Args: cobra.RangeArgs(1, 2),
+		Use:     "owner [address]",
+		Short:   "get the NFTs owned by an account address",
+		Example: "nft owner <address> --denom=<denom>",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			address, err := sdk.AccAddressFromBech32(args[0])
@@ -98,24 +97,15 @@ $ %s query %s owner cosmos1gghjut3ccd8ay0zduzj64hwre2fxs9ld75ru9p crypto-kitties
 				return err
 			}
 
-			denom := ""
-			if len(args) == 2 {
-				denom = args[1]
-			}
-
-			params := types.NewQueryBalanceParams(address, denom)
+			denom := viper.GetString(FlagDenom)
+			params := types.NewQueryOwnerParams(denom, address)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
 				return err
 			}
 
-			var res []byte
-			if denom == "" {
-				res, _, err = cliCtx.QueryWithData(fmt.Sprintf("custom/%s/owner", queryRoute), bz)
-			} else {
-				res, _, err = cliCtx.QueryWithData(fmt.Sprintf("custom/%s/ownerByDenom", queryRoute), bz)
-			}
-
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryOwner), bz)
 			if err != nil {
 				return err
 			}
@@ -129,27 +119,24 @@ $ %s query %s owner cosmos1gghjut3ccd8ay0zduzj64hwre2fxs9ld75ru9p crypto-kitties
 			return cliCtx.PrintOutput(out)
 		},
 	}
-
-	return flags.GetCommands(cmd)[0]
+	cmd.Flags().AddFlagSet(FsQueryOwner)
+	return cmd
 }
 
 // GetCmdQueryCollection queries all the NFTs from a collection
 func GetCmdQueryCollection(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "collection [denom]",
-		Short: "get all the NFTs from a given collection",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Get a list of all NFTs from a given collection.
-
-Example:
-$ %s query %s collection crypto-kitties
-`, version.ClientName, types.ModuleName,
-			),
-		),
-		Args: cobra.ExactArgs(1),
+		Use:     "collection [denom]",
+		Short:   "get all the NFTs from a given collection",
+		Example: "nft collection <denom>",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			denom := args[0]
+
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
 
 			params := types.NewQueryCollectionParams(denom)
 			bz, err := cdc.MarshalJSON(params)
@@ -157,99 +144,85 @@ $ %s query %s collection crypto-kitties
 				return err
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/collection", queryRoute), bz)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryCollection), bz)
 			if err != nil {
 				return err
 			}
 
-			var out types.Collections
-			err = cdc.UnmarshalJSON(res, &out)
-			if err != nil {
+			var out types.Collection
+			if err = cdc.UnmarshalJSON(res, &out); err != nil {
 				return err
 			}
-
 			return cliCtx.PrintOutput(out)
 		},
 	}
-
-	return flags.GetCommands(cmd)[0]
+	return cmd
 }
 
 // GetCmdQueryDenoms queries all denoms
 func GetCmdQueryDenoms(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "denoms",
-		Short: "queries all denominations of all collections of NFTs",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Gets all denominations of all the available collections of NFTs that
-			are stored on the chain.
-
-			Example:
-			$ %s query %s denoms
-			`, version.ClientName, types.ModuleName,
-			),
-		),
-		Args: cobra.ExactArgs(0),
+		Use:     "denoms",
+		Short:   "queries all denominations of all collections of NFTs",
+		Example: "nft denoms",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/denoms", queryRoute), nil)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenoms), nil)
 			if err != nil {
 				return err
 			}
 
-			var out types.SortedStringArray
-			err = cdc.UnmarshalJSON(res, &out)
-			if err != nil {
+			var out []string
+			if err = cdc.UnmarshalJSON(res, &out); err != nil {
 				return err
 			}
-
 			return cliCtx.PrintOutput(out)
 		},
 	}
-
-	return flags.GetCommands(cmd)[0]
+	return cmd
 }
 
 // GetCmdQueryNFT queries a single NFTs from a collection
 func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "token [denom] [ID]",
-		Short: "query a single NFT from a collection",
-		Long: strings.TrimSpace(
-			fmt.Sprintf(`Get an NFT from a collection that has the given ID (SHA-256 hex hash).
-
-Example:
-$ %s query %s token crypto-kitties d04b98f48e8f8bcc15c6ae5ac050801cd6dcfd428fb5f9e65c4e16e7807340fa
-`, version.ClientName, types.ModuleName,
-			),
-		),
-		Args: cobra.ExactArgs(2),
+		Use:     "token [denom] [tokenID]",
+		Short:   "query a single NFT from a collection",
+		Example: "nft token <denom> <tokenID>",
+		Args:    cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-			denom := args[0]
-			id := args[1]
 
-			params := types.NewQueryNFTParams(denom, id)
+			denom := strings.TrimSpace(args[0])
+			if err := types.ValidateDenom(denom); err != nil {
+				return err
+			}
+
+			tokenID := strings.TrimSpace(args[1])
+			if err := types.ValidateTokenID(tokenID); err != nil {
+				return err
+			}
+
+			params := types.NewQueryNFTParams(denom, tokenID)
 			bz, err := cdc.MarshalJSON(params)
 			if err != nil {
 				return err
 			}
 
-			res, _, err := cliCtx.QueryWithData(fmt.Sprintf("custom/%s/nft", queryRoute), bz)
+			res, _, err := cliCtx.QueryWithData(
+				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryNFT), bz)
 			if err != nil {
 				return err
 			}
 
 			var out exported.NFT
-			err = cdc.UnmarshalJSON(res, &out)
-			if err != nil {
+			if err = cdc.UnmarshalJSON(res, &out); err != nil {
 				return err
 			}
-
 			return cliCtx.PrintOutput(out)
 		},
 	}
-
-	return flags.GetCommands(cmd)[0]
+	return cmd
 }

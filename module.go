@@ -1,7 +1,5 @@
 package nft
 
-// DONTCOVER
-
 import (
 	"encoding/json"
 	"math/rand"
@@ -15,11 +13,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	"github.com/cosmos/cosmos-sdk/x/auth"
 	sim "github.com/cosmos/cosmos-sdk/x/simulation"
 
-	"github.com/irisnet/modules/incubator/nft/client/cli"
-	"github.com/irisnet/modules/incubator/nft/client/rest"
-	"github.com/irisnet/modules/incubator/nft/simulation"
+	"github.com/irismod/nft/client/cli"
+	"github.com/irismod/nft/client/rest"
+	"github.com/irismod/nft/simulation"
 )
 
 var (
@@ -80,13 +79,15 @@ type AppModule struct {
 	AppModuleBasic
 
 	keeper Keeper
+	ak     auth.AccountKeeper
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(keeper Keeper) AppModule {
+func NewAppModule(keeper Keeper, ak auth.AccountKeeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
 		keeper:         keeper,
+		ak:             ak,
 	}
 }
 
@@ -107,7 +108,7 @@ func (AppModule) Route() string {
 
 // NewHandler module handler
 func (am AppModule) NewHandler() sdk.Handler {
-	return GenericHandler(am.keeper)
+	return NewHandler(am.keeper)
 }
 
 // QuerierRoute module querier route name
@@ -138,8 +139,8 @@ func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 func (AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
 
 // EndBlock module end-block
-func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return EndBlocker(ctx, am.keeper)
+func (am AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	return []abci.ValidatorUpdate{}
 }
 
 //____________________________________________________________________________
@@ -169,5 +170,5 @@ func (AppModule) RandomizedParams(_ *rand.Rand) []sim.ParamChange {
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
-	return nil
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.keeper, am.ak)
 }

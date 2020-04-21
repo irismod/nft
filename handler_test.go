@@ -9,14 +9,14 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irisnet/modules/incubator/nft"
-	"github.com/irisnet/modules/incubator/nft/internal/types"
+	"github.com/irismod/nft"
+	"github.com/irismod/nft/types"
 )
 
 const (
 	module    = "module"
 	denom     = "denom"
-	nftID     = "nft-id"
+	nftID     = "token-id"
 	sender    = "sender"
 	recipient = "recipient"
 	tokenURI  = "token-uri"
@@ -24,7 +24,7 @@ const (
 
 func TestInvalidMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 	res, err := h(ctx, sdk.NewTestMsg())
 	require.Error(t, err)
 	require.Nil(t, res)
@@ -33,10 +33,7 @@ func TestInvalidMsg(t *testing.T) {
 
 func TestTransferNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
-
-	// An NFT to be transferred
-	nft := types.NewBaseNFT(id, address, "TokenURI")
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// Define MsgTransferNft
 	transferNftMsg := types.NewMsgTransferNFT(address, address2, denom, id, tokenURI)
@@ -47,7 +44,7 @@ func TestTransferNFTMsg(t *testing.T) {
 	require.Nil(t, res)
 
 	// Create token (collection and owner)
-	err = app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err = app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
@@ -92,7 +89,7 @@ func TestTransferNFTMsg(t *testing.T) {
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
 	// Create token (collection and owner)
-	err = app.NFTKeeper.MintNFT(ctx, denom2, &nft)
+	err = app.NFTKeeper.MintNFT(ctx, denom2, id, tokenURI, address)
 	require.Nil(t, err)
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 
@@ -107,24 +104,21 @@ func TestTransferNFTMsg(t *testing.T) {
 
 func TestEditNFTMetadataMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
-
-	// An NFT to be edited
-	nft := types.NewBaseNFT(id, address, tokenURI)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// Create token (collection and address)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err := app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 
 	// Define MsgTransferNft
-	failingEditNFTMetadata := types.NewMsgEditNFTMetadata(address, id, denom2, tokenURI2)
+	failingEditNFTMetadata := types.NewMsgEditNFT(address, id, denom2, tokenURI2)
 
 	res, err := h(ctx, failingEditNFTMetadata)
 	require.Error(t, err)
 	require.Nil(t, res)
 
 	// Define MsgTransferNft
-	editNFTMetadata := types.NewMsgEditNFTMetadata(address, id, denom, tokenURI2)
+	editNFTMetadata := types.NewMsgEditNFT(address, id, denom, tokenURI2)
 
 	res, err = h(ctx, editNFTMetadata)
 	require.NoError(t, err)
@@ -158,7 +152,7 @@ func TestEditNFTMetadataMsg(t *testing.T) {
 
 func TestMintNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// Define MsgMintNFT
 	mintNFT := types.NewMsgMintNFT(address, address, id, denom, tokenURI)
@@ -206,16 +200,13 @@ func TestMintNFTMsg(t *testing.T) {
 
 func TestBurnNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
-	h := nft.GenericHandler(app.NFTKeeper)
-
-	// An NFT to be burned
-	nft := types.NewBaseNFT(id, address, tokenURI)
+	h := nft.NewHandler(app.NFTKeeper)
 
 	// Create token (collection and address)
-	err := app.NFTKeeper.MintNFT(ctx, denom, &nft)
+	err := app.NFTKeeper.MintNFT(ctx, denom, id, tokenURI, address)
 	require.Nil(t, err)
 
-	exists := app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists := app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.True(t, exists)
 
 	// burning a non-existent NFT should fail
@@ -225,7 +216,7 @@ func TestBurnNFTMsg(t *testing.T) {
 	require.Nil(t, res)
 
 	// NFT should still exist
-	exists = app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists = app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.True(t, exists)
 
 	// burning the NFt should succeed
@@ -255,11 +246,11 @@ func TestBurnNFTMsg(t *testing.T) {
 	}
 
 	// the NFT should not exist after burn
-	exists = app.NFTKeeper.IsNFT(ctx, denom, id)
+	exists = app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.False(t, exists)
 
 	ownerReturned := app.NFTKeeper.GetOwner(ctx, address)
-	require.Equal(t, 0, ownerReturned.Supply())
+	require.Equal(t, 0, len(ownerReturned.IDCollections))
 
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 }

@@ -8,19 +8,17 @@ NFTs on application specific blockchains share some but not all features as thei
 
 ## Contents
 
-1. **[Concepts](./01_concepts.md)**
-   - [NFT](./01_concepts.md#nft)
-   - [Collections](./01_concepts.md#collections)
-2. **[State](./02_state.md)**
-   - [Collections](./02_state.md#collections)
-   - [Owners](./02_state.md#owners)
-3. **[Messages](./03_messages.md)**
-   - [Transfer NFT](./03_messages.md#transfer-nft)
-   - [Edit Metadata](./03_messages.md#edit-metadata)
-   - [Mint NFT](./03_messages.md#mint-nft)
-   - [Burn NFT](./03_messages.md#burn-nft)
-4. **[Events](./04_events.md)**
-5. **[Future Improvements](./05_future_improvements.md)**
+1. **[State](./01_state.md)**
+   - [NFT](./01_state.md#NFT)
+   - [Collections](./01_state.md#collections)
+   - [Owners](./01_state.md#owners)
+2. **[Messages](./02_messages.md)**
+   - [Transfer NFT](./02_messages.md#MsgTransferNFT)
+   - [Edit NFT](./02_messages.md#MsgEditNFT)
+   - [Mint NFT](./02_messages.md#MsgMintNFT)
+   - [Burn NFT](./02_messages.md#MsgBurnNFT)
+3. **[Events](./03_events.md)**
+4. **[Future Improvements](./04_future_improvements.md)**
 
 ## A Note on Metadata & IBC
 
@@ -66,8 +64,8 @@ func CustomNFTHandler(k keeper.Keeper) sdk.Handler {
     switch msg := msg.(type) {
       case types.MsgTransferNFT:
         return nft.HandleMsgTransferNFT(ctx, msg, k)
-      case types.MsgEditNFTMetadata:
-        return nft.HandleMsgEditNFTMetadata(ctx, msg, k)
+      case types.MsgEditNFT:
+        return nft.HandleMsgEditdata(ctx, msg, k)
      case types.MsgMintNFT:
         return HandleMsgMintNFTCustom(ctx, msg, k) // <-- This one is custom, the others fall back onto the default
       case types.MsgBurnNFT:
