@@ -69,6 +69,11 @@ func querySupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string)
 			return
 		}
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
 		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QuerySupply), bz)
 		if err != nil {
@@ -103,6 +108,11 @@ func queryOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) 
 			return
 		}
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
 		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryOwner), bz)
 		if err != nil {
@@ -129,6 +139,11 @@ func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute str
 			return
 		}
 
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
 		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryCollection), bz)
 		if err != nil {
@@ -143,6 +158,11 @@ func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute str
 
 func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
 		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenoms), nil)
 		if err != nil {
@@ -173,6 +193,11 @@ func queryNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) ht
 		bz, err := cdc.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
 			return
 		}
 
