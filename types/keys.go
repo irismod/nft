@@ -33,23 +33,14 @@ var (
 func SplitKeyOwner(key []byte) (address sdk.AccAddress, denom, id string, err error) {
 	key = key[len(PrefixOwners)+len(delimiter):]
 	keys := bytes.Split(key, delimiter)
-
-	switch len(keys) {
-	case 3:
-		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
-		denom = string(keys[1])
-		id = string(keys[2])
-		return
-	case 2:
-		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
-		denom = string(keys[1])
-		return
-	case 1:
-		address, _ = sdk.AccAddressFromBech32(string(keys[0]))
-		return
-	default:
+	if len(keys) != 3 {
 		return address, denom, id, errors.New("wrong KeyOwner")
 	}
+
+	address, _ = sdk.AccAddressFromBech32(string(keys[0]))
+	denom = string(keys[1])
+	id = string(keys[2])
+	return
 }
 
 // KeyOwner gets the key of a collection owned by an account address

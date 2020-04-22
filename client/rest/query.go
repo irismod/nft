@@ -18,31 +18,31 @@ import (
 func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
 	// Get the total supply of a collection or owner
 	r.HandleFunc(
-		fmt.Sprintf("/nfts/supply/{%s}", RestParamDenom),
+		fmt.Sprintf("/nft/nfts/supplies/{%s}", RestParamDenom),
 		querySupply(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Get the collections of NFTs owned by an address
 	r.HandleFunc(
-		fmt.Sprintf("/nfts/owner/{%s}", RestParamOwner),
+		fmt.Sprintf("/nft/nfts/owners/{%s}", RestParamOwner),
 		queryOwner(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Get all the NFT from a given collection
 	r.HandleFunc(
-		fmt.Sprintf("/nfts/collection/{%s}", RestParamDenom),
+		fmt.Sprintf("/nft/nfts/collections/{%s}", RestParamDenom),
 		queryCollection(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Query all denoms
 	r.HandleFunc(
-		"/nfts/denoms",
+		"/nft/nfts/denoms",
 		queryDenoms(cliCtx, queryRoute),
 	).Methods("GET")
 
 	// Query a single NFT
 	r.HandleFunc(
-		fmt.Sprintf("/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
+		fmt.Sprintf("/nft/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
 		queryNFT(cdc, cliCtx, queryRoute),
 	).Methods("GET")
 }

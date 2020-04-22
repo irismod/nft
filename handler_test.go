@@ -249,7 +249,7 @@ func TestBurnNFTMsg(t *testing.T) {
 	exists = app.NFTKeeper.HasNFT(ctx, denom, id)
 	require.False(t, exists)
 
-	ownerReturned := app.NFTKeeper.GetOwner(ctx, address)
+	ownerReturned := app.NFTKeeper.GetOwner(ctx, address, "")
 	require.Equal(t, 0, len(ownerReturned.IDCollections))
 
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
