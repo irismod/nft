@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/binary"
 	"fmt"
 	"net/http"
 	"strings"
@@ -68,14 +69,16 @@ func querySupply(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string)
 			return
 		}
 
-		res, _, err := cliCtx.QueryWithData(
+		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QuerySupply), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
-		rest.PostProcessResponse(w, cliCtx, res)
+		out := binary.LittleEndian.Uint64(res)
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, out)
 	}
 }
 
@@ -100,13 +103,14 @@ func queryOwner(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) 
 			return
 		}
 
-		res, _, err := cliCtx.QueryWithData(
+		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryOwner), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
+		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
@@ -125,26 +129,28 @@ func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute str
 			return
 		}
 
-		res, _, err := cliCtx.QueryWithData(
+		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryCollection), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
+		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
 
 func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		res, _, err := cliCtx.QueryWithData(
+		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenoms), nil)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
+		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
@@ -170,13 +176,14 @@ func queryNFT(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) ht
 			return
 		}
 
-		res, _, err := cliCtx.QueryWithData(
+		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryNFT), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return
 		}
 
+		cliCtx = cliCtx.WithHeight(height)
 		rest.PostProcessResponse(w, cliCtx, res)
 	}
 }
