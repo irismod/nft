@@ -23,6 +23,7 @@ const (
 
 type mintNFTReq struct {
 	BaseReq   rest.BaseReq   `json:"base_req"`
+	Owner     sdk.AccAddress `json:"owner"`
 	Recipient sdk.AccAddress `json:"recipient"`
 	Denom     string         `json:"denom"`
 	TokenID   string         `json:"token_id"`
@@ -30,16 +31,19 @@ type mintNFTReq struct {
 }
 
 type editNFTReq struct {
-	BaseReq  rest.BaseReq `json:"base_req"`
-	TokenURI string       `json:"token_uri"`
+	BaseReq  rest.BaseReq   `json:"base_req"`
+	Owner    sdk.AccAddress `json:"owner"`
+	TokenURI string         `json:"token_uri"`
 }
 
 type transferNFTReq struct {
-	BaseReq   rest.BaseReq `json:"base_req"`
-	Recipient string       `json:"recipient"`
-	TokenURI  string       `json:"token_uri"`
+	BaseReq   rest.BaseReq   `json:"base_req"`
+	Owner     sdk.AccAddress `json:"owner"`
+	Recipient string         `json:"recipient"`
+	TokenURI  string         `json:"token_uri"`
 }
 
 type burnNFTReq struct {
-	BaseReq rest.BaseReq `json:"base_req"`
+	BaseReq rest.BaseReq   `json:"base_req"`
+	Owner   sdk.AccAddress `json:"owner"`
 }
