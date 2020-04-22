@@ -7,12 +7,7 @@ import (
 )
 
 // GetOwner gets all the TokenID Collections owned by an address and denom
-func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denoms ...string) types.Owner {
-	var denom string
-	if len(denoms) > 0 {
-		denom = denoms[0]
-	}
-
+func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denom string) types.Owner {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, denom, ""))
 	defer iterator.Close()

@@ -18,25 +18,25 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router,
 	cdc *codec.Codec, queryRoute string) {
 	// Mint an NFT
 	r.HandleFunc(
-		"/nfts/mint",
+		"/nft/nfts/mint",
 		mintNFTHandlerFn(cdc, cliCtx),
 	).Methods("POST")
 
 	// Update an NFT metadata
 	r.HandleFunc(
-		"/nfts/{denom}/{id}",
+		"/nft/nfts/{denom}/{id}",
 		editNFTHandlerFn(cdc, cliCtx),
 	).Methods("PUT")
 
 	// Transfer an NFT to an address
 	r.HandleFunc(
-		"/nfts/{denom}/{id}/transfer",
+		"/nft/nfts/{denom}/{id}/transfer",
 		transferNFTHandlerFn(cdc, cliCtx),
 	).Methods("POST")
 
 	// Burn an NFT
 	r.HandleFunc(
-		"/nfts/{denom}/{id}/burn",
+		"/nft/nfts/{denom}/{id}/burn",
 		burnNFTHandlerFn(cdc, cliCtx),
 	).Methods("PUT")
 }
