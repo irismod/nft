@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -24,21 +25,21 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router,
 
 	// Update an NFT metadata
 	r.HandleFunc(
-		"/nft/nfts/{denom}/{id}",
+		fmt.Sprintf("/nft/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
 		editNFTHandlerFn(cdc, cliCtx),
 	).Methods("PUT")
 
 	// Transfer an NFT to an address
 	r.HandleFunc(
-		"/nft/nfts/{denom}/{id}/transfer",
+		fmt.Sprintf("/nft/nfts/{%s}/{%s}/transfer", RestParamDenom, RestParamTokenID),
 		transferNFTHandlerFn(cdc, cliCtx),
 	).Methods("POST")
 
 	// Burn an NFT
 	r.HandleFunc(
-		"/nft/nfts/{denom}/{id}/burn",
+		fmt.Sprintf("/nft/nfts/{%s}/{%s}/burn", RestParamDenom, RestParamTokenID),
 		burnNFTHandlerFn(cdc, cliCtx),
-	).Methods("PUT")
+	).Methods("POST")
 }
 
 func mintNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
