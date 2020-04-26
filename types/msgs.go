@@ -107,7 +107,7 @@ func NewMsgEditNFT(sender sdk.AccAddress, id,
 func (msg MsgEditNFT) Route() string { return RouterKey }
 
 // Type Implements Msg
-func (msg MsgEditNFT) Type() string { return "edit_nft_metadata" }
+func (msg MsgEditNFT) Type() string { return "edit_nft" }
 
 // ValidateBasic Implements Msg.
 func (msg MsgEditNFT) ValidateBasic() error {

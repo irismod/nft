@@ -102,7 +102,7 @@ func TestTransferNFTMsg(t *testing.T) {
 	require.True(t, CheckInvariants(app.NFTKeeper, ctx))
 }
 
-func TestEditNFTMetadataMsg(t *testing.T) {
+func TestEditNFTMsg(t *testing.T) {
 	app, ctx := createTestApp(false)
 	h := nft.NewHandler(app.NFTKeeper)
 
