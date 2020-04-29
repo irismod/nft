@@ -21,7 +21,7 @@ var (
 
 func init() {
 	FsMintNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
-	FsMintNFT.String(FlagRecipient, "", "Receiver of the nft")
+	FsMintNFT.String(FlagRecipient, "", "Receiver of the nft,if not filled, the default is the sender of the transaction")
 
 	FsEditNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
 

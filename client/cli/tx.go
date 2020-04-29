@@ -53,7 +53,7 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
 
-			var recipient sdk.AccAddress
+			var recipient = cliCtx.GetFromAddress()
 			var err error
 			recipientStr := strings.TrimSpace(viper.GetString(FlagRecipient))
 			if len(recipientStr) > 0 {

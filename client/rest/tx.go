@@ -54,6 +54,9 @@ func mintNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 			return
 		}
 
+		if req.Recipient.Empty() {
+			req.Recipient = req.Owner
+		}
 		// create the message
 		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI)
 		if err := msg.ValidateBasic(); err != nil {
