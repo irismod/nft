@@ -57,7 +57,6 @@ func (msg MsgIssueDenom) ValidateBasic() error {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
 
-	//validate Denom
 	return nil
 }
 

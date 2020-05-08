@@ -19,6 +19,12 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router,
 	cdc *codec.Codec, queryRoute string) {
 	// Mint an NFT
 	r.HandleFunc(
+		"/nft/nfts/denoms/issue",
+		issueDenomHandlerFn(cdc, cliCtx),
+	).Methods("POST")
+
+	// Mint an NFT
+	r.HandleFunc(
 		"/nft/nfts/mint",
 		mintNFTHandlerFn(cdc, cliCtx),
 	).Methods("POST")
@@ -40,6 +46,28 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router,
 		fmt.Sprintf("/nft/nfts/{%s}/{%s}/burn", RestParamDenom, RestParamTokenID),
 		burnNFTHandlerFn(cdc, cliCtx),
 	).Methods("POST")
+}
+
+func issueDenomHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var req issueDenomReq
+		if !rest.ReadRESTReq(w, r, cdc, &req) {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
+			return
+		}
+		baseReq := req.BaseReq.Sanitize()
+		if !baseReq.ValidateBasic(w) {
+			return
+		}
+
+		// create the message
+		msg := types.NewMsgIssueDenom(req.Owner, req.Denom, req.Schema)
+		if err := msg.ValidateBasic(); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+		utils.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+	}
 }
 
 func mintNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerFunc {

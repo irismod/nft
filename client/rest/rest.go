@@ -21,6 +21,13 @@ const (
 	RestParamOwner   = "owner"
 )
 
+type issueDenomReq struct {
+	BaseReq rest.BaseReq   `json:"base_req"`
+	Owner   sdk.AccAddress `json:"owner"`
+	Denom   string         `json:"denom"`
+	Schema  string         `json:"schema"`
+}
+
 type mintNFTReq struct {
 	BaseReq   rest.BaseReq   `json:"base_req"`
 	Owner     sdk.AccAddress `json:"owner"`

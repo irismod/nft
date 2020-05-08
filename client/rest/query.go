@@ -41,6 +41,12 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Co
 		queryDenoms(cliCtx, queryRoute),
 	).Methods("GET")
 
+	// Query the denom
+	r.HandleFunc(
+		fmt.Sprintf("/nft/nfts/denom/{%s}", RestParamDenom),
+		queryDenom(cdc, cliCtx, queryRoute),
+	).Methods("GET")
+
 	// Query a single NFT
 	r.HandleFunc(
 		fmt.Sprintf("/nft/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
@@ -146,6 +152,37 @@ func queryCollection(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute str
 
 		res, height, err := cliCtx.QueryWithData(
 			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryCollection), bz)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		cliCtx = cliCtx.WithHeight(height)
+		rest.PostProcessResponse(w, cliCtx, res)
+	}
+}
+
+func queryDenom(cdc *codec.Codec, cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
+		if !ok {
+			return
+		}
+
+		denom := mux.Vars(r)[RestParamDenom]
+		if err := types.ValidateDenom(denom); err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+		}
+
+		params := types.NewQueryDenomParams(denom)
+		bz, err := cdc.MarshalJSON(params)
+		if err != nil {
+			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		res, height, err := cliCtx.QueryWithData(
+			fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenom), bz)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
 			return

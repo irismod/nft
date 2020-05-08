@@ -66,6 +66,13 @@ type QueryDenomParams struct {
 	Denom string
 }
 
+// NewQueryDenomParams creates a new instance of QueryDenomParams
+func NewQueryDenomParams(denom string) QueryDenomParams {
+	return QueryDenomParams{
+		Denom: denom,
+	}
+}
+
 // QueryNFTParams params for query 'custom/nfts/nft'
 type QueryNFTParams struct {
 	Denom   string
