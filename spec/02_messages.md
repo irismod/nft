@@ -1,5 +1,23 @@
 # Messages
 
+## MsgIssueDenom
+This message defines a type of nft, there can be multiple nft of the same type
+
+| **Field** | **Type**         | **Description**                                              |
+| :-------- | :--------------- | :----------------------------------------------------------- |
+| Sender    | `sdk.AccAddress` | The account address of the user sending the NFT. By default it is __not__ required that the sender is also the owner of the NFT. |
+| Denom     | `string`         | The denomination of the NFT, necessary as multiple denominations are able to be represented on each chain. |
+| Schema    | `string`         | NFT specifications defined under this category               |
+```go
+type MsgIssueDenom struct {
+	Sender sdk.AccAddress `json:"sender",yaml:"sender"`
+	Denom  string         `json:"denom",yaml:"denom"`
+	Schema string         `json:"schema" yaml:"schema"`
+}
+```
+
+
+
 ## MsgTransferNFT
 
 This is the most commonly expected MsgType to be supported across chains. While each application specific blockchain will have very different adoption of the `MsgMintNFT`, `MsgBurnNFT` and `MsgEditNFTMetadata` it should be expected that most chains support the ability to transfer ownership of the NFT asset. The exception to this would be non-transferable NFTs that might be attached to reputation or some asset which should not be transferable. It still makes sense for this to be represented as an NFT because there are common queriers which will remain relevant to the NFT type even if non-transferable. This Message will fail if the NFT does not exist. By default it will not fail if the transfer is executed by someone beside the owner. **It is highly recommended that a custom handler is made to restrict use of this Message type to prevent unintended use.**
@@ -33,7 +51,7 @@ This message type allows the `TokenURI` to be updated. By default anyone can exe
 | TokenURI    | `string`         | The URI pointing to a JSON object that contains subsequent metadata information off-chain                   |
 
 ```go
-// MsgEditNFTMetadata edits an NFT's metadata
+// MsgEditNFT edits an NFT's metadata
 type MsgEditNFTMetadata struct {
   Sender       sdk.AccAddress
   ID          string

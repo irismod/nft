@@ -12,6 +12,8 @@ type NFT interface {
   SetOwner(address sdk.AccAddress)  // gets owner account of the NFT
   GetTokenURI() string              // metadata field: URI to retrieve the of chain metadata of the NFT
   SetTokenURI(tokenURI string)     // edit metadata of the NFT
+  GetMetadata() string
+	SetMetadata(metadata string)
   String() string                   // string representation of the NFT object
 }
 ```
@@ -48,3 +50,5 @@ type IDCollection struct {
   Denom string   `json:"denom"`
   IDs   []string `json:"IDs"`
 }
+
+```

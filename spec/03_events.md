@@ -4,6 +4,15 @@ The nft module emits the following events:
 
 ## Handlers
 
+### MsgIssueDenom
+
+| Type         | Attribute Key | Attribute Value |
+| ------------ | ------------- | --------------- |
+| transfer_nft | denom         | {nftDenom}      |
+| message      | module        | nft             |
+| message      | action        | issue_nft       |
+| message      | sender        | {senderAddress} |
+
 ### MsgTransferNFT
 
 | Type         | Attribute Key | Attribute Value    |
