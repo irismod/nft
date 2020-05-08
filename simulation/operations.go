@@ -180,7 +180,7 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Opera
 			randomSender.Address,                 // sender
 			randomRecipient.Address,              // recipient
 			simulation.RandStringOfLength(r, 5),  // nft TokenID
-			simulation.RandStringOfLength(r, 5),  // denom
+			getRandomDenom(ctx, k, r),            // denom
 			simulation.RandStringOfLength(r, 45), // tokenURI
 			simulation.RandStringOfLength(r, 10), // metadata
 		)
@@ -286,4 +286,10 @@ func getRandomNFTFromOwner(ctx sdk.Context, k keeper.Keeper, r *rand.Rand) (addr
 	nftID = idsCollection.IDs[i]
 
 	return owner.Address, denom, nftID
+}
+
+func getRandomDenom(ctx sdk.Context, k keeper.Keeper, r *rand.Rand) string {
+	var denoms = []string{kitties, doggos}
+	i := r.Intn(len(denoms))
+	return denoms[i]
 }
