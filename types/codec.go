@@ -10,6 +10,7 @@ import (
 
 // RegisterCodec concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
+	cdc.RegisterConcrete(MsgIssueDenom{}, "irismod/nft/MsgIssueDenom", nil)
 	cdc.RegisterConcrete(MsgTransferNFT{}, "irismod/nft/MsgTransferNFT", nil)
 	cdc.RegisterConcrete(MsgEditNFT{}, "irismod/nft/MsgEditNFT", nil)
 	cdc.RegisterConcrete(MsgMintNFT{}, "irismod/nft/MsgMintNFT", nil)

@@ -189,9 +189,7 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 // GetCmdBurnNFT is the CLI command for sending a BurnNFT transaction
 func GetCmdBurnNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "burn [denom] [tokenID]",
-		Short:   "burn an NFT",
-		Example: "nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fees=<fee>",
+		Use: "burn [denom] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Burn an NFT.
 Example:
