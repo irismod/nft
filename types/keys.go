@@ -25,6 +25,7 @@ var (
 	PrefixNFT        = []byte{0x01}
 	PrefixOwners     = []byte{0x02} // key for a owner
 	PrefixCollection = []byte{0x03} // key for balance of NFTs held by the denom
+	PrefixDenom      = []byte{0x04} // key for denom of the nft
 
 	delimiter = []byte("/")
 )
@@ -77,14 +78,14 @@ func KeyNFT(denom, id string) []byte {
 	return key
 }
 
-// KeyCollection gets the storeKey by the denom
+// KeyCollection gets the storeKey by the collection
 func KeyCollection(denom string) []byte {
 	key := append(PrefixCollection, delimiter...)
 	return append(key, []byte(denom)...)
 }
 
-// SplitKeyCollection return the denom from the storeKey
-func SplitKeyCollection(key []byte) (denom string) {
-	key = key[len(PrefixCollection)+len(delimiter):]
-	return string(key)
+// KeyDenom gets the storeKey by the denom
+func KeyDenom(denom string) []byte {
+	key := append(PrefixDenom, delimiter...)
+	return append(key, []byte(denom)...)
 }

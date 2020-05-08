@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/irismod/nft/exported"
 )
@@ -17,14 +18,16 @@ type BaseNFT struct {
 	ID       string         `json:"id" yaml:"id"`               // id of the token; not exported to clients
 	Owner    sdk.AccAddress `json:"owner" yaml:"owner"`         // account address that owns the NFT
 	TokenURI string         `json:"token_uri" yaml:"token_uri"` // optional extra properties available for querying
+	Metadata string         `json:"metadata" yaml:"metadata"`
 }
 
 // NewBaseNFT creates a new NFT instance
-func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI string) BaseNFT {
+func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI,schema string) BaseNFT {
 	return BaseNFT{
 		ID:       strings.ToLower(strings.TrimSpace(id)),
 		Owner:    owner,
 		TokenURI: strings.TrimSpace(tokenURI),
+		Metadata: strings.TrimSpace(schema),
 	}
 }
 
@@ -45,6 +48,14 @@ func (bnft BaseNFT) GetTokenURI() string { return bnft.TokenURI }
 // SetTokenURI edits metadata of an nft
 func (bnft *BaseNFT) SetTokenURI(tokenURI string) {
 	bnft.TokenURI = tokenURI
+}
+
+func (bnft BaseNFT) GetMetadata() string {
+	return bnft.Metadata
+}
+
+func (bnft *BaseNFT) SetMetadata(metadata string) {
+	bnft.Metadata = metadata
 }
 
 func (bnft BaseNFT) String() string {
@@ -85,4 +96,22 @@ func (nfts NFTs) String() string {
 		buf.WriteString(nft.String())
 	}
 	return buf.String()
+}
+
+func ValidateTokenID(tokenID string) error {
+	tokenID = strings.TrimSpace(tokenID)
+	if len(tokenID) < MinDenomLen || len(tokenID) > MaxDenomLen {
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
+	}
+	if !IsBeginWithAlpha(tokenID) || !IsAlphaNumeric(tokenID) {
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts alphanumeric characters,and begin with an english letter", denom)
+	}
+	return nil
+}
+
+func ValidateTokenURI(tokenURI string) error {
+	if len(tokenURI) > MaxTokenURILen {
+		return sdkerrors.Wrapf(ErrInvalidTokenURI, "invalid tokenURI %s, only accepts value [0, %d]", denom, MaxTokenURILen)
+	}
+	return nil
 }

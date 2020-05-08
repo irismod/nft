@@ -34,18 +34,30 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("irismod/%s", types.ModuleName))
 }
 
+func (k Keeper) IssueDenom(ctx sdk.Context, name, schema string, creator sdk.AccAddress) error {
+	name = strings.ToLower(strings.TrimSpace(name))
+	schema = strings.ToLower(strings.TrimSpace(schema))
+
+	denom := types.NewDenom(name, schema, creator)
+	return k.SetDenom(ctx, denom)
+}
+
 // MintNFT mints an NFT and manages that NFTs existence within Collections and Owners
 func (k Keeper) MintNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI string,
+	denom, tokenID, tokenURI,metadata string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
 
+	if !k.HasDenom(ctx, denom) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not exists", denom)
+	}
+
 	if k.HasNFT(ctx, denom, tokenID) {
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denom)
 	}
-	nft := types.NewBaseNFT(tokenID, owner, tokenURI)
+	nft := types.NewBaseNFT(tokenID, owner, tokenURI,metadata)
 	k.setNFT(ctx, denom, &nft)
 	k.setOwner(ctx, denom, tokenID, owner)
 	k.increaseSupply(ctx, denom)
@@ -54,17 +66,22 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 
 // EditNFT updates an already existing NFTs
 func (k Keeper) EditNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI string,
+	denom, tokenID, tokenURI,metadata string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
+
+	if !k.HasDenom(ctx, denom) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not exists", denom)
+	}
 
 	nft, err := k.Authorize(ctx, denom, tokenID, owner)
 	if err != nil {
 		return err
 	}
 
+	nft.SetMetadata(metadata)
 	nft.SetTokenURI(tokenURI)
 	k.setNFT(ctx, denom, nft)
 	return nil
@@ -72,11 +89,15 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 
 // TransferOwner gets all the TokenID Collections owned by an address
 func (k Keeper) TransferOwner(ctx sdk.Context,
-	denom, tokenID, tokenURI string,
+	denom, tokenID, tokenURI,metadata string,
 	srcOwner, dstOwner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	tokenURI = strings.TrimSpace(tokenURI)
+
+	if !k.HasDenom(ctx, denom) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not exists", denom)
+	}
 
 	nft, err := k.Authorize(ctx, denom, tokenID, srcOwner)
 	if err != nil {
@@ -86,6 +107,9 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 	nft.SetOwner(dstOwner)
 	if tokenURI != types.DoNotModify {
 		nft.SetTokenURI(tokenURI)
+	}
+	if metadata != types.DoNotModify {
+		nft.SetMetadata(metadata)
 	}
 
 	k.setNFT(ctx, denom, nft)
@@ -99,6 +123,10 @@ func (k Keeper) BurnNFT(ctx sdk.Context,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
+
+	if !k.HasDenom(ctx, denom) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not exists", denom)
+	}
 
 	nft, err := k.Authorize(ctx, denom, tokenID, owner)
 	if err != nil {

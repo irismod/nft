@@ -18,9 +18,59 @@ const (
 )
 
 var (
-	IsAlphaNumeric   = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString // only accepts alphanumeric characters
+	// IsAlphaNumeric only accepts alphanumeric characters
+	IsAlphaNumeric   = regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString
 	IsBeginWithAlpha = regexp.MustCompile(`^[a-zA-Z].*`).MatchString
 )
+
+/* --------------------------------------------------------------------------- */
+// MsgIssueDenom
+/* --------------------------------------------------------------------------- */
+type MsgIssueDenom struct {
+	Sender sdk.AccAddress `json:"sender",yaml:"sender"`
+	Denom  string         `json:"denom",yaml:"denom"`
+	Schema string         `json:"schema" yaml:"schema"`
+}
+
+// NewMsgTransferNFT is a constructor function for MsgSetName
+func NewMsgIssueDenom(sender sdk.AccAddress, denom, metadata string) MsgIssueDenom {
+	return MsgIssueDenom{
+		Sender: sender,
+		Denom:  strings.TrimSpace(denom),
+		Schema: strings.TrimSpace(metadata),
+	}
+}
+
+// Route Implements Msg
+func (msg MsgIssueDenom) Route() string { return RouterKey }
+
+// Type Implements Msg
+func (msg MsgIssueDenom) Type() string { return "issue_denom" }
+
+// ValidateBasic Implements Msg.
+func (msg MsgIssueDenom) ValidateBasic() error {
+	if err := ValidateDenom(msg.Denom); err != nil {
+		return err
+	}
+
+	if msg.Sender.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
+	}
+
+	//validate Denom
+	return nil
+}
+
+// GetSignBytes Implements Msg.
+func (msg MsgIssueDenom) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(msg)
+	return sdk.MustSortJSON(bz)
+}
+
+// GetSigners Implements Msg.
+func (msg MsgIssueDenom) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Sender}
+}
 
 /* --------------------------------------------------------------------------- */
 // MsgTransferNFT
@@ -28,21 +78,24 @@ var (
 
 // MsgTransferNFT defines a TransferNFT message
 type MsgTransferNFT struct {
-	Sender    sdk.AccAddress
-	Recipient sdk.AccAddress
-	TokenURI  string
-	Denom     string
-	ID        string
+	Sender    sdk.AccAddress `json:"sender",yaml:"sender"`
+	Recipient sdk.AccAddress `json:"recipient",yaml:"recipient"`
+	Denom     string         `json:"denom",yaml:"denom"`
+	ID        string         `json:"id",yaml:"id"`
+	TokenURI  string         `json:"token_uri",yaml:"token_uri"`
+	Metadata  string         `json:"metadata",yaml:"metadata"`
 }
 
 // NewMsgTransferNFT is a constructor function for MsgSetName
-func NewMsgTransferNFT(sender, recipient sdk.AccAddress, denom, id, tokenURI string) MsgTransferNFT {
+func NewMsgTransferNFT(sender, recipient sdk.AccAddress,
+	denom, id, tokenURI, metadata string) MsgTransferNFT {
 	return MsgTransferNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
 		ID:        strings.TrimSpace(id),
 		TokenURI:  strings.TrimSpace(tokenURI),
+		Metadata:  strings.TrimSpace(metadata),
 	}
 }
 
@@ -85,21 +138,22 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 
 // MsgEditNFT edits an NFT's metadata
 type MsgEditNFT struct {
-	Sender   sdk.AccAddress
-	ID       string
-	Denom    string
-	TokenURI string
+	Sender   sdk.AccAddress `json:"sender",yaml:"sender"`
+	ID       string         `json:"id",yaml:"id"`
+	Denom    string         `json:"denom",yaml:"denom"`
+	TokenURI string         `json:"token_uri",yaml:"token_uri"`
+	Metadata string         `json:"metadata",yaml:"metadata"`
 }
 
 // NewMsgEditNFT is a constructor function for MsgSetName
 func NewMsgEditNFT(sender sdk.AccAddress, id,
-	denom, tokenURI string,
-) MsgEditNFT {
+	denom, tokenURI, metadata string) MsgEditNFT {
 	return MsgEditNFT{
 		Sender:   sender,
 		Denom:    strings.TrimSpace(denom),
 		ID:       strings.TrimSpace(id),
 		TokenURI: strings.TrimSpace(tokenURI),
+		Metadata: strings.TrimSpace(metadata),
 	}
 }
 
@@ -142,21 +196,23 @@ func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 
 // MsgMintNFT defines a MintNFT message
 type MsgMintNFT struct {
-	Sender    sdk.AccAddress
-	Recipient sdk.AccAddress
-	ID        string
-	Denom     string
-	TokenURI  string
+	Sender    sdk.AccAddress `json:"sender",yaml:"sender"`
+	Recipient sdk.AccAddress `json:"recipient",yaml:"recipient"`
+	Denom     string         `json:"denom",yaml:"denom"`
+	ID        string         `json:"id",yaml:"id"`
+	TokenURI  string         `json:"token_uri",yaml:"token_uri"`
+	Metadata  string         `json:"metadata",yaml:"metadata"`
 }
 
 // NewMsgMintNFT is a constructor function for MsgMintNFT
-func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI string) MsgMintNFT {
+func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI, metadata string) MsgMintNFT {
 	return MsgMintNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
 		ID:        strings.TrimSpace(id),
 		TokenURI:  strings.TrimSpace(tokenURI),
+		Metadata:  strings.TrimSpace(metadata),
 	}
 }
 
@@ -201,9 +257,9 @@ func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 
 // MsgBurnNFT defines a BurnNFT message
 type MsgBurnNFT struct {
-	Sender sdk.AccAddress
-	ID     string
-	Denom  string
+	Sender sdk.AccAddress `json:"sender",yaml:"sender"`
+	Denom  string         `json:"denom",yaml:"denom"`
+	ID     string         `json:"id",yaml:"id"`
 }
 
 // NewMsgBurnNFT is a constructor function for MsgBurnNFT
@@ -242,33 +298,4 @@ func (msg MsgBurnNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgBurnNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-func ValidateDenom(denom string) error {
-	denom = strings.TrimSpace(denom)
-	if len(denom) < MinDenomLen || len(denom) > MaxDenomLen {
-		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
-	}
-	if !IsBeginWithAlpha(denom) || !IsAlphaNumeric(denom) {
-		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts alphanumeric characters,and begin with an english letter", denom)
-	}
-	return nil
-}
-
-func ValidateTokenID(tokenID string) error {
-	tokenID = strings.TrimSpace(tokenID)
-	if len(tokenID) < MinDenomLen || len(tokenID) > MaxDenomLen {
-		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
-	}
-	if !IsBeginWithAlpha(tokenID) || !IsAlphaNumeric(tokenID) {
-		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts alphanumeric characters,and begin with an english letter", denom)
-	}
-	return nil
-}
-
-func ValidateTokenURI(tokenURI string) error {
-	if len(tokenURI) > MaxTokenURILen {
-		return sdkerrors.Wrapf(ErrInvalidTokenURI, "invalid tokenURI %s, only accepts value [0, %d]", denom, MaxTokenURILen)
-	}
-	return nil
 }

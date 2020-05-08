@@ -3,21 +3,19 @@ package types
 import (
 	"bytes"
 	"fmt"
-	"strings"
-
 	"github.com/irismod/nft/exported"
 )
 
 // Collection of non fungible tokens
 type Collection struct {
-	Denom string `json:"denom" yaml:"denom"` // name of the collection; not exported to clients
+	Denom Denom `json:"denom" yaml:"denom"` // name of the collection; not exported to clients
 	NFTs  NFTs   `json:"nfts" yaml:"nfts"`   // NFTs that belong to a collection
 }
 
 // NewCollection creates a new NFT Collection
-func NewCollection(denom string, nfts NFTs) Collection {
+func NewCollection(denom Denom, nfts NFTs) Collection {
 	return Collection{
-		Denom: strings.TrimSpace(denom),
+		Denom: denom,
 		NFTs:  nfts,
 	}
 }
