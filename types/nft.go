@@ -22,12 +22,12 @@ type BaseNFT struct {
 }
 
 // NewBaseNFT creates a new NFT instance
-func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI,schema string) BaseNFT {
+func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, metadata string) BaseNFT {
 	return BaseNFT{
 		ID:       strings.ToLower(strings.TrimSpace(id)),
 		Owner:    owner,
 		TokenURI: strings.TrimSpace(tokenURI),
-		Metadata: strings.TrimSpace(schema),
+		Metadata: strings.TrimSpace(metadata),
 	}
 }
 

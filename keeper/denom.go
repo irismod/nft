@@ -14,8 +14,8 @@ func (k Keeper) HasDenom(ctx sdk.Context, denom string) bool {
 }
 
 // SetDenom is responsible for saving the definition of denom
-func (k Keeper) SetDenom(ctx sdk.Context,denom types.Denom) error {
-	if k.HasDenom(ctx,denom.Name) {
+func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
+	if k.HasDenom(ctx, denom.Name) {
 		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s has already exists", denom.Name)
 	}
 
@@ -47,7 +47,7 @@ func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []types.Denom) {
 	for ; iterator.Valid(); iterator.Next() {
 		var denom types.Denom
 		k.cdc.MustUnmarshalBinaryLengthPrefixed(iterator.Value(), &denom)
-		denoms = append(denoms,denom)
+		denoms = append(denoms, denom)
 	}
 	return denoms
 }

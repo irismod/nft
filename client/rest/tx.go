@@ -58,7 +58,7 @@ func mintNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 			req.Recipient = req.Owner
 		}
 		// create the message
-		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI)
+		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI, req.Metadata)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -81,7 +81,7 @@ func editNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.HandlerF
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgEditNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI)
+		msg := types.NewMsgEditNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.Metadata)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -109,7 +109,7 @@ func transferNFTHandlerFn(cdc *codec.Codec, cliCtx context.CLIContext) http.Hand
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgTransferNFT(req.Owner, recipient, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI)
+		msg := types.NewMsgTransferNFT(req.Owner, recipient, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.Metadata)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

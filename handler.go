@@ -31,7 +31,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 }
 
 func HandleMsgIssueDenom(ctx sdk.Context, msg types.MsgIssueDenom, k keeper.Keeper,
-) (*sdk.Result, error)  {
+) (*sdk.Result, error) {
 	if err := k.IssueDenom(ctx, msg.Denom,
 		msg.Schema,
 		msg.Sender); err != nil {

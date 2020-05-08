@@ -52,6 +52,7 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
+			metadata := viper.GetString(FlagMetadata)
 
 			var recipient = cliCtx.GetFromAddress()
 			var err error
@@ -63,7 +64,7 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 				}
 			}
 
-			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI)
+			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, metadata)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -89,8 +90,9 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
+			metadata := viper.GetString(FlagMetadata)
 
-			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI)
+			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, metadata)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -122,8 +124,9 @@ func GetCmdTransferNFT(cdc *codec.Codec) *cobra.Command {
 			denom := args[1]
 			tokenID := args[2]
 			tokenURI := viper.GetString(FlagTokenURI)
+			metadata := viper.GetString(FlagMetadata)
 
-			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI)
+			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, metadata)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

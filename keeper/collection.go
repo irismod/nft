@@ -75,7 +75,7 @@ func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Col
 	for _, denom := range k.GetDenoms(ctx) {
 		nfts := k.GetNFTs(ctx, denom.Name)
 		fn(types.Collection{
-			Denom: denom.Name,
+			Denom: denom,
 			NFTs:  nfts,
 		})
 	}

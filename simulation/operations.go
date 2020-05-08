@@ -90,6 +90,7 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.O
 			denom,
 			nftID,
 			"",
+			simulation.RandStringOfLength(r, 10), // metadata
 		)
 		account := ak.GetAccount(ctx, msg.Sender)
 
@@ -135,6 +136,7 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulati
 			nftID,
 			denom,
 			simulation.RandStringOfLength(r, 45), // tokenURI
+			simulation.RandStringOfLength(r, 10), // metadata
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
@@ -180,6 +182,7 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Opera
 			simulation.RandStringOfLength(r, 5),  // nft TokenID
 			simulation.RandStringOfLength(r, 5),  // denom
 			simulation.RandStringOfLength(r, 45), // tokenURI
+			simulation.RandStringOfLength(r, 10), // metadata
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
