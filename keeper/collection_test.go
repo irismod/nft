@@ -55,11 +55,6 @@ func (suite *KeeperSuite) TestGetCollections() {
 	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
 	suite.NoError(err)
 
-	// collections should equal 1
-	collections := suite.keeper.GetCollections(suite.ctx)
-	suite.NotEmpty(collections)
-	suite.Equal(len(collections), 2)
-
 	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
 	suite.False(fail, msg)
 }

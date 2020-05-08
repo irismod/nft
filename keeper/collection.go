@@ -81,24 +81,6 @@ func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Col
 	}
 }
 
-// GetDenoms return the denoms of all the collection
-//func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []string) {
-//	store := ctx.KVStore(k.storeKey)
-//	iterator := sdk.KVStorePrefixIterator(store, types.KeyCollection(""))
-//	defer iterator.Close()
-//
-//	var denomMap = make(map[string]int)
-//	for ; iterator.Valid(); iterator.Next() {
-//		key := iterator.Key()
-//		denom := types.SplitKeyCollection(key)
-//		if _, existed := denomMap[denom]; !existed {
-//			denoms = append(denoms, denom)
-//			denomMap[denom] = 1
-//		}
-//	}
-//	return denoms
-//}
-
 func (k Keeper) increaseSupply(ctx sdk.Context, denom string) {
 	supply := k.GetTotalSupply(ctx, denom)
 	supply++

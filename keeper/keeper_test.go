@@ -66,6 +66,11 @@ func (suite *KeeperSuite) SetupTest() {
 
 	err = suite.keeper.SetDenom(suite.ctx, denomE2)
 	suite.Nil(err)
+
+	// collections should equal 1
+	collections := suite.keeper.GetCollections(suite.ctx)
+	suite.NotEmpty(collections)
+	suite.Equal(len(collections), 2)
 }
 
 func TestKeeperSuite(t *testing.T) {
