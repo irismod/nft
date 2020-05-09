@@ -24,11 +24,11 @@ var (
 )
 
 // NewMsgIssueDenom is a constructor function for MsgSetName
-func NewMsgIssueDenom(sender sdk.AccAddress, denom, metadata string) MsgIssueDenom {
+func NewMsgIssueDenom(sender sdk.AccAddress, denom, schema string) MsgIssueDenom {
 	return MsgIssueDenom{
 		Sender: sender,
 		Denom:  strings.TrimSpace(denom),
-		Schema: strings.TrimSpace(metadata),
+		Schema: strings.TrimSpace(schema),
 	}
 }
 

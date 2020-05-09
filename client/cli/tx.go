@@ -48,7 +48,7 @@ func GetCmdIssueDenom(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Issue a new denom.
 Example:
-$ %s tx nft issue [denom] --from=<key-name> --metadata=<schema> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),
@@ -59,16 +59,16 @@ $ %s tx nft issue [denom] --from=<key-name> --metadata=<schema> --chain-id=<chai
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			denom := args[0]
-			metadata := viper.GetString(FlagMetadata)
+			schema := viper.GetString(FlagSchema)
 
-			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, metadata)
+			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, schema)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
 			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
-	cmd.Flags().AddFlagSet(FsMintNFT)
+	cmd.Flags().AddFlagSet(FsIssueDenom)
 	return cmd
 }
 
