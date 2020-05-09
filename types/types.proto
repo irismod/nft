@@ -5,7 +5,6 @@ import "third_party/proto/gogoproto/gogo.proto";
 
 option go_package = "github.com/irismod/nft/types";
 option (gogoproto.goproto_getters_all)  = false;
-//option (gogoproto.goproto_stringer_all)  = false;
 
 
 // MsgIssueDenom defines an SDK message for creating a new denom.
