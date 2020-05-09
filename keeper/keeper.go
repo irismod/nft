@@ -17,12 +17,11 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	storeKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-
-	cdc *codec.Codec // The amino codec for binary encoding/decoding.
+	cdc      codec.Marshaler
 }
 
 // NewKeeper creates new instances of the nft Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc codec.Marshaler, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
@@ -58,7 +57,7 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denom)
 	}
 	nft := types.NewBaseNFT(tokenID, owner, tokenURI, metadata)
-	k.setNFT(ctx, denom, &nft)
+	k.setNFT(ctx, denom, nft)
 	k.setOwner(ctx, denom, tokenID, owner)
 	k.increaseSupply(ctx, denom)
 	return nil
@@ -81,8 +80,8 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 		return err
 	}
 
-	nft.SetMetadata(metadata)
-	nft.SetTokenURI(tokenURI)
+	nft.Metadata = metadata
+	nft.TokenURI = tokenURI
 	k.setNFT(ctx, denom, nft)
 	return nil
 }
@@ -104,12 +103,12 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 		return err
 	}
 
-	nft.SetOwner(dstOwner)
+	nft.Owner = dstOwner
 	if tokenURI != types.DoNotModify {
-		nft.SetTokenURI(tokenURI)
+		nft.TokenURI = tokenURI
 	}
 	if metadata != types.DoNotModify {
-		nft.SetMetadata(metadata)
+		nft.Metadata = metadata
 	}
 
 	k.setNFT(ctx, denom, nft)

@@ -73,8 +73,9 @@ func (k Keeper) setOwner(ctx sdk.Context,
 	denom, tokenID string,
 	owner sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
-	bzID := k.cdc.MustMarshalBinaryLengthPrefixed(tokenID)
-	store.Set(types.KeyOwner(owner, denom, tokenID), bzID)
+
+	bz := types.MustMarshalTokenID(k.cdc, tokenID)
+	store.Set(types.KeyOwner(owner, denom, tokenID), bz)
 }
 
 func (k Keeper) swapOwner(ctx sdk.Context,

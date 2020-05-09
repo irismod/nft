@@ -63,7 +63,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONMarshaler, bz json.RawMessag
 
 // RegisterRESTRoutes registers rest routes
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
-	rest.RegisterRoutes(ctx, rtr, ModuleCdc, RouterKey)
+	rest.RegisterRoutes(ctx, rtr, RouterKey)
 }
 
 // GetTxCmd gets the root tx command of this module

@@ -263,7 +263,7 @@ func NewSimApp(
 	evidenceKeeper.SetRouter(evidenceRouter)
 	app.EvidenceKeeper = *evidenceKeeper
 
-	app.NFTKeeper = nft.NewKeeper(app.cdc, keys[nft.StoreKey])
+	app.NFTKeeper = nft.NewKeeper(app.appCodec, keys[nft.StoreKey])
 
 	// NOTE: Any module instantiated in the module manager that is later modified
 	// must be passed by reference here.

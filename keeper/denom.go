@@ -20,7 +20,7 @@ func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
 	}
 
 	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryLengthPrefixed(denom)
+	bz := k.cdc.MustMarshalBinaryBare(&denom)
 	store.Set(types.KeyDenom(denom.Name), bz)
 	return nil
 }
@@ -34,7 +34,7 @@ func (k Keeper) GetDenom(ctx sdk.Context, name string) (denom types.Denom, err e
 		return denom, sdkerrors.Wrapf(types.ErrInvalidDenom, "not found denom: %s", name)
 	}
 
-	k.cdc.MustUnmarshalBinaryLengthPrefixed(bz, &denom)
+	k.cdc.MustUnmarshalBinaryBare(bz, &denom)
 	return denom, nil
 }
 
@@ -46,7 +46,7 @@ func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []types.Denom) {
 
 	for ; iterator.Valid(); iterator.Next() {
 		var denom types.Denom
-		k.cdc.MustUnmarshalBinaryLengthPrefixed(iterator.Value(), &denom)
+		k.cdc.MustUnmarshalBinaryBare(iterator.Value(), &denom)
 		denoms = append(denoms, denom)
 	}
 	return denoms

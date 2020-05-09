@@ -16,24 +16,21 @@ func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB tmkv.Pair) string {
 		switch {
 		case bytes.Equal(kvA.Key[:1], types.PrefixNFT):
 			var nftA, nftB types.BaseNFT
-			cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &nftA)
-			cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &nftB)
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &nftA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &nftB)
 			return fmt.Sprintf("%v\n%v", nftA, nftB)
-
-		//case bytes.Equal(kvA.Key[:1], types.PrefixOwners):
-		//	var idA, idB string
-		//	cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &idA)
-		//	cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &idB)
-		//	return fmt.Sprintf("%v\n%v", kvA.Value, kvB.Value)
-		//case bytes.Equal(kvA.Key[:1], types.PrefixCollection):
-		//	var supplyA, supplyB uint64
-		//	cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &supplyA)
-		//	cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &supplyB)
-		//	return fmt.Sprintf("%d\n%d", supplyA, supplyB)
+		case bytes.Equal(kvA.Key[:1], types.PrefixOwners):
+			idA := types.MustUnMarshalTokenID(cdc, kvA.Value)
+			idB := types.MustUnMarshalTokenID(cdc, kvB.Value)
+			return fmt.Sprintf("%v\n%v", idA, idB)
+		case bytes.Equal(kvA.Key[:1], types.PrefixCollection):
+			supplyA := types.MustUnMarshalSupply(cdc, kvA.Value)
+			supplyB := types.MustUnMarshalSupply(cdc, kvB.Value)
+			return fmt.Sprintf("%d\n%d", supplyA, supplyB)
 		case bytes.Equal(kvA.Key[:1], types.PrefixDenom):
 			var denomA, denomB types.Denom
-			cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &denomA)
-			cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &denomB)
+			cdc.MustUnmarshalBinaryBare(kvA.Value, &denomA)
+			cdc.MustUnmarshalBinaryBare(kvB.Value, &denomB)
 			return fmt.Sprintf("%v\n%v", denomA, denomB)
 
 		default:

@@ -2,6 +2,7 @@ package types
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -22,18 +23,30 @@ func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, metadata string) Base
 	}
 }
 
-// SetOwner updates the owner address of the NFT
-func (bnft *BaseNFT) SetOwner(address sdk.AccAddress) {
-	bnft.Owner = address
+func (bnft BaseNFT) GetID() string {
+	return bnft.ID
 }
 
-// SetTokenURI edits metadata of an nft
-func (bnft *BaseNFT) SetTokenURI(tokenURI string) {
-	bnft.TokenURI = tokenURI
+func (bnft BaseNFT) GetOwner() sdk.AccAddress {
+	return bnft.Owner
 }
 
-func (bnft *BaseNFT) SetMetadata(metadata string) {
-	bnft.Metadata = metadata
+func (bnft BaseNFT) GetTokenURI() string {
+	return bnft.TokenURI
+}
+
+func (bnft BaseNFT) GetMetadata() string {
+	return bnft.Metadata
+}
+
+func (bnft BaseNFT) String() string {
+	return fmt.Sprintf(`TokenID:				%s
+Owner:			%s
+TokenURI:		%s`,
+		bnft.ID,
+		bnft.Owner,
+		bnft.TokenURI,
+	)
 }
 
 // ----------------------------------------------------------------------------
