@@ -7,13 +7,6 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// Denom defines the data structure of the nft category
-type Denom struct {
-	Name    string         `json:"name"`
-	Schema  string         `json:"schema"`
-	Creator sdk.AccAddress `json:"creator"`
-}
-
 // NewDenom return a new denom
 func NewDenom(name, schema string, creator sdk.AccAddress) Denom {
 	return Denom{

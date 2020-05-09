@@ -2,6 +2,22 @@ PACKAGES_NOSIMULATION=$(shell go list ./...)
 BINDIR ?= $(GOPATH)/bin
 SIMAPP = ./app
 
+# The below include contains the tools, runsim and golangci-lint targets.
+include devtools/Makefile
+
+all: tools lint test
+########################################
+### Dependencies
+
+go-mod-cache: go.sum
+	@echo "--> Download go modules to local cache"
+	@go mod download
+.PHONY: go-mod-cache
+
+go.sum: go.mod
+	@echo "--> Ensure dependencies have not been modified"
+	@go mod verify
+	@go mod tidy
 
 ###############################################################################
 ###                           Tests & Simulation                            ###
@@ -56,6 +72,10 @@ test-sim-custom-genesis-multi-seed \
 test-sim-multi-seed-short \
 test-sim-multi-seed-long
 
+test-cover:
+	bash -x devtools/test_cover.sh
+.PHONY: test-cover
+
 lint:
 	@echo "--> Running linter"
 	@golangci-lint run ./...
@@ -69,38 +89,5 @@ format:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" | xargs goimports -w -local github.com/irismod/nft
 .PHONY: format
 
-###############################################################################
-###                          Tools & Dependencies                           ###
-###############################################################################
-
-###
-# Find OS and Go environment
-# GO contains the Go binary
-# FS contains the OS file separator
-###
-ifeq ($(OS),Windows_NT)
-  GO := $(shell where go.exe 2> NUL)
-  FS := "\\"
-else
-  GO := $(shell command -v go 2> /dev/null)
-  FS := "/"
-endif
-
-ifeq ($(GO),)
-  $(error could not find go. Is it in PATH $(GO))
-endif
-
-tools: runsim
-
-GOPATH ?= $(shell $(GO) env GOPATH)
-
-TOOLS_DESTDIR  ?= $(GOPATH)/bin
-RUNSIM 					= $(TOOLS_DESTDIR)/runsim
-
-runsim:
-	@echo "Installing runsim..."
-	@go get github.com/cosmos/tools/cmd/runsim@v1.0.0
-
-tools-clean:
-	rm -f $(RUNSIM)
-	rm -f tools-stamp
+proto-gen:
+	@./scripts/protocgen.sh

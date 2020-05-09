@@ -23,16 +23,7 @@ var (
 	IsBeginWithAlpha = regexp.MustCompile(`^[a-zA-Z].*`).MatchString
 )
 
-/* --------------------------------------------------------------------------- */
-// MsgIssueDenom
-/* --------------------------------------------------------------------------- */
-type MsgIssueDenom struct {
-	Sender sdk.AccAddress `json:"sender",yaml:"sender"`
-	Denom  string         `json:"denom",yaml:"denom"`
-	Schema string         `json:"schema" yaml:"schema"`
-}
-
-// NewMsgTransferNFT is a constructor function for MsgSetName
+// NewMsgIssueDenom is a constructor function for MsgSetName
 func NewMsgIssueDenom(sender sdk.AccAddress, denom, metadata string) MsgIssueDenom {
 	return MsgIssueDenom{
 		Sender: sender,
@@ -69,20 +60,6 @@ func (msg MsgIssueDenom) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgIssueDenom) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-/* --------------------------------------------------------------------------- */
-// MsgTransferNFT
-/* --------------------------------------------------------------------------- */
-
-// MsgTransferNFT defines a TransferNFT message
-type MsgTransferNFT struct {
-	Sender    sdk.AccAddress `json:"sender",yaml:"sender"`
-	Recipient sdk.AccAddress `json:"recipient",yaml:"recipient"`
-	Denom     string         `json:"denom",yaml:"denom"`
-	ID        string         `json:"id",yaml:"id"`
-	TokenURI  string         `json:"token_uri",yaml:"token_uri"`
-	Metadata  string         `json:"metadata",yaml:"metadata"`
 }
 
 // NewMsgTransferNFT is a constructor function for MsgSetName
@@ -131,19 +108,6 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
 }
 
-/* --------------------------------------------------------------------------- */
-// MsgEditNFT
-/* --------------------------------------------------------------------------- */
-
-// MsgEditNFT edits an NFT's metadata
-type MsgEditNFT struct {
-	Sender   sdk.AccAddress `json:"sender",yaml:"sender"`
-	ID       string         `json:"id",yaml:"id"`
-	Denom    string         `json:"denom",yaml:"denom"`
-	TokenURI string         `json:"token_uri",yaml:"token_uri"`
-	Metadata string         `json:"metadata",yaml:"metadata"`
-}
-
 // NewMsgEditNFT is a constructor function for MsgSetName
 func NewMsgEditNFT(sender sdk.AccAddress, id,
 	denom, tokenURI, metadata string) MsgEditNFT {
@@ -187,20 +151,6 @@ func (msg MsgEditNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-/* --------------------------------------------------------------------------- */
-// MsgMintNFT
-/* --------------------------------------------------------------------------- */
-
-// MsgMintNFT defines a MintNFT message
-type MsgMintNFT struct {
-	Sender    sdk.AccAddress `json:"sender",yaml:"sender"`
-	Recipient sdk.AccAddress `json:"recipient",yaml:"recipient"`
-	Denom     string         `json:"denom",yaml:"denom"`
-	ID        string         `json:"id",yaml:"id"`
-	TokenURI  string         `json:"token_uri",yaml:"token_uri"`
-	Metadata  string         `json:"metadata",yaml:"metadata"`
 }
 
 // NewMsgMintNFT is a constructor function for MsgMintNFT
@@ -248,17 +198,6 @@ func (msg MsgMintNFT) GetSignBytes() []byte {
 // GetSigners Implements Msg.
 func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 	return []sdk.AccAddress{msg.Sender}
-}
-
-/* --------------------------------------------------------------------------- */
-// MsgBurnNFT
-/* --------------------------------------------------------------------------- */
-
-// MsgBurnNFT defines a BurnNFT message
-type MsgBurnNFT struct {
-	Sender sdk.AccAddress `json:"sender",yaml:"sender"`
-	Denom  string         `json:"denom",yaml:"denom"`
-	ID     string         `json:"id",yaml:"id"`
 }
 
 // NewMsgBurnNFT is a constructor function for MsgBurnNFT
