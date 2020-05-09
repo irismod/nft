@@ -12,6 +12,9 @@ func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) {
 	}
 
 	for _, c := range data.Collections {
+		if err := k.SetDenom(ctx, c.Denom); err != nil {
+			panic(err)
+		}
 		if err := k.SetCollection(ctx, c); err != nil {
 			panic(err)
 		}
@@ -32,7 +35,7 @@ func DefaultGenesisState() GenesisState {
 // error for any failed validation criteria.
 func ValidateGenesis(data GenesisState) error {
 	for _, c := range data.Collections {
-		if err := ValidateDenom(c.Denom); err != nil {
+		if err := ValidateDenom(c.Denom.Name); err != nil {
 			return err
 		}
 		for _, nft := range c.NFTs {

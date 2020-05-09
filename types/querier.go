@@ -12,6 +12,7 @@ const (
 	QueryOwner      = "owner"
 	QueryCollection = "collection"
 	QueryDenoms     = "denoms"
+	QueryDenom      = "denom"
 	QueryNFT        = "nft"
 )
 
@@ -56,6 +57,18 @@ type QueryCollectionParams struct {
 // NewQueryCollectionParams creates a new instance of QueryCollectionParams
 func NewQueryCollectionParams(denom string) QueryCollectionParams {
 	return QueryCollectionParams{
+		Denom: denom,
+	}
+}
+
+// QueryDenomParams defines the params for queries:
+type QueryDenomParams struct {
+	Denom string
+}
+
+// NewQueryDenomParams creates a new instance of QueryDenomParams
+func NewQueryDenomParams(denom string) QueryDenomParams {
+	return QueryDenomParams{
 		Denom: denom,
 	}
 }

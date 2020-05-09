@@ -22,6 +22,7 @@ var (
 	address3  = types.CreateTestAddrs(3)[2]
 	tokenURI1 = "https://google.com/token-1.json"
 	tokenURI2 = "https://google.com/token-2.json"
+	metadata  = "{}"
 )
 
 func createTestApp(isCheckTx bool) (*simapp.SimApp, sdk.Context) {
@@ -37,7 +38,7 @@ func CheckInvariants(k nft.Keeper, ctx sdk.Context) bool {
 	ownersCollectionsSupply := make(map[string]int)
 
 	k.IterateCollections(ctx, func(collection types.Collection) {
-		collectionsSupply[collection.Denom] = collection.Supply()
+		collectionsSupply[collection.Denom.Name] = collection.Supply()
 	})
 
 	owners := k.GetOwners(ctx)

@@ -14,18 +14,42 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 
 		switch msg := msg.(type) {
+		case types.MsgIssueDenom:
+			return HandleMsgIssueDenom(ctx, msg, k)
+		case types.MsgMintNFT:
+			return HandleMsgMintNFT(ctx, msg, k)
 		case types.MsgTransferNFT:
 			return HandleMsgTransferNFT(ctx, msg, k)
 		case types.MsgEditNFT:
 			return HandleMsgEditNFT(ctx, msg, k)
-		case types.MsgMintNFT:
-			return HandleMsgMintNFT(ctx, msg, k)
 		case types.MsgBurnNFT:
 			return HandleMsgBurnNFT(ctx, msg, k)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized nft message type: %T", msg)
 		}
 	}
+}
+
+func HandleMsgIssueDenom(ctx sdk.Context, msg types.MsgIssueDenom, k keeper.Keeper,
+) (*sdk.Result, error) {
+	if err := k.IssueDenom(ctx, msg.Denom,
+		msg.Schema,
+		msg.Sender); err != nil {
+		return nil, err
+	}
+
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			types.EventTypeIssueDenom,
+			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
+		),
+		sdk.NewEvent(
+			sdk.EventTypeMessage,
+			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeySender, msg.Sender.String()),
+		),
+	})
+	return &sdk.Result{Events: ctx.EventManager().Events()}, nil
 }
 
 // HandleMsgTransferNFT handler for MsgTransferNFT
@@ -35,6 +59,7 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 		msg.Denom,
 		msg.ID,
 		msg.TokenURI,
+		msg.Metadata,
 		msg.Sender,
 		msg.Recipient); err != nil {
 		return nil, err
@@ -62,6 +87,7 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 	if err := k.EditNFT(ctx, msg.Denom,
 		msg.ID,
 		msg.TokenURI,
+		msg.Metadata,
 		msg.Sender); err != nil {
 		return nil, err
 	}
@@ -85,7 +111,12 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 // HandleMsgMintNFT handles MsgMintNFT
 func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.MintNFT(ctx, msg.Denom, msg.ID, msg.TokenURI, msg.Recipient); err != nil {
+	if err := k.MintNFT(ctx,
+		msg.Denom,
+		msg.ID,
+		msg.TokenURI,
+		msg.Metadata,
+		msg.Recipient); err != nil {
 		return nil, err
 	}
 

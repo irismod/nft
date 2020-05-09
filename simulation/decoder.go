@@ -30,6 +30,11 @@ func DecodeStore(cdc *codec.Codec, kvA, kvB kv.Pair) string {
 		cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &supplyA)
 		cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &supplyB)
 		return fmt.Sprintf("%d\n%d", supplyA, supplyB)
+	case bytes.Equal(kvA.Key[:1], types.PrefixDenom):
+		var denomA, denomB types.Denom
+		cdc.MustUnmarshalBinaryLengthPrefixed(kvA.Value, &denomA)
+		cdc.MustUnmarshalBinaryLengthPrefixed(kvB.Value, &denomB)
+		return fmt.Sprintf("%v\n%v", denomA, denomB)
 
 	default:
 		panic(fmt.Sprintf("invalid %s key prefix %X", types.ModuleName, kvA.Key[:1]))

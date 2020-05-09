@@ -11,9 +11,10 @@ import (
 func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) error {
 	for _, nft := range collection.NFTs {
 		if err := k.MintNFT(ctx,
-			collection.Denom,
+			collection.Denom.Name,
 			nft.GetID(),
 			nft.GetTokenURI(),
+			nft.GetMetadata(),
 			nft.GetOwner(),
 		); err != nil {
 			return err
@@ -23,11 +24,17 @@ func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) erro
 }
 
 // GetCollection returns the collection by the specified denom
-func (k Keeper) GetCollection(ctx sdk.Context, denom string) (types.Collection, error) {
-	nfts := k.GetNFTs(ctx, denom)
+func (k Keeper) GetCollection(ctx sdk.Context, denomNm string) (types.Collection, error) {
+	denom, err := k.GetDenom(ctx, denomNm)
+	if err != nil {
+		return types.Collection{}, sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not existed ", denom)
+	}
+
+	nfts := k.GetNFTs(ctx, denomNm)
 	if len(nfts) == 0 {
 		return types.Collection{}, sdkerrors.Wrapf(types.ErrUnknownCollection, "collection %s not existed ", denom)
 	}
+
 	return types.NewCollection(denom, nfts), nil
 }
 
@@ -65,32 +72,13 @@ func (k Keeper) GetTotalSupplyOfOwner(ctx sdk.Context, denom string, owner sdk.A
 
 // IterateCollections iterate all the collection
 func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Collection)) {
-	denoms := k.GetDenoms(ctx)
-	for _, denom := range denoms {
-		nfts := k.GetNFTs(ctx, denom)
+	for _, denom := range k.GetDenoms(ctx) {
+		nfts := k.GetNFTs(ctx, denom.Name)
 		fn(types.Collection{
 			Denom: denom,
 			NFTs:  nfts,
 		})
 	}
-}
-
-// GetDenoms return the denoms of all the collection
-func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []string) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyCollection(""))
-	defer iterator.Close()
-
-	var denomMap = make(map[string]int)
-	for ; iterator.Valid(); iterator.Next() {
-		key := iterator.Key()
-		denom := types.SplitKeyCollection(key)
-		if _, existed := denomMap[denom]; !existed {
-			denoms = append(denoms, denom)
-			denomMap[denom] = 1
-		}
-	}
-	return denoms
 }
 
 func (k Keeper) increaseSupply(ctx sdk.Context, denom string) {

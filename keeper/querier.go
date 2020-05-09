@@ -22,6 +22,8 @@ func NewQuerier(k Keeper) sdk.Querier {
 			return queryOwner(ctx, req, k)
 		case types.QueryCollection:
 			return queryCollection(ctx, req, k)
+		case types.QueryDenom:
+			return queryDenom(ctx, req, k)
 		case types.QueryDenoms:
 			return queryDenoms(ctx, req, k)
 		case types.QueryNFT:
@@ -87,6 +89,24 @@ func queryCollection(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, 
 	}
 
 	bz, err := types.ModuleCdc.MarshalJSON(collection)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return bz, nil
+}
+
+func queryDenom(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
+	var params types.QueryDenomParams
+
+	err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+	}
+
+	denom, err := k.GetDenom(ctx, params.Denom)
+
+	bz, err := types.ModuleCdc.MarshalJSON(denom)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

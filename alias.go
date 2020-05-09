@@ -30,6 +30,7 @@ var (
 	NewCollections           = types.NewCollections
 	NewGenesisState          = types.NewGenesisState
 	GetOwnerKey              = types.KeyOwner
+	NewMsgIssueDenom         = types.NewMsgIssueDenom
 	NewMsgTransferNFT        = types.NewMsgTransferNFT
 	NewMsgEditNFTMetadata    = types.NewMsgEditNFT
 	NewMsgMintNFT            = types.NewMsgMintNFT
@@ -82,6 +83,7 @@ type (
 	MsgBurnNFT            = types.MsgBurnNFT
 	BaseNFT               = types.BaseNFT
 	NFTs                  = types.NFTs
+	Denom                 = types.Denom
 	IDCollection          = types.IDCollection
 	IDCollections         = types.IDCollections
 	Owner                 = types.Owner
