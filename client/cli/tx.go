@@ -92,7 +92,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
 			var recipient = cliCtx.GetFromAddress()
 			var err error
@@ -104,7 +104,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 				}
 			}
 
-			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, metadata)
+			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -120,7 +120,7 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "edit [denom] [tokenID]",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Edit the metadata of an NFT.
+			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
 $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
@@ -135,9 +135,9 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
-			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, metadata)
+			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -174,9 +174,9 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 			denom := args[1]
 			tokenID := args[2]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
-			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, metadata)
+			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

@@ -22,7 +22,7 @@ var (
 	address3  = types.CreateTestAddrs(3)[2]
 	tokenURI1 = "https://google.com/token-1.json"
 	tokenURI2 = "https://google.com/token-2.json"
-	metadata  = "{}"
+	tokenData = "{}"
 )
 
 func createTestApp(isCheckTx bool) (*simapp.SimApp, sdk.Context) {

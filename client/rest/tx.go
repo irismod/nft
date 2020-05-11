@@ -27,7 +27,7 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute strin
 		mintNFTHandlerFn(cliCtx),
 	).Methods("POST")
 
-	// Update an NFT metadata
+	// Update an NFT tokenData
 	r.HandleFunc(
 		fmt.Sprintf("/nft/nfts/{%s}/{%s}", RestParamDenom, RestParamTokenID),
 		editNFTHandlerFn(cliCtx),
@@ -84,7 +84,7 @@ func mintNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			req.Recipient = req.Owner
 		}
 		// create the message
-		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI, req.Metadata)
+		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI, req.TokenData)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -107,7 +107,7 @@ func editNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgEditNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.Metadata)
+		msg := types.NewMsgEditNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.TokenData)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -135,7 +135,7 @@ func transferNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgTransferNFT(req.Owner, recipient, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.Metadata)
+		msg := types.NewMsgTransferNFT(req.Owner, recipient, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.TokenData)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

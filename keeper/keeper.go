@@ -43,7 +43,7 @@ func (k Keeper) IssueDenom(ctx sdk.Context, name, schema string, creator sdk.Acc
 
 // MintNFT mints an NFT and manages that NFTs existence within Collections and Owners
 func (k Keeper) MintNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -56,7 +56,7 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 	if k.HasNFT(ctx, denom, tokenID) {
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denom)
 	}
-	nft := types.NewBaseNFT(tokenID, owner, tokenURI, metadata)
+	nft := types.NewBaseNFT(tokenID, owner, tokenURI, tokenData)
 	k.setNFT(ctx, denom, nft)
 	k.setOwner(ctx, denom, tokenID, owner)
 	k.increaseSupply(ctx, denom)
@@ -65,7 +65,7 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 
 // EditNFT updates an already existing NFTs
 func (k Keeper) EditNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -80,7 +80,7 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 		return err
 	}
 
-	nft.Metadata = metadata
+	nft.TokenData = tokenData
 	nft.TokenURI = tokenURI
 	k.setNFT(ctx, denom, nft)
 	return nil
@@ -88,7 +88,7 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 
 // TransferOwner gets all the TokenID Collections owned by an address
 func (k Keeper) TransferOwner(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	srcOwner, dstOwner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -107,8 +107,8 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 	if tokenURI != types.DoNotModify {
 		nft.TokenURI = tokenURI
 	}
-	if metadata != types.DoNotModify {
-		nft.Metadata = metadata
+	if tokenData != types.DoNotModify {
+		nft.TokenData = tokenData
 	}
 
 	k.setNFT(ctx, denom, nft)

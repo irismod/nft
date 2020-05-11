@@ -34,14 +34,14 @@ type mintNFTReq struct {
 	Denom     string         `json:"denom"`
 	TokenID   string         `json:"token_id"`
 	TokenURI  string         `json:"token_uri"`
-	Metadata  string         `json:"metadata"`
+	TokenData string         `json:"token_data"`
 }
 
 type editNFTReq struct {
-	BaseReq  rest.BaseReq   `json:"base_req"`
-	Owner    sdk.AccAddress `json:"owner"`
-	TokenURI string         `json:"token_uri"`
-	Metadata string         `json:"metadata"`
+	BaseReq   rest.BaseReq   `json:"base_req"`
+	Owner     sdk.AccAddress `json:"owner"`
+	TokenURI  string         `json:"token_uri"`
+	TokenData string         `json:"token_data"`
 }
 
 type transferNFTReq struct {
@@ -49,7 +49,7 @@ type transferNFTReq struct {
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient string         `json:"recipient"`
 	TokenURI  string         `json:"token_uri"`
-	Metadata  string         `json:"metadata"`
+	TokenData string         `json:"token_data"`
 }
 
 type burnNFTReq struct {

@@ -18,7 +18,7 @@ import (
 // Simulation operation weights constants
 const (
 	OpWeightMsgMintNFT     = "op_weight_msg_mint_nft"
-	OpWeightMsgEditNFT     = "op_weight_msg_edit_nft_metadata"
+	OpWeightMsgEditNFT     = "op_weight_msg_edit_nft_tokenData"
 	OpWeightMsgTransferNFT = "op_weight_msg_transfer_nft"
 	OpWeightMsgBurnNFT     = "op_weight_msg_transfer_burn_nft"
 )
@@ -61,7 +61,7 @@ func WeightedOperations(
 		),
 		simulation.NewWeightedOperation(
 			weightEdit,
-			SimulateMsgEditNFTMetadata(k, ak, bk),
+			SimulateMsgEditNFT(k, ak, bk),
 		),
 		simulation.NewWeightedOperation(
 			weightTransfer,
@@ -90,7 +90,7 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 			denom,
 			nftID,
 			"",
-			simtypes.RandStringOfLength(r, 10), // metadata
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 		account := ak.GetAccount(ctx, msg.Sender)
 
@@ -123,8 +123,8 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 	}
 }
 
-// SimulateMsgEditNFTMetadata simulates an edit metadata transaction
-func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
+// SimulateMsgEditNFT simulates an edit tokenData transaction
+func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
 		accs []simtypes.Account, chainID string) (opMsg simtypes.OperationMsg, fOps []simtypes.FutureOperation, err error) {
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
@@ -137,7 +137,7 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak types.AccountKeeper, bk type
 			nftID,
 			denom,
 			simtypes.RandStringOfLength(r, 45), // tokenURI
-			simtypes.RandStringOfLength(r, 10), // metadata
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
@@ -184,7 +184,7 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 			simtypes.RandStringOfLength(r, 5),  // nft TokenID
 			getRandomDenom(ctx, k, r),          // denom
 			simtypes.RandStringOfLength(r, 45), // tokenURI
-			simtypes.RandStringOfLength(r, 10), // metadata
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)

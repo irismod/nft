@@ -32,7 +32,7 @@ var (
 	GetOwnerKey              = types.KeyOwner
 	NewMsgIssueDenom         = types.NewMsgIssueDenom
 	NewMsgTransferNFT        = types.NewMsgTransferNFT
-	NewMsgEditNFTMetadata    = types.NewMsgEditNFT
+	NewMsgEditNFT            = types.NewMsgEditNFT
 	NewMsgMintNFT            = types.NewMsgMintNFT
 	NewMsgBurnNFT            = types.NewMsgBurnNFT
 	NewBaseNFT               = types.NewBaseNFT
@@ -50,26 +50,18 @@ var (
 	ValidateTokenURI = types.ValidateTokenURI
 
 	// variable aliases
-	ModuleCdc                = types.ModuleCdc
-	EventTypeTransfer        = types.EventTypeTransfer
-	EventTypeEditNFTMetadata = types.EventTypeEditNFT
-	EventTypeMintNFT         = types.EventTypeMintNFT
-	EventTypeBurnNFT         = types.EventTypeBurnNFT
-	AttributeValueCategory   = types.AttributeValueCategory
-	AttributeKeySender       = types.AttributeKeySender
-	AttributeKeyRecipient    = types.AttributeKeyRecipient
-	AttributeKeyOwner        = types.AttributeKeyOwner
-	AttributeKeyNFTID        = types.AttributeKeyTokenID
-	AttributeKeyNFTTokenURI  = types.AttributeKeyTokenURI
-	AttributeKeyDenom        = types.AttributeKeyDenom
-
-	// error
-	ErrInvalidCollection = types.ErrInvalidCollection
-	ErrUnknownCollection = types.ErrUnknownCollection
-	ErrInvalidNFT        = types.ErrInvalidNFT
-	ErrNFTAlreadyExists  = types.ErrNFTAlreadyExists
-	ErrUnknownNFT        = types.ErrUnknownNFT
-	ErrEmptyMetadata     = types.ErrEmptyMetadata
+	ModuleCdc               = types.ModuleCdc
+	EventTypeTransfer       = types.EventTypeTransfer
+	EventTypeEditNFT        = types.EventTypeEditNFT
+	EventTypeMintNFT        = types.EventTypeMintNFT
+	EventTypeBurnNFT        = types.EventTypeBurnNFT
+	AttributeValueCategory  = types.AttributeValueCategory
+	AttributeKeySender      = types.AttributeKeySender
+	AttributeKeyRecipient   = types.AttributeKeyRecipient
+	AttributeKeyOwner       = types.AttributeKeyOwner
+	AttributeKeyNFTID       = types.AttributeKeyTokenID
+	AttributeKeyNFTTokenURI = types.AttributeKeyTokenURI
+	AttributeKeyDenom       = types.AttributeKeyDenom
 )
 
 type (

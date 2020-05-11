@@ -8,7 +8,7 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// GetNFT gets the entire NFT metadata struct
+// GetNFT gets the entire NFT tokenData struct
 func (k Keeper) GetNFT(ctx sdk.Context, denom, tokenID string) (nft exported.NFT, err error) {
 	store := ctx.KVStore(k.storeKey)
 

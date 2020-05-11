@@ -64,14 +64,14 @@ func (msg MsgIssueDenom) GetSigners() []sdk.AccAddress {
 
 // NewMsgTransferNFT is a constructor function for MsgSetName
 func NewMsgTransferNFT(sender, recipient sdk.AccAddress,
-	denom, id, tokenURI, metadata string) MsgTransferNFT {
+	denom, id, tokenURI, tokenData string) MsgTransferNFT {
 	return MsgTransferNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
 		ID:        strings.TrimSpace(id),
 		TokenURI:  strings.TrimSpace(tokenURI),
-		Metadata:  strings.TrimSpace(metadata),
+		TokenData: strings.TrimSpace(tokenData),
 	}
 }
 
@@ -110,13 +110,13 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 
 // NewMsgEditNFT is a constructor function for MsgSetName
 func NewMsgEditNFT(sender sdk.AccAddress, id,
-	denom, tokenURI, metadata string) MsgEditNFT {
+	denom, tokenURI, tokenData string) MsgEditNFT {
 	return MsgEditNFT{
-		Sender:   sender,
-		Denom:    strings.TrimSpace(denom),
-		ID:       strings.TrimSpace(id),
-		TokenURI: strings.TrimSpace(tokenURI),
-		Metadata: strings.TrimSpace(metadata),
+		Sender:    sender,
+		Denom:     strings.TrimSpace(denom),
+		ID:        strings.TrimSpace(id),
+		TokenURI:  strings.TrimSpace(tokenURI),
+		TokenData: strings.TrimSpace(tokenData),
 	}
 }
 
@@ -154,14 +154,14 @@ func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgMintNFT is a constructor function for MsgMintNFT
-func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI, metadata string) MsgMintNFT {
+func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI, tokenData string) MsgMintNFT {
 	return MsgMintNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
 		ID:        strings.TrimSpace(id),
 		TokenURI:  strings.TrimSpace(tokenURI),
-		Metadata:  strings.TrimSpace(metadata),
+		TokenData: strings.TrimSpace(tokenData),
 	}
 }
 

@@ -6,9 +6,9 @@ import (
 )
 
 func (suite *KeeperSuite) TestSetCollection() {
-	nft := types.NewBaseNFT(id, address, tokenURI, metadata)
+	nft := types.NewBaseNFT(id, address, tokenURI, tokenData)
 	// create a new NFT and add it to the collection created with the NFT mint
-	nft2 := types.NewBaseNFT(id2, address, tokenURI, metadata)
+	nft2 := types.NewBaseNFT(id2, address, tokenURI, tokenData)
 
 	denomE := types.Denom{
 		Name:    denom,
@@ -37,7 +37,7 @@ func (suite *KeeperSuite) TestGetCollection() {
 	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err = suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// collection should exist
@@ -52,7 +52,7 @@ func (suite *KeeperSuite) TestGetCollection() {
 func (suite *KeeperSuite) TestGetCollections() {
 
 	// MintNFT shouldn't fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	msg, fail := keeper.SupplyInvariant(suite.keeper)(suite.ctx)
@@ -61,15 +61,15 @@ func (suite *KeeperSuite) TestGetCollections() {
 
 func (suite *KeeperSuite) TestGetSupply() {
 	// MintNFT shouldn't fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denom, id2, tokenURI, metadata, address2)
+	err = suite.keeper.MintNFT(suite.ctx, denom, id2, tokenURI, tokenData, address2)
 	suite.NoError(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denom2, id, tokenURI, metadata, address2)
+	err = suite.keeper.MintNFT(suite.ctx, denom2, id, tokenURI, tokenData, address2)
 	suite.NoError(err)
 
 	supply := suite.keeper.GetTotalSupply(suite.ctx, denom)

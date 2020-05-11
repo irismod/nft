@@ -2,18 +2,15 @@
 
 ## NFT
 
-Nft defines the metadata of non-fungible tokens, mainly including ID, owner, and tokenURI.Nft can be transferred through `MsgTransferNFT`, or you can edit` tokenURI` information through `MsgEditNFT` transaction.The name of the collection and the id of nft identify the unique assets in the system.The `NFT` Interface inherits the BaseNFT struct and includes getter functions for the asset data. It also includes a Stringer function in order to print the struct. The interface may change if metadata is moved to it’s own module as it might no longer be necessary for the flexibility of an interface.
+Nft defines the tokenData of non-fungible tokens, mainly including ID, owner, and tokenURI.Nft can be transferred through `MsgTransferNFT`, or you can edit` tokenURI` information through `MsgEditNFT` transaction.The name of the collection and the id of nft identify the unique assets in the system.The `NFT` Interface inherits the BaseNFT struct and includes getter functions for the asset data. It also includes a Stringer function in order to print the struct. The interface may change if tokenData is moved to it’s own module as it might no longer be necessary for the flexibility of an interface.
 
 ```go
 // NFT non fungible token interface
 type NFT interface {
   GetID() string                    // unique identifier of the NFT
   GetOwner() sdk.AccAddress         // gets owner account of the NFT
-  SetOwner(address sdk.AccAddress)  // gets owner account of the NFT
-  GetTokenURI() string              // metadata field: URI to retrieve the of chain metadata of the NFT
-  SetTokenURI(tokenURI string)     // edit metadata of the NFT
-  GetMetadata() string
-	SetMetadata(metadata string)
+  GetTokenURI() string              // tokenData field: URI to retrieve the of chain tokenData of the NFT
+  GetTokenData() string
   String() string                   // string representation of the NFT object
 }
 ```

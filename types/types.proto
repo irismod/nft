@@ -25,7 +25,7 @@ message MsgTransferNFT {
     string denom = 3 [(gogoproto.moretags) = "yaml:\"denom\""];
     string ID = 4 [(gogoproto.moretags) = "yaml:\"id\""];
     string tokenURI = 5 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
-    string metadata = 6 [(gogoproto.moretags) = "yaml:\"metadata\""];
+    string token_data = 6 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
 // MsgEditNFT defines an SDK message for editing a nft.
@@ -36,7 +36,7 @@ message MsgEditNFT {
     string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
     string ID = 3 [(gogoproto.moretags) = "yaml:\"id\""];
     string tokenURI = 4 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
-    string metadata = 5 [(gogoproto.moretags) = "yaml:\"metadata\""];
+    string token_data = 5 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
 // MsgMintNFT defines an SDK message for creating a new NFT.
@@ -48,7 +48,7 @@ message MsgMintNFT {
     string denom = 3 [(gogoproto.moretags) = "yaml:\"denom\""];
     string ID = 4 [(gogoproto.moretags) = "yaml:\"id\""];
     string tokenURI = 5 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
-    string metadata = 6 [(gogoproto.moretags) = "yaml:\"metadata\""];
+    string token_data = 6 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
 // MsgBurnNFT defines an SDK message for burn a NFT.
@@ -69,7 +69,7 @@ message BaseNFT {
     string ID = 1 [(gogoproto.moretags) = "yaml:\"id\""];
     bytes owner = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string tokenURI = 3 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
-    string metadata = 4 [(gogoproto.moretags) = "yaml:\"metadata\""];
+    string token_data = 4 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
 // Denom defines a type of NFT.

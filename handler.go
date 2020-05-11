@@ -59,7 +59,7 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 		msg.Denom,
 		msg.ID,
 		msg.TokenURI,
-		msg.Metadata,
+		msg.TokenData,
 		msg.Sender,
 		msg.Recipient); err != nil {
 		return nil, err
@@ -87,7 +87,7 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 	if err := k.EditNFT(ctx, msg.Denom,
 		msg.ID,
 		msg.TokenURI,
-		msg.Metadata,
+		msg.TokenData,
 		msg.Sender); err != nil {
 		return nil, err
 	}
@@ -115,7 +115,7 @@ func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 		msg.Denom,
 		msg.ID,
 		msg.TokenURI,
-		msg.Metadata,
+		msg.TokenData,
 		msg.Recipient); err != nil {
 		return nil, err
 	}
