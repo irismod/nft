@@ -23,8 +23,8 @@ message MsgTransferNFT {
     bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     bytes recipient = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string denom = 3 [(gogoproto.moretags) = "yaml:\"denom\""];
-    string ID = 4 [(gogoproto.moretags) = "yaml:\"id\""];
-    string tokenURI = 5 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
+    string id = 4 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
+    string token_uri = 5 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
     string token_data = 6 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
@@ -34,8 +34,8 @@ message MsgEditNFT {
 
     bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
-    string ID = 3 [(gogoproto.moretags) = "yaml:\"id\""];
-    string tokenURI = 4 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
+    string id = 3 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
+    string token_uri = 4 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
     string token_data = 5 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
@@ -46,8 +46,8 @@ message MsgMintNFT {
     bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     bytes recipient = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string denom = 3 [(gogoproto.moretags) = "yaml:\"denom\""];
-    string ID = 4 [(gogoproto.moretags) = "yaml:\"id\""];
-    string tokenURI = 5 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
+    string id = 4 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
+    string tokenURI = 5 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
     string token_data = 6 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 
@@ -57,7 +57,7 @@ message MsgBurnNFT {
 
     bytes sender = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
-    string ID = 3 [(gogoproto.moretags) = "yaml:\"id\""];
+    string id = 3 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
 }
 
 // BaseNFT defines a non fungible token.
@@ -66,9 +66,9 @@ message BaseNFT {
     option (gogoproto.goproto_stringer) = false;
 
 
-    string ID = 1 [(gogoproto.moretags) = "yaml:\"id\""];
+    string id = 1 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
     bytes owner = 2 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
-    string tokenURI = 3 [(gogoproto.moretags) = "yaml:\"tokenURI\""];
+    string tokenURI = 3 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
     string token_data = 4 [(gogoproto.moretags) = "yaml:\"token_data\""];
 }
 

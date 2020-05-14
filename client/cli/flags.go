@@ -23,9 +23,9 @@ var (
 )
 
 func init() {
-	FsIssueDenom.String(FlagSchema, "[do-not-modify]", "denom data structure definition")
+	FsIssueDenom.String(FlagSchema, "", "denom data structure definition")
 
-	FsMintNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain tokenData (should return a JSON object)")
+	FsMintNFT.String(FlagTokenURI, "", "URI for supplemental off-chain tokenData (should return a JSON object)")
 	FsMintNFT.String(FlagRecipient, "", "Receiver of the nft, if not filled, the default is the sender of the transaction")
 	FsMintNFT.String(FlagTokenData, "", "the origin data of nft")
 
