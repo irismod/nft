@@ -6,13 +6,15 @@ import (
 
 const (
 	FlagTokenURI  = "token-uri"
-	FlagMetadata  = "metadata"
+	FlagTokenData = "token-data"
 	FlagRecipient = "recipient"
 	FlagOwner     = "owner"
 	FlagDenom     = "denom"
+	FlagSchema    = "schema"
 )
 
 var (
+	FsIssueDenom  = flag.NewFlagSet("", flag.ContinueOnError)
 	FsMintNFT     = flag.NewFlagSet("", flag.ContinueOnError)
 	FsEditNFT     = flag.NewFlagSet("", flag.ContinueOnError)
 	FsTransferNFT = flag.NewFlagSet("", flag.ContinueOnError)
@@ -21,15 +23,17 @@ var (
 )
 
 func init() {
-	FsMintNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsIssueDenom.String(FlagSchema, "", "denom data structure definition")
+
+	FsMintNFT.String(FlagTokenURI, "", "URI for supplemental off-chain tokenData (should return a JSON object)")
 	FsMintNFT.String(FlagRecipient, "", "Receiver of the nft, if not filled, the default is the sender of the transaction")
-	FsMintNFT.String(FlagMetadata, "", "Receiver of the nft, if not filled, the default is the sender of the transaction")
+	FsMintNFT.String(FlagTokenData, "", "the origin data of nft")
 
-	FsEditNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
-	FsEditNFT.String(FlagMetadata, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsEditNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain tokenData (should return a JSON object)")
+	FsEditNFT.String(FlagTokenData, "[do-not-modify]", "the tokenData of nft")
 
-	FsTransferNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
-	FsTransferNFT.String(FlagMetadata, "[do-not-modify]", "URI for supplemental off-chain metadata (should return a JSON object)")
+	FsTransferNFT.String(FlagTokenURI, "[do-not-modify]", "URI for supplemental off-chain tokenData (should return a JSON object)")
+	FsTransferNFT.String(FlagTokenData, "[do-not-modify]", "the tokenData of nft")
 
 	FsQuerySupply.String(FlagOwner, "", "the owner of a nft")
 

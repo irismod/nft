@@ -13,49 +13,30 @@ import (
 
 var _ exported.NFT = (*BaseNFT)(nil)
 
-// BaseNFT non fungible token definition
-type BaseNFT struct {
-	ID       string         `json:"id" yaml:"id"`               // id of the token; not exported to clients
-	Owner    sdk.AccAddress `json:"owner" yaml:"owner"`         // account address that owns the NFT
-	TokenURI string         `json:"token_uri" yaml:"token_uri"` // optional extra properties available for querying
-	Metadata string         `json:"metadata" yaml:"metadata"`
-}
-
 // NewBaseNFT creates a new NFT instance
-func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, metadata string) BaseNFT {
+func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, tokenData string) BaseNFT {
 	return BaseNFT{
-		ID:       strings.ToLower(strings.TrimSpace(id)),
-		Owner:    owner,
-		TokenURI: strings.TrimSpace(tokenURI),
-		Metadata: strings.TrimSpace(metadata),
+		ID:        strings.ToLower(strings.TrimSpace(id)),
+		Owner:     owner,
+		TokenURI:  strings.TrimSpace(tokenURI),
+		TokenData: strings.TrimSpace(tokenData),
 	}
 }
 
-// GetID returns the TokenID of the token
-func (bnft BaseNFT) GetID() string { return bnft.ID }
-
-// GetOwner returns the account address that owns the NFT
-func (bnft BaseNFT) GetOwner() sdk.AccAddress { return bnft.Owner }
-
-// SetOwner updates the owner address of the NFT
-func (bnft *BaseNFT) SetOwner(address sdk.AccAddress) {
-	bnft.Owner = address
+func (bnft BaseNFT) GetID() string {
+	return bnft.ID
 }
 
-// GetTokenURI returns the path to optional extra properties
-func (bnft BaseNFT) GetTokenURI() string { return bnft.TokenURI }
-
-// SetTokenURI edits metadata of an nft
-func (bnft *BaseNFT) SetTokenURI(tokenURI string) {
-	bnft.TokenURI = tokenURI
+func (bnft BaseNFT) GetOwner() sdk.AccAddress {
+	return bnft.Owner
 }
 
-func (bnft BaseNFT) GetMetadata() string {
-	return bnft.Metadata
+func (bnft BaseNFT) GetTokenURI() string {
+	return bnft.TokenURI
 }
 
-func (bnft *BaseNFT) SetMetadata(metadata string) {
-	bnft.Metadata = metadata
+func (bnft BaseNFT) GetTokenData() string {
+	return bnft.TokenData
 }
 
 func (bnft BaseNFT) String() string {

@@ -15,9 +15,9 @@ func TestInitGenesis(t *testing.T) {
 	genesisState := nft.DefaultGenesisState()
 	require.Equal(t, 0, len(genesisState.Collections))
 
-	nft1 := nft.NewBaseNFT(id, address, tokenURI1, metadata)
-	nft2 := nft.NewBaseNFT(id2, address, tokenURI1, metadata)
-	nft3 := nft.NewBaseNFT(id3, address, tokenURI1, metadata)
+	nft1 := nft.NewBaseNFT(id, address, tokenURI1, tokenData)
+	nft2 := nft.NewBaseNFT(id2, address, tokenURI1, tokenData)
+	nft3 := nft.NewBaseNFT(id3, address, tokenURI1, tokenData)
 	nfts := nft.NewNFTs(&nft1, &nft2, &nft3)
 	collection := nft.NewCollection(types.Denom{
 		Name:    denom,
@@ -25,9 +25,9 @@ func TestInitGenesis(t *testing.T) {
 		Creator: address,
 	}, nfts)
 
-	nftx := nft.NewBaseNFT(id, address2, tokenURI1, metadata)
-	nft2x := nft.NewBaseNFT(id2, address2, tokenURI1, metadata)
-	nft3x := nft.NewBaseNFT(id3, address2, tokenURI1, metadata)
+	nftx := nft.NewBaseNFT(id, address2, tokenURI1, tokenData)
+	nft2x := nft.NewBaseNFT(id2, address2, tokenURI1, tokenData)
+	nft3x := nft.NewBaseNFT(id3, address2, tokenURI1, tokenData)
 	nftsx := nft.NewNFTs(&nftx, &nft2x, &nft3x)
 	collection2 := nft.NewCollection(types.Denom{
 		Name:    denom2,

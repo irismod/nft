@@ -6,13 +6,12 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
-	"github.com/cosmos/cosmos-sdk/codec"
 )
 
 // RegisterRoutes register distribution REST routes.
-func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, cdc *codec.Codec, queryRoute string) {
-	registerQueryRoutes(cliCtx, r, cdc, queryRoute)
-	registerTxRoutes(cliCtx, r, cdc, queryRoute)
+func RegisterRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute string) {
+	registerQueryRoutes(cliCtx, r, queryRoute)
+	registerTxRoutes(cliCtx, r, queryRoute)
 }
 
 const (
@@ -35,14 +34,14 @@ type mintNFTReq struct {
 	Denom     string         `json:"denom"`
 	TokenID   string         `json:"token_id"`
 	TokenURI  string         `json:"token_uri"`
-	Metadata  string         `json:"metadata"`
+	TokenData string         `json:"token_data"`
 }
 
 type editNFTReq struct {
-	BaseReq  rest.BaseReq   `json:"base_req"`
-	Owner    sdk.AccAddress `json:"owner"`
-	TokenURI string         `json:"token_uri"`
-	Metadata string         `json:"metadata"`
+	BaseReq   rest.BaseReq   `json:"base_req"`
+	Owner     sdk.AccAddress `json:"owner"`
+	TokenURI  string         `json:"token_uri"`
+	TokenData string         `json:"token_data"`
 }
 
 type transferNFTReq struct {
@@ -50,7 +49,7 @@ type transferNFTReq struct {
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient string         `json:"recipient"`
 	TokenURI  string         `json:"token_uri"`
-	Metadata  string         `json:"metadata"`
+	TokenData string         `json:"token_data"`
 }
 
 type burnNFTReq struct {

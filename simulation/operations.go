@@ -8,7 +8,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/auth"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/irismod/nft/keeper"
@@ -18,16 +18,16 @@ import (
 // Simulation operation weights constants
 const (
 	OpWeightMsgMintNFT     = "op_weight_msg_mint_nft"
-	OpWeightMsgEditNFT     = "op_weight_msg_edit_nft_metadata"
+	OpWeightMsgEditNFT     = "op_weight_msg_edit_nft_tokenData"
 	OpWeightMsgTransferNFT = "op_weight_msg_transfer_nft"
 	OpWeightMsgBurnNFT     = "op_weight_msg_transfer_burn_nft"
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
 func WeightedOperations(
-	appParams simulation.AppParams,
+	appParams simtypes.AppParams,
 	cdc *codec.Codec,
-	k keeper.Keeper, ak auth.AccountKeeper) simulation.WeightedOperations {
+	k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simulation.WeightedOperations {
 
 	var weightMint, weightEdit, weightBurn, weightTransfer int
 	appParams.GetOrGenerate(cdc, OpWeightMsgMintNFT, &weightMint, nil,
@@ -57,51 +57,52 @@ func WeightedOperations(
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			weightMint,
-			SimulateMsgMintNFT(k, ak),
+			SimulateMsgMintNFT(k, ak, bk),
 		),
 		simulation.NewWeightedOperation(
 			weightEdit,
-			SimulateMsgEditNFTMetadata(k, ak),
+			SimulateMsgEditNFT(k, ak, bk),
 		),
 		simulation.NewWeightedOperation(
 			weightTransfer,
-			SimulateMsgTransferNFT(k, ak),
+			SimulateMsgTransferNFT(k, ak, bk),
 		),
 		simulation.NewWeightedOperation(
 			weightBurn,
-			SimulateMsgBurnNFT(k, ak),
+			SimulateMsgBurnNFT(k, ak, bk),
 		),
 	}
 }
 
 // SimulateMsgTransferNFT simulates the transfer of an NFT
-func SimulateMsgTransferNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Operation {
+func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simulation.Account, chainID string) (opMsg simulation.OperationMsg, fOps []simulation.FutureOperation, err error) {
+		accs []simtypes.Account, chainID string) (opMsg simtypes.OperationMsg, fOps []simtypes.FutureOperation, err error) {
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
-			return simulation.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName), nil, nil
 		}
 
-		recipientAccount, _ := simulation.RandomAcc(r, accs)
+		recipientAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := types.NewMsgTransferNFT(
 			ownerAddr,                // sender
 			recipientAccount.Address, // recipient
 			denom,
 			nftID,
 			"",
-			simulation.RandStringOfLength(r, 10), // metadata
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 		account := ak.GetAccount(ctx, msg.Sender)
 
-		ownerAccount, found := simulation.FindAccount(accs, msg.Sender)
+		ownerAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
-			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
+			return simtypes.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
 		}
 
-		fees, err := simulation.RandomFees(r, ctx, account.SpendableCoins(ctx.BlockTime()))
+		spendable := bk.SpendableCoins(ctx, account.GetAddress())
+		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
 		tx := helpers.GenTx(
@@ -115,39 +116,40 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.O
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		return simulation.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 
-// SimulateMsgEditNFTMetadata simulates an edit metadata transaction
-func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulation.Operation {
+// SimulateMsgEditNFT simulates an edit tokenData transaction
+func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simulation.Account, chainID string) (opMsg simulation.OperationMsg, fOps []simulation.FutureOperation, err error) {
+		accs []simtypes.Account, chainID string) (opMsg simtypes.OperationMsg, fOps []simtypes.FutureOperation, err error) {
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
-			return simulation.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgEditNFT(
 			ownerAddr,
 			nftID,
 			denom,
-			simulation.RandStringOfLength(r, 45), // tokenURI
-			simulation.RandStringOfLength(r, 10), // metadata
+			simtypes.RandStringOfLength(r, 45), // tokenURI
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
-		fees, err := simulation.RandomFees(r, ctx, account.SpendableCoins(ctx.BlockTime()))
+		spendable := bk.SpendableCoins(ctx, account.GetAddress())
+		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		ownerAccount, found := simulation.FindAccount(accs, msg.Sender)
+		ownerAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
-			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", ownerAddr)
+			return simtypes.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", ownerAddr)
 		}
 
 		tx := helpers.GenTx(
@@ -161,39 +163,40 @@ func SimulateMsgEditNFTMetadata(k keeper.Keeper, ak auth.AccountKeeper) simulati
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		return simulation.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 
 // SimulateMsgMintNFT simulates a mint of an NFT
-func SimulateMsgMintNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Operation {
+func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simulation.Account, chainID string) (opMsg simulation.OperationMsg, fOps []simulation.FutureOperation, err error) {
+		accs []simtypes.Account, chainID string) (opMsg simtypes.OperationMsg, fOps []simtypes.FutureOperation, err error) {
 
-		randomSender, _ := simulation.RandomAcc(r, accs)
-		randomRecipient, _ := simulation.RandomAcc(r, accs)
+		randomSender, _ := simtypes.RandomAcc(r, accs)
+		randomRecipient, _ := simtypes.RandomAcc(r, accs)
 
 		msg := types.NewMsgMintNFT(
-			randomSender.Address,                 // sender
-			randomRecipient.Address,              // recipient
-			simulation.RandStringOfLength(r, 5),  // nft TokenID
-			getRandomDenom(ctx, k, r),            // denom
-			simulation.RandStringOfLength(r, 45), // tokenURI
-			simulation.RandStringOfLength(r, 10), // metadata
+			randomSender.Address,               // sender
+			randomRecipient.Address,            // recipient
+			simtypes.RandStringOfLength(r, 5),  // nft TokenID
+			getRandomDenom(ctx, k, r),          // denom
+			simtypes.RandStringOfLength(r, 45), // tokenURI
+			simtypes.RandStringOfLength(r, 10), // tokenData
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
-		fees, err := simulation.RandomFees(r, ctx, account.SpendableCoins(ctx.BlockTime()))
+		spendable := bk.SpendableCoins(ctx, account.GetAddress())
+		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		simAccount, found := simulation.FindAccount(accs, msg.Sender)
+		simAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
-			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
+			return simtypes.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
 		}
 
 		tx := helpers.GenTx(
@@ -207,33 +210,34 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Opera
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		return simulation.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 
 // SimulateMsgBurnNFT simulates a burn of an existing NFT
-func SimulateMsgBurnNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Operation {
+func SimulateMsgBurnNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKeeper) simtypes.Operation {
 	return func(r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context,
-		accs []simulation.Account, chainID string) (opMsg simulation.OperationMsg, fOps []simulation.FutureOperation, err error) {
+		accs []simtypes.Account, chainID string) (opMsg simtypes.OperationMsg, fOps []simtypes.FutureOperation, err error) {
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
-			return simulation.NoOpMsg(types.ModuleName), nil, nil
+			return simtypes.NoOpMsg(types.ModuleName), nil, nil
 		}
 
 		msg := types.NewMsgBurnNFT(ownerAddr, nftID, denom)
 
 		account := ak.GetAccount(ctx, msg.Sender)
-		fees, err := simulation.RandomFees(r, ctx, account.SpendableCoins(ctx.BlockTime()))
+		spendable := bk.SpendableCoins(ctx, account.GetAddress())
+		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		simAccount, found := simulation.FindAccount(accs, msg.Sender)
+		simAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
-			return simulation.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
+			return simtypes.NoOpMsg(types.ModuleName), nil, fmt.Errorf("account %s not found", msg.Sender)
 		}
 
 		tx := helpers.GenTx(
@@ -247,10 +251,10 @@ func SimulateMsgBurnNFT(k keeper.Keeper, ak auth.AccountKeeper) simulation.Opera
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simulation.NoOpMsg(types.ModuleName), nil, err
+			return simtypes.NoOpMsg(types.ModuleName), nil, err
 		}
 
-		return simulation.NewOperationMsg(msg, true, ""), nil, nil
+		return simtypes.NewOperationMsg(msg, true, ""), nil, nil
 	}
 }
 

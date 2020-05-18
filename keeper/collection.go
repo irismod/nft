@@ -14,7 +14,7 @@ func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) erro
 			collection.Denom.Name,
 			nft.GetID(),
 			nft.GetTokenURI(),
-			nft.GetMetadata(),
+			nft.GetTokenData(),
 			nft.GetOwner(),
 		); err != nil {
 			return err
@@ -40,9 +40,13 @@ func (k Keeper) GetCollection(ctx sdk.Context, denomNm string) (types.Collection
 
 // GetCollections returns all the collection
 func (k Keeper) GetCollections(ctx sdk.Context) (cs types.Collections) {
-	k.IterateCollections(ctx, func(collection types.Collection) {
-		cs = append(cs, collection)
-	})
+	for _, denom := range k.GetDenoms(ctx) {
+		nfts := k.GetNFTs(ctx, denom.Name)
+		cs = append(cs, types.Collection{
+			Denom: denom,
+			NFTs:  nfts,
+		})
+	}
 	return cs
 }
 
@@ -53,10 +57,7 @@ func (k Keeper) GetTotalSupply(ctx sdk.Context, denom string) uint64 {
 	if len(bz) == 0 {
 		return 0
 	}
-
-	var supply uint64
-	k.cdc.MustUnmarshalBinaryLengthPrefixed(bz, &supply)
-	return supply
+	return types.MustUnMarshalSupply(k.cdc, bz)
 }
 
 // GetTotalSupplyOfOwner returns the amount of nft by the specified conditions
@@ -70,24 +71,13 @@ func (k Keeper) GetTotalSupplyOfOwner(ctx sdk.Context, denom string, owner sdk.A
 	return supply
 }
 
-// IterateCollections iterate all the collection
-func (k Keeper) IterateCollections(ctx sdk.Context, fn func(collection types.Collection)) {
-	for _, denom := range k.GetDenoms(ctx) {
-		nfts := k.GetNFTs(ctx, denom.Name)
-		fn(types.Collection{
-			Denom: denom,
-			NFTs:  nfts,
-		})
-	}
-}
-
 func (k Keeper) increaseSupply(ctx sdk.Context, denom string) {
 	supply := k.GetTotalSupply(ctx, denom)
 	supply++
 
-	bzSupply := k.cdc.MustMarshalBinaryLengthPrefixed(supply)
 	store := ctx.KVStore(k.storeKey)
-	store.Set(types.KeyCollection(denom), bzSupply)
+	bz := types.MustMarshalSupply(k.cdc, supply)
+	store.Set(types.KeyCollection(denom), bz)
 }
 
 func (k Keeper) decreaseSupply(ctx sdk.Context, denom string) {
@@ -100,6 +90,6 @@ func (k Keeper) decreaseSupply(ctx sdk.Context, denom string) {
 		return
 	}
 
-	bzSupply := k.cdc.MustMarshalBinaryLengthPrefixed(supply)
-	store.Set(types.KeyCollection(denom), bzSupply)
+	bz := types.MustMarshalSupply(k.cdc, supply)
+	store.Set(types.KeyCollection(denom), bz)
 }

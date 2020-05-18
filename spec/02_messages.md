@@ -16,11 +16,9 @@ type MsgIssueDenom struct {
 }
 ```
 
-
-
 ## MsgTransferNFT
 
-This is the most commonly expected MsgType to be supported across chains. While each application specific blockchain will have very different adoption of the `MsgMintNFT`, `MsgBurnNFT` and `MsgEditNFTMetadata` it should be expected that most chains support the ability to transfer ownership of the NFT asset. The exception to this would be non-transferable NFTs that might be attached to reputation or some asset which should not be transferable. It still makes sense for this to be represented as an NFT because there are common queriers which will remain relevant to the NFT type even if non-transferable. This Message will fail if the NFT does not exist. By default it will not fail if the transfer is executed by someone beside the owner. **It is highly recommended that a custom handler is made to restrict use of this Message type to prevent unintended use.**
+This is the most commonly expected MsgType to be supported across chains. While each application specific blockchain will have very different adoption of the `MsgMintNFT`, `MsgBurnNFT` and `MsgEditNFT` it should be expected that most chains support the ability to transfer ownership of the NFT asset. The exception to this would be non-transferable NFTs that might be attached to reputation or some asset which should not be transferable. It still makes sense for this to be represented as an NFT because there are common queriers which will remain relevant to the NFT type even if non-transferable. This Message will fail if the NFT does not exist. By default it will not fail if the transfer is executed by someone beside the owner. **It is highly recommended that a custom handler is made to restrict use of this Message type to prevent unintended use.**
 
 | **Field** | **Type**         | **Description**                                                                                               |
 |:----------|:-----------------|:--------------------------------------------------------------------------------------------------------------|
@@ -28,6 +26,8 @@ This is the most commonly expected MsgType to be supported across chains. While 
 | Recipient | `sdk.AccAddress` | The account address who will receive the NFT as a result of the transfer transaction.                         |
 | Denom     | `string`         | The denomination of the NFT, necessary as multiple denominations are able to be represented on each chain.    |
 | ID        | `string`         | The unique ID of the NFT being transferred                                                                    |
+| TokenURI  | `string`         | The URI pointing to a JSON object that contains subsequent tokenData information off-chain                                                                  |
+| TokenData | `string`         | The data of the NFT                                                                    |
 
 ```go
 // MsgTransferNFT defines a TransferNFT message
@@ -36,6 +36,8 @@ type MsgTransferNFT struct {
   Recipient sdk.AccAddress
   Denom     string
   ID        string
+  TokenURI  string
+  TokenData string
 }
 ```
 
@@ -48,15 +50,17 @@ This message type allows the `TokenURI` to be updated. By default anyone can exe
 | Sender       | `sdk.AccAddress` | The creator of the message                                      |
 | ID          | `string`         | The unique ID of the NFT being edited                                                                      |
 | Denom       | `string`         | The denomination of the NFT, necessary as multiple denominations are able to be represented on each chain. |
-| TokenURI    | `string`         | The URI pointing to a JSON object that contains subsequent metadata information off-chain                   |
+| TokenURI    | `string`         | The URI pointing to a JSON object that contains subsequent tokenData information off-chain                   |
+| TokenData   | `string`         | The data of the NFT 
 
 ```go
-// MsgEditNFT edits an NFT's metadata
-type MsgEditNFTMetadata struct {
+// MsgEditNFT edits an NFT's tokenData
+type MsgEditNFT struct {
   Sender       sdk.AccAddress
   ID          string
   Denom       string
   TokenURI    string
+  TokenData   string
 }
 ```
 
@@ -70,7 +74,8 @@ This message type is used for minting new tokens. If a new `NFT` is minted under
 | Recipient   | `sdk.AccAddress` | The recipiet of the new NFT                                                              |
 | ID          | `string`         | The unique ID of the NFT being minted                                                    |
 | Denom       | `string`         | The denomination of the NFT.                                                             |
-| TokenURI    | `string`         | The URI pointing to a JSON object that contains subsequent metadata information off-chain |
+| TokenURI    | `string`         | The URI pointing to a JSON object that contains subsequent tokenData information off-chain |
+| TokenData   | `string`         | The data of the NFT 
 
 ```go
 // MsgMintNFT defines a MintNFT message
@@ -80,6 +85,7 @@ type MsgMintNFT struct {
   ID          string
   Denom       string
   TokenURI    string
+  TokenData   string
 }
 ```
 

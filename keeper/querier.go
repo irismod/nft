@@ -4,12 +4,13 @@ import (
 	"encoding/binary"
 	"strings"
 
+	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/irismod/nft/types"
-
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // NewQuerier is the module level router for state queries
@@ -66,7 +67,7 @@ func queryOwner(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error
 	}
 
 	owner := k.GetOwner(ctx, params.Owner, params.Denom)
-	bz, err := types.ModuleCdc.MarshalJSON(owner)
+	bz, err := codec.MarshalJSONIndent(k.cdc, owner)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -88,7 +89,7 @@ func queryCollection(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, 
 		return nil, err
 	}
 
-	bz, err := types.ModuleCdc.MarshalJSON(collection)
+	bz, err := codec.MarshalJSONIndent(k.cdc, collection)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -106,7 +107,7 @@ func queryDenom(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error
 
 	denom, err := k.GetDenom(ctx, params.Denom)
 
-	bz, err := types.ModuleCdc.MarshalJSON(denom)
+	bz, err := codec.MarshalJSONIndent(k.cdc, denom)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -117,7 +118,7 @@ func queryDenom(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error
 func queryDenoms(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) {
 	denoms := k.GetDenoms(ctx)
 
-	bz, err := types.ModuleCdc.MarshalJSON(denoms)
+	bz, err := codec.MarshalJSONIndent(k.cdc, denoms)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
@@ -140,7 +141,7 @@ func queryNFT(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error) 
 		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid NFT %s from collection %s", params.TokenID, params.Denom)
 	}
 
-	bz, err := types.ModuleCdc.MarshalJSON(nft)
+	bz, err := codec.MarshalJSONIndent(k.cdc, nft)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

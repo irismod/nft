@@ -17,12 +17,11 @@ import (
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
 	storeKey sdk.StoreKey // Unexposed key to access store from sdk.Context
-
-	cdc *codec.Codec // The amino codec for binary encoding/decoding.
+	cdc      codec.Marshaler
 }
 
 // NewKeeper creates new instances of the nft Keeper
-func NewKeeper(cdc *codec.Codec, storeKey sdk.StoreKey) Keeper {
+func NewKeeper(cdc codec.Marshaler, storeKey sdk.StoreKey) Keeper {
 	return Keeper{
 		storeKey: storeKey,
 		cdc:      cdc,
@@ -44,7 +43,7 @@ func (k Keeper) IssueDenom(ctx sdk.Context, name, schema string, creator sdk.Acc
 
 // MintNFT mints an NFT and manages that NFTs existence within Collections and Owners
 func (k Keeper) MintNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -57,8 +56,8 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 	if k.HasNFT(ctx, denom, tokenID) {
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denom)
 	}
-	nft := types.NewBaseNFT(tokenID, owner, tokenURI, metadata)
-	k.setNFT(ctx, denom, &nft)
+	nft := types.NewBaseNFT(tokenID, owner, tokenURI, tokenData)
+	k.setNFT(ctx, denom, nft)
 	k.setOwner(ctx, denom, tokenID, owner)
 	k.increaseSupply(ctx, denom)
 	return nil
@@ -66,7 +65,7 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 
 // EditNFT updates an already existing NFTs
 func (k Keeper) EditNFT(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -81,15 +80,15 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 		return err
 	}
 
-	nft.SetMetadata(metadata)
-	nft.SetTokenURI(tokenURI)
+	nft.TokenData = tokenData
+	nft.TokenURI = tokenURI
 	k.setNFT(ctx, denom, nft)
 	return nil
 }
 
 // TransferOwner gets all the TokenID Collections owned by an address
 func (k Keeper) TransferOwner(ctx sdk.Context,
-	denom, tokenID, tokenURI, metadata string,
+	denom, tokenID, tokenURI, tokenData string,
 	srcOwner, dstOwner sdk.AccAddress) error {
 	denom = strings.ToLower(strings.TrimSpace(denom))
 	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
@@ -104,12 +103,12 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 		return err
 	}
 
-	nft.SetOwner(dstOwner)
+	nft.Owner = dstOwner
 	if tokenURI != types.DoNotModify {
-		nft.SetTokenURI(tokenURI)
+		nft.TokenURI = tokenURI
 	}
-	if metadata != types.DoNotModify {
-		nft.SetMetadata(metadata)
+	if tokenData != types.DoNotModify {
+		nft.TokenData = tokenData
 	}
 
 	k.setNFT(ctx, denom, nft)

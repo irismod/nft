@@ -3,18 +3,19 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/version"
 	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
-	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
 
 	"github.com/irismod/nft/types"
 )
@@ -47,27 +48,27 @@ func GetCmdIssueDenom(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Issue a new denom.
 Example:
-$ %s tx nft issue [denom] --from=<key-name> --metadata=<schema> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(authclient.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			denom := args[0]
-			metadata := viper.GetString(FlagMetadata)
+			schema := viper.GetString(FlagSchema)
 
-			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, metadata)
+			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, schema)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
-	cmd.Flags().AddFlagSet(FsMintNFT)
+	cmd.Flags().AddFlagSet(FsIssueDenom)
 	return cmd
 }
 
@@ -85,13 +86,13 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(authclient.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
 			var recipient = cliCtx.GetFromAddress()
 			var err error
@@ -103,11 +104,11 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 				}
 			}
 
-			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, metadata)
+			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 	cmd.Flags().AddFlagSet(FsMintNFT)
@@ -119,7 +120,7 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "edit [denom] [tokenID]",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Edit the metadata of an NFT.
+			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
 $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
@@ -128,19 +129,19 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(authclient.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
-			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, metadata)
+			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 	cmd.Flags().AddFlagSet(FsEditNFT)
@@ -161,7 +162,7 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(authclient.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			sender := cliCtx.GetFromAddress()
@@ -173,13 +174,13 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 			denom := args[1]
 			tokenID := args[2]
 			tokenURI := viper.GetString(FlagTokenURI)
-			metadata := viper.GetString(FlagMetadata)
+			tokenData := viper.GetString(FlagTokenData)
 
-			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, metadata)
+			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 	cmd.Flags().AddFlagSet(FsTransferNFT)
@@ -200,7 +201,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			inBuf := bufio.NewReader(cmd.InOrStdin())
-			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(authclient.GetTxEncoder(cdc))
 			cliCtx := context.NewCLIContextWithInput(inBuf).WithCodec(cdc)
 
 			denom := args[0]
@@ -210,7 +211,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+			return authclient.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
 	return cmd

@@ -5,7 +5,7 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/irismod/nft/types"
 )
@@ -32,10 +32,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 		// 10% of accounts own an NFT
 		if simState.Rand.Intn(100) < 10 {
 			baseNFT := types.NewBaseNFT(
-				simulation.RandStringOfLength(simState.Rand, 5), // id
+				simtypes.RandStringOfLength(simState.Rand, 5), // id
 				acc.Address,
-				simulation.RandStringOfLength(simState.Rand, 45), // tokenURI
-				simulation.RandStringOfLength(simState.Rand, 10),
+				simtypes.RandStringOfLength(simState.Rand, 45), // tokenURI
+				simtypes.RandStringOfLength(simState.Rand, 10),
 			)
 
 			// 50% doggos and 50% kitties

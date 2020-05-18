@@ -58,7 +58,7 @@ func TestHandlerSuite(t *testing.T) {
 
 func (suite *HandlerSuite) TestTransferNFTMsg() {
 	// Define MsgTransferNft
-	transferNftMsg := types.NewMsgTransferNFT(address, address2, denom, id, tokenURI, metadata)
+	transferNftMsg := types.NewMsgTransferNFT(address, address2, denom, id, tokenURI, tokenData)
 
 	// handle should fail trying to transfer NFT that doesn't exist
 	res, err := suite.handler(suite.ctx, transferNftMsg)
@@ -66,7 +66,7 @@ func (suite *HandlerSuite) TestTransferNFTMsg() {
 	suite.Nil(res)
 
 	// Create token (collection and owner)
-	err = suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err = suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.Nil(err)
 	suite.True(CheckInvariants(suite.app.NFTKeeper, suite.ctx))
 
@@ -102,7 +102,7 @@ func (suite *HandlerSuite) TestTransferNFTMsg() {
 	suite.NoError(err)
 	suite.True(nftAfterwards.GetOwner().Equals(address2))
 
-	transferNftMsg = types.NewMsgTransferNFT(address2, address3, denom, id, tokenURI, metadata)
+	transferNftMsg = types.NewMsgTransferNFT(address2, address3, denom, id, tokenURI, tokenData)
 
 	// handle should succeed when nft exists and is transferred by owner
 	res, err = suite.handler(suite.ctx, transferNftMsg)
@@ -111,11 +111,11 @@ func (suite *HandlerSuite) TestTransferNFTMsg() {
 	suite.True(CheckInvariants(suite.app.NFTKeeper, suite.ctx))
 
 	// Create token (collection and owner)
-	err = suite.app.NFTKeeper.MintNFT(suite.ctx, denom2, id, tokenURI, metadata, address)
+	err = suite.app.NFTKeeper.MintNFT(suite.ctx, denom2, id, tokenURI, tokenData, address)
 	suite.Nil(err)
 	suite.True(CheckInvariants(suite.app.NFTKeeper, suite.ctx))
 
-	transferNftMsg = types.NewMsgTransferNFT(address2, address3, denom2, id, tokenURI, metadata)
+	transferNftMsg = types.NewMsgTransferNFT(address2, address3, denom2, id, tokenURI, tokenData)
 
 	// handle should fail when nft exists and is not transferred by owner
 	res, err = suite.handler(suite.ctx, transferNftMsg)
@@ -126,20 +126,20 @@ func (suite *HandlerSuite) TestTransferNFTMsg() {
 
 func (suite *HandlerSuite) TestEditNFTMsg() {
 	// Create token (collection and address)
-	err := suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err := suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.Nil(err)
 
 	// Define MsgTransferNft
-	failingEditNFTMetadata := types.NewMsgEditNFT(address, id, denom2, tokenURI2, metadata)
+	failingEditNFT := types.NewMsgEditNFT(address, id, denom2, tokenURI2, tokenData)
 
-	res, err := suite.handler(suite.ctx, failingEditNFTMetadata)
+	res, err := suite.handler(suite.ctx, failingEditNFT)
 	suite.Error(err)
 	suite.Nil(res)
 
 	// Define MsgTransferNft
-	editNFTMetadata := types.NewMsgEditNFT(address, id, denom, tokenURI2, metadata)
+	EditNFT := types.NewMsgEditNFT(address, id, denom, tokenURI2, tokenData)
 
-	res, err = suite.handler(suite.ctx, editNFTMetadata)
+	res, err = suite.handler(suite.ctx, EditNFT)
 	suite.NoError(err)
 	suite.NotNil(res)
 
@@ -171,7 +171,7 @@ func (suite *HandlerSuite) TestEditNFTMsg() {
 
 func (suite *HandlerSuite) TestMintNFTMsg() {
 	// Define MsgMintNFT
-	mintNFT := types.NewMsgMintNFT(address, address, id, denom, tokenURI, metadata)
+	mintNFT := types.NewMsgMintNFT(address, address, id, denom, tokenURI, tokenData)
 
 	// minting a token should succeed
 	res, err := suite.handler(suite.ctx, mintNFT)
@@ -216,7 +216,7 @@ func (suite *HandlerSuite) TestMintNFTMsg() {
 
 func (suite *HandlerSuite) TestBurnNFTMsg() {
 	// Create token (collection and address)
-	err := suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, metadata, address)
+	err := suite.app.NFTKeeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.Nil(err)
 
 	exists := suite.app.NFTKeeper.HasNFT(suite.ctx, denom, id)
