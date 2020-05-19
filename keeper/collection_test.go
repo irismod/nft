@@ -33,11 +33,8 @@ func (suite *KeeperSuite) TestSetCollection() {
 }
 
 func (suite *KeeperSuite) TestGetCollection() {
-	_, err := suite.keeper.GetCollection(suite.ctx, denom)
-	suite.Error(err)
-
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// collection should exist

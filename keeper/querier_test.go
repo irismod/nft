@@ -86,8 +86,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 
 	query.Data = bz
 	res, err = querier(suite.ctx, []string{"collection"}, query)
-	suite.Error(err)
-	suite.Nil(res)
+	suite.NoError(err)
 
 	queryCollectionParams = types.NewQuerySupplyParams(denom, nil)
 	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
