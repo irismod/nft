@@ -27,14 +27,10 @@ func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) erro
 func (k Keeper) GetCollection(ctx sdk.Context, denomNm string) (types.Collection, error) {
 	denom, err := k.GetDenom(ctx, denomNm)
 	if err != nil {
-		return types.Collection{}, sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not existed ", denom)
+		return types.Collection{}, sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s not existed ", denomNm)
 	}
 
 	nfts := k.GetNFTs(ctx, denomNm)
-	if len(nfts) == 0 {
-		return types.Collection{}, sdkerrors.Wrapf(types.ErrUnknownCollection, "collection %s not existed ", denom)
-	}
-
 	return types.NewCollection(denom, nfts), nil
 }
 
