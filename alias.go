@@ -69,6 +69,7 @@ type (
 	Collection            = types.Collection
 	Collections           = types.Collections
 	GenesisState          = types.GenesisState
+	MsgIssueDenom         = types.MsgIssueDenom
 	MsgTransferNFT        = types.MsgTransferNFT
 	MsgEditNFT            = types.MsgEditNFT
 	MsgMintNFT            = types.MsgMintNFT
