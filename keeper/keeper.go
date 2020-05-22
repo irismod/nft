@@ -80,8 +80,13 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 		return err
 	}
 
-	nft.TokenData = tokenData
-	nft.TokenURI = tokenURI
+	if tokenURI != types.DoNotModify {
+		nft.TokenURI = tokenURI
+	}
+	if tokenData != types.DoNotModify {
+		nft.TokenData = tokenData
+	}
+
 	k.setNFT(ctx, denom, nft)
 	return nil
 }
