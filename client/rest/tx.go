@@ -6,7 +6,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 	authclient "github.com/cosmos/cosmos-sdk/x/auth/client"
@@ -14,7 +14,7 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute string) {
+func registerTxRoutes(cliCtx client.Context, r *mux.Router, queryRoute string) {
 	// Mint an NFT
 	r.HandleFunc(
 		"/nft/nfts/denoms/issue",
@@ -46,7 +46,7 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute strin
 	).Methods("POST")
 }
 
-func issueDenomHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func issueDenomHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req issueDenomReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -64,11 +64,11 @@ func issueDenomHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
 	}
 }
 
-func mintNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func mintNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req mintNFTReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -89,11 +89,11 @@ func mintNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
 	}
 }
 
-func editNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func editNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req editNFTReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -112,11 +112,11 @@ func editNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
 	}
 }
 
-func transferNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func transferNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req transferNFTReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -140,11 +140,11 @@ func transferNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
 	}
 }
 
-func burnNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func burnNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req burnNFTReq
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
@@ -164,6 +164,6 @@ func burnNFTHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
 	}
 }

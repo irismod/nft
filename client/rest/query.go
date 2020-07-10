@@ -8,14 +8,14 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 
 	"github.com/irismod/nft/types"
 )
 
-func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute string) {
+func registerQueryRoutes(cliCtx client.Context, r *mux.Router, queryRoute string) {
 	// Get the total supply of a collection or owner
 	r.HandleFunc(
 		fmt.Sprintf("/nft/nfts/supplies/{%s}", RestParamDenom),
@@ -53,7 +53,7 @@ func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, queryRoute st
 	).Methods("GET")
 }
 
-func querySupply(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func querySupply(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := strings.TrimSpace(mux.Vars(r)[RestParamDenom])
 		if err := types.ValidateDenom(denom); err != nil {
@@ -92,7 +92,7 @@ func querySupply(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc 
 	}
 }
 
-func queryOwner(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryOwner(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		ownerStr := mux.Vars(r)[RestParamOwner]
 		if len(ownerStr) == 0 {
@@ -130,7 +130,7 @@ func queryOwner(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	}
 }
 
-func queryCollection(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryCollection(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := mux.Vars(r)[RestParamDenom]
 		if err := types.ValidateDenom(denom); err != nil {
@@ -161,7 +161,7 @@ func queryCollection(cliCtx context.CLIContext, queryRoute string) http.HandlerF
 	}
 }
 
-func queryDenom(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryDenom(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
@@ -192,7 +192,7 @@ func queryDenom(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
 	}
 }
 
-func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryDenoms(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
@@ -211,7 +211,7 @@ func queryDenoms(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc 
 	}
 }
 
-func queryNFT(cliCtx context.CLIContext, queryRoute string) http.HandlerFunc {
+func queryNFT(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
