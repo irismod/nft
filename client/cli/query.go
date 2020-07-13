@@ -1,7 +1,7 @@
 package cli
 
 import (
-	"encoding/binary"
+	"context"
 	"fmt"
 
 	"strings"
@@ -15,7 +15,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	"github.com/irismod/nft/exported"
 	"github.com/irismod/nft/types"
 )
 
@@ -67,20 +66,15 @@ $ %s q nft supply [denom]`, version.AppName)),
 				return err
 			}
 
-			params := types.NewQuerySupplyParams(denom, owner)
-			bz, err := cdc.MarshalJSON(params)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.Supply(context.Background(), &types.QuerySupplyRequest{
+				Denom: denom,
+				Owner: owner,
+			})
 			if err != nil {
 				return err
 			}
-
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QuerySupply), bz)
-			if err != nil {
-				return err
-			}
-
-			out := binary.LittleEndian.Uint64(res)
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.Amount)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsQuerySupply)
@@ -105,25 +99,16 @@ $ %s q nft owner <address> --denom=<denom>`, version.AppName)),
 			}
 
 			denom := viper.GetString(FlagDenom)
-			params := types.NewQueryOwnerParams(denom, address)
-			bz, err := cdc.MarshalJSON(params)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.Owner(context.Background(), &types.QueryOwnerRequest{
+				Denom: denom,
+				Owner: address,
+			})
 			if err != nil {
 				return err
 			}
 
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryOwner), bz)
-			if err != nil {
-				return err
-			}
-
-			var out types.Owner
-			err = cdc.UnmarshalJSON(res, &out)
-			if err != nil {
-				return err
-			}
-
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.Owner)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsQueryOwner)
@@ -147,23 +132,14 @@ $ %s q nft collection <denom>`, version.AppName)),
 				return err
 			}
 
-			params := types.NewQueryCollectionParams(denom)
-			bz, err := cdc.MarshalJSON(params)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.Collection(context.Background(), &types.QueryCollectionRequest{
+				Denom: denom,
+			})
 			if err != nil {
 				return err
 			}
-
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryCollection), bz)
-			if err != nil {
-				return err
-			}
-
-			var out types.Collection
-			if err = cdc.UnmarshalJSON(res, &out); err != nil {
-				return err
-			}
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.Collection)
 		},
 	}
 	return cmd
@@ -180,17 +156,12 @@ $ %s q nft denoms`, version.AppName)),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := client.NewContext().WithCodec(cdc).WithJSONMarshaler(cdc)
 
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenoms), nil)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.Denoms(context.Background(), &types.QueryDenomsRequest{})
 			if err != nil {
 				return err
 			}
-
-			var out []types.Denom
-			if err = cdc.UnmarshalJSON(res, &out); err != nil {
-				return err
-			}
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.Denoms)
 		},
 	}
 	return cmd
@@ -213,23 +184,14 @@ $ %s q nft denom <denom>`, version.AppName)),
 				return err
 			}
 
-			params := types.NewQueryDenomParams(denom)
-			bz, err := cdc.MarshalJSON(params)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.Denom(context.Background(), &types.QueryDenomRequest{
+				Denom: denom,
+			})
 			if err != nil {
 				return err
 			}
-
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryDenom), bz)
-			if err != nil {
-				return err
-			}
-
-			var out types.Denom
-			if err = cdc.UnmarshalJSON(res, &out); err != nil {
-				return err
-			}
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.Denom)
 		},
 	}
 	return cmd
@@ -257,23 +219,15 @@ $ %s q nft token <denom> <tokenID>`, version.AppName)),
 				return err
 			}
 
-			params := types.NewQueryNFTParams(denom, tokenID)
-			bz, err := cdc.MarshalJSON(params)
+			queryClient := types.NewQueryClient(cliCtx)
+			resp, err := queryClient.NFT(context.Background(), &types.QueryNFTRequest{
+				Denom:   denom,
+				TokenID: tokenID,
+			})
 			if err != nil {
 				return err
 			}
-
-			res, _, err := cliCtx.QueryWithData(
-				fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryNFT), bz)
-			if err != nil {
-				return err
-			}
-
-			var out exported.NFT
-			if err = cdc.UnmarshalJSON(res, &out); err != nil {
-				return err
-			}
-			return cliCtx.PrintOutput(out)
+			return cliCtx.PrintOutput(resp.NFT)
 		},
 	}
 	return cmd

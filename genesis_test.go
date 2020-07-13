@@ -17,7 +17,7 @@ func TestInitGenesis(t *testing.T) {
 	nft1 := types.NewBaseNFT(id, address, tokenURI1, tokenData)
 	nft2 := types.NewBaseNFT(id2, address, tokenURI1, tokenData)
 	nft3 := types.NewBaseNFT(id3, address, tokenURI1, tokenData)
-	nfts := types.NewNFTs(&nft1, &nft2, &nft3)
+	nfts := types.NewNFTs(nft1, nft2, nft3)
 	collection := types.NewCollection(types.Denom{
 		Name:    denom,
 		Schema:  "",
@@ -27,7 +27,7 @@ func TestInitGenesis(t *testing.T) {
 	nftx := types.NewBaseNFT(id, address2, tokenURI1, tokenData)
 	nft2x := types.NewBaseNFT(id2, address2, tokenURI1, tokenData)
 	nft3x := types.NewBaseNFT(id3, address2, tokenURI1, tokenData)
-	nftsx := types.NewNFTs(&nftx, &nft2x, &nft3x)
+	nftsx := types.NewNFTs(nftx, nft2x, nft3x)
 	collection2 := types.NewCollection(types.Denom{
 		Name:    denom2,
 		Schema:  "",

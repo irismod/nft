@@ -8,21 +8,22 @@ import (
 )
 
 // Collection of non fungible tokens
-type Collection struct {
-	Denom Denom `json:"denom" yaml:"denom"` // name of the collection; not exported to clients
-	NFTs  NFTs  `json:"nfts" yaml:"nfts"`   // NFTs that belong to a collection
-}
+//type Collection struct {
+//	Denom Denom `json:"denom" yaml:"denom"` // name of the collection; not exported to clients
+//	NFTs  NFTs  `json:"nfts" yaml:"nfts"`   // NFTs that belong to a collection
+//}
 
 // NewCollection creates a new NFT Collection
-func NewCollection(denom Denom, nfts NFTs) Collection {
-	return Collection{
-		Denom: denom,
-		NFTs:  nfts,
+func NewCollection(denom Denom, nfts []exported.NFT) (c Collection) {
+	c.Denom = denom
+	for _, nft := range nfts {
+		c = c.AddNFT(nft.(BaseNFT))
 	}
+	return c
 }
 
 // AddNFT adds an NFT to the collection
-func (c Collection) AddNFT(nft exported.NFT) Collection {
+func (c Collection) AddNFT(nft BaseNFT) Collection {
 	c.NFTs = append(c.NFTs, nft)
 	return c
 }
@@ -33,12 +34,19 @@ func (c Collection) Supply() int {
 
 // String follows stringer interface
 func (c Collection) String() string {
+	var buf bytes.Buffer
+	for _, nft := range c.NFTs {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
+		buf.WriteString(nft.String())
+	}
 	return fmt.Sprintf(`Denom: 				%s
 NFTs:
 
 %s`,
 		c.Denom,
-		c.NFTs.String(),
+		buf.String(),
 	)
 }
 

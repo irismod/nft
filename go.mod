@@ -12,6 +12,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/tendermint/tendermint v0.33.6
 	github.com/tendermint/tm-db v0.5.1
+	google.golang.org/grpc v1.30.0
 )
 
 replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.2-alpha.regen.4

@@ -2,6 +2,8 @@ syntax = "proto3";
 package irismod.nft;
 
 import "third_party/proto/gogoproto/gogo.proto";
+//import "google/protobuf/any.proto";
+//import "third_party/proto/cosmos-proto/cosmos.proto";
 
 option go_package = "github.com/irismod/nft/types";
 option (gogoproto.goproto_getters_all)  = false;
@@ -80,4 +82,35 @@ message Denom {
     string name = 1 [(gogoproto.moretags) = "yaml:\"name\""];
     string schema = 2 [(gogoproto.moretags) = "yaml:\"schema\""];
     bytes creator = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+}
+
+message IDCollection {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = false;
+
+    string denom = 1 [(gogoproto.moretags) = "yaml:\"denom\""];
+    repeated string ids = 2 [(gogoproto.customname)  ="IDs"];
+}
+
+message Owner {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = false;
+
+    bytes address = 1 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
+    repeated IDCollection id_collections = 2 [
+                                             (gogoproto.customname)  ="IDCollections",
+                                             (gogoproto.nullable) = false
+                                             ];
+}
+
+message Collection {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = false;
+
+    Denom denom = 1 [(gogoproto.moretags) = "yaml:\"denom\"",(gogoproto.nullable) = false];
+    repeated BaseNFT nfts  = 2 [
+                               (gogoproto.moretags) = "yaml:\"nfts\"",
+                               (gogoproto.customname)  ="NFTs",
+                               (gogoproto.nullable) = false
+                               ];
 }
