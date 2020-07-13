@@ -8,12 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// IDCollection defines a set of nft ids that belong to a specific
-type IDCollection struct {
-	Denom string   `json:"denom" yaml:"denom"`
-	IDs   []string `json:"ids" yaml:"ids"`
-}
-
 // NewIDCollection creates a new IDCollection instance
 func NewIDCollection(denom string, ids []string) IDCollection {
 	return IDCollection{
@@ -77,10 +71,10 @@ func (idcs IDCollections) String() string {
 }
 
 // Owner of non fungible tokens
-type Owner struct {
-	Address       sdk.AccAddress `json:"address" yaml:"address"`
-	IDCollections IDCollections  `json:"id_collections" yaml:"id_collections"`
-}
+//type Owner struct {
+//	Address       sdk.AccAddress `json:"address" yaml:"address"`
+//	IDCollections IDCollections  `json:"id_collections" yaml:"id_collections"`
+//}
 
 // NewOwner creates a new Owner
 func NewOwner(owner sdk.AccAddress, idCollections ...IDCollection) Owner {
@@ -92,11 +86,18 @@ func NewOwner(owner sdk.AccAddress, idCollections ...IDCollection) Owner {
 
 // String follows stringer interface
 func (owner Owner) String() string {
+	var buf bytes.Buffer
+	for _, idCollection := range owner.IDCollections {
+		if buf.Len() > 0 {
+			buf.WriteString("\n")
+		}
+		buf.WriteString(idCollection.String())
+	}
 	return fmt.Sprintf(`
 	Address: 				%s
 	IDCollections:        	%s`,
 		owner.Address,
-		owner.IDCollections.String(),
+		buf.String(),
 	)
 }
 

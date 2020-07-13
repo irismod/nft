@@ -1,6 +1,7 @@
 package keeper_test
 
 import (
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"testing"
 
 	"github.com/irismod/nft/types"
@@ -39,15 +40,23 @@ type KeeperSuite struct {
 	cdc    *codec.Codec
 	ctx    sdk.Context
 	keeper keeper.Keeper
+	app    *simapp.SimApp
+
+	queryClient types.QueryClient
 }
 
 func (suite *KeeperSuite) SetupTest() {
 
 	app := simapp.Setup(isCheckTx)
 
+	suite.app = app
 	suite.cdc = app.Codec()
 	suite.ctx = app.BaseApp.NewContext(isCheckTx, abci.Header{})
 	suite.keeper = app.NFTKeeper
+
+	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, app.InterfaceRegistry())
+	types.RegisterQueryServer(queryHelper, app.NFTKeeper)
+	suite.queryClient = types.NewQueryClient(queryHelper)
 
 	denomE := types.Denom{
 		Name:    denom,

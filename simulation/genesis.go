@@ -41,10 +41,10 @@ func RandomizedGenState(simState *module.SimulationState) {
 			// 50% doggos and 50% kitties
 			if simState.Rand.Intn(100) < 50 {
 				collections[0].Denom.Creator = baseNFT.Owner
-				collections[0] = collections[0].AddNFT(&baseNFT)
+				collections[0] = collections[0].AddNFT(baseNFT)
 			} else {
 				collections[1].Denom.Creator = baseNFT.Owner
-				collections[1] = collections[1].AddNFT(&baseNFT)
+				collections[1] = collections[1].AddNFT(baseNFT)
 			}
 		}
 	}

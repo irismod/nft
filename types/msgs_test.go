@@ -132,7 +132,7 @@ func TestMsgMsgMintNFTValidateBasicMethod(t *testing.T) {
 func TestMsgMintNFTGetSignBytesMethod(t *testing.T) {
 	newMsgMintNFT := NewMsgMintNFT(address, address2, id, denom, tokenURI, tokenData)
 	sortedBytes := newMsgMintNFT.GetSignBytes()
-	require.Equal(t, string(sortedBytes), `{"type":"irismod/nft/MsgMintNFT","value":{"denom":"denom","id":"id1","recipient":"cosmos15ky9du8a2wlstz6fpx3p4mqpjyrm5cgp0ctjdj","sender":"cosmos15ky9du8a2wlstz6fpx3p4mqpjyrm5cgqjwl8sq","tokenURI":"https://google.com/token-1.json","token_data":"https://google.com/token-1.json"}}`)
+	require.Equal(t, string(sortedBytes), `{"type":"irismod/nft/MsgMintNFT","value":{"denom":"denom","id":"id1","recipient":"cosmos15ky9du8a2wlstz6fpx3p4mqpjyrm5cgp0ctjdj","sender":"cosmos15ky9du8a2wlstz6fpx3p4mqpjyrm5cgqjwl8sq","token_data":"https://google.com/token-1.json","token_uri":"https://google.com/token-1.json"}}`)
 }
 
 func TestMsgMintNFTGetSignersMethod(t *testing.T) {

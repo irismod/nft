@@ -5,6 +5,8 @@ package types
 import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
+	cryptocodec "github.com/cosmos/cosmos-sdk/crypto/codec"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	gogotypes "github.com/gogo/protobuf/types"
 
 	"github.com/irismod/nft/exported"
@@ -22,6 +24,20 @@ func RegisterCodec(cdc *codec.Codec) {
 	cdc.RegisterConcrete(&BaseNFT{}, "irismod/nft/BaseNFT", nil)
 }
 
+func RegisterInterfaces(registry types.InterfaceRegistry) {
+	registry.RegisterImplementations((*sdk.Msg)(nil),
+		&MsgIssueDenom{},
+		&MsgTransferNFT{},
+		&MsgEditNFT{},
+		&MsgMintNFT{},
+		&MsgBurnNFT{},
+	)
+
+	registry.RegisterImplementations((*exported.NFT)(nil),
+		&BaseNFT{},
+	)
+}
+
 var (
 	amino = codec.New()
 
@@ -35,9 +51,8 @@ var (
 )
 
 func init() {
-	codec.RegisterCrypto(amino)
 	RegisterCodec(amino)
-	amino.Seal()
+	cryptocodec.RegisterCrypto(amino)
 }
 
 // return supply protobuf code

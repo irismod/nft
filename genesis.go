@@ -3,10 +3,12 @@ package nft
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/irismod/nft/keeper"
+	"github.com/irismod/nft/types"
 )
 
 // InitGenesis sets nft information for genesis.
-func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) {
+func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) {
 	if err := ValidateGenesis(data); err != nil {
 		panic(err.Error())
 	}
@@ -22,20 +24,20 @@ func InitGenesis(ctx sdk.Context, k Keeper, data GenesisState) {
 }
 
 // ExportGenesis returns a GenesisState for a given context and keeper.
-func ExportGenesis(ctx sdk.Context, k Keeper) GenesisState {
-	return NewGenesisState(k.GetCollections(ctx))
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
+	return types.NewGenesisState(k.GetCollections(ctx))
 }
 
 // DefaultGenesisState returns a default genesis state
-func DefaultGenesisState() GenesisState {
-	return NewGenesisState(Collections{})
+func DefaultGenesisState() types.GenesisState {
+	return types.NewGenesisState(types.Collections{})
 }
 
 // ValidateGenesis performs basic validation of nfts genesis data returning an
 // error for any failed validation criteria.
-func ValidateGenesis(data GenesisState) error {
+func ValidateGenesis(data types.GenesisState) error {
 	for _, c := range data.Collections {
-		if err := ValidateDenom(c.Denom.Name); err != nil {
+		if err := types.ValidateDenom(c.Denom.Name); err != nil {
 			return err
 		}
 		for _, nft := range c.NFTs {
@@ -43,11 +45,11 @@ func ValidateGenesis(data GenesisState) error {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing owner")
 			}
 
-			if err := ValidateTokenID(nft.GetID()); err != nil {
+			if err := types.ValidateTokenID(nft.GetID()); err != nil {
 				return err
 			}
 
-			if err := ValidateTokenURI(nft.GetTokenURI()); err != nil {
+			if err := types.ValidateTokenURI(nft.GetTokenURI()); err != nil {
 				return err
 			}
 		}

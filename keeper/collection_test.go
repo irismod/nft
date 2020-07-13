@@ -18,7 +18,7 @@ func (suite *KeeperSuite) TestSetCollection() {
 
 	collection2 := types.Collection{
 		Denom: denomE,
-		NFTs:  types.NFTs{&nft2, &nft},
+		NFTs:  []types.BaseNFT{nft2, nft},
 	}
 
 	err := suite.keeper.SetCollection(suite.ctx, collection2)

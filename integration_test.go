@@ -2,12 +2,12 @@ package nft_test
 
 import (
 	"fmt"
+	keep "github.com/irismod/nft/keeper"
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/irismod/nft"
 	simapp "github.com/irismod/nft/app"
 	"github.com/irismod/nft/types"
 )
@@ -33,7 +33,7 @@ func createTestApp(isCheckTx bool) (*simapp.SimApp, sdk.Context) {
 }
 
 // CheckInvariants checks the invariants
-func CheckInvariants(k nft.Keeper, ctx sdk.Context) bool {
+func CheckInvariants(k keep.Keeper, ctx sdk.Context) bool {
 	collectionsSupply := make(map[string]int)
 	ownersCollectionsSupply := make(map[string]int)
 
