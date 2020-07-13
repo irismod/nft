@@ -8,12 +8,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
-// IDCollection defines a set of nft ids that belong to a specific
-//type IDCollection struct {
-//	Denom string   `json:"denom" yaml:"denom"`
-//	IDs   []string `json:"ids" yaml:"ids"`
-//}
-
 // NewIDCollection creates a new IDCollection instance
 func NewIDCollection(denom string, ids []string) IDCollection {
 	return IDCollection{
