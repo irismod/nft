@@ -1,8 +1,9 @@
 package keeper_test
 
 import (
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"testing"
+
+	"github.com/cosmos/cosmos-sdk/baseapp"
 
 	"github.com/irismod/nft/types"
 

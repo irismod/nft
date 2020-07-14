@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -26,14 +25,14 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		DisableFlagParsing: true,
 	}
 
-	queryCmd.AddCommand(flags.GetCommands(
+	queryCmd.AddCommand(
 		GetCmdQueryDenom(queryRoute, cdc),
 		GetCmdQueryDenoms(queryRoute, cdc),
 		GetCmdQueryCollection(queryRoute, cdc),
 		GetCmdQuerySupply(queryRoute, cdc),
 		GetCmdQueryOwner(queryRoute, cdc),
 		GetCmdQueryNFT(queryRoute, cdc),
-	)...)
+	)
 
 	return queryCmd
 }

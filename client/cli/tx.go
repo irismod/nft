@@ -9,10 +9,10 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
+
 	"github.com/irismod/nft/types"
 )
 
@@ -26,13 +26,13 @@ func GetTxCmd(clientCtx client.Context) *cobra.Command {
 		RunE:                       client.ValidateCmd,
 	}
 
-	txCmd.AddCommand(flags.PostCommands(
+	txCmd.AddCommand(
 		GetCmdIssueDenom(clientCtx),
 		GetCmdMintNFT(clientCtx),
 		GetCmdEditNFT(clientCtx),
 		GetCmdTransferNFT(clientCtx),
 		GetCmdBurnNFT(clientCtx),
-	)...)
+	)
 
 	return txCmd
 }

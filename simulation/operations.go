@@ -81,7 +81,7 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
 			err = fmt.Errorf("invalid account")
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer, err.Error()), nil, err
 		}
 
 		recipientAccount, _ := simtypes.RandomAcc(r, accs)
@@ -98,13 +98,13 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 		ownerAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
 			err = fmt.Errorf("account %s not found", msg.Sender)
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer,err.Error()),nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer, err.Error()), nil, err
 		}
 
 		spendable := bk.SpendableCoins(ctx, account.GetAddress())
 		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer, err.Error()), nil, err
 		}
 
 		tx := helpers.GenTx(
@@ -118,7 +118,7 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeTransfer, err.Error()), nil, err
 		}
 
 		return simtypes.NewOperationMsg(&msg, true, ""), nil, nil
@@ -132,7 +132,7 @@ func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
 			err = fmt.Errorf("account invalid")
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT,err.Error()),nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT, err.Error()), nil, err
 		}
 
 		msg := types.NewMsgEditNFT(
@@ -147,13 +147,13 @@ func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		spendable := bk.SpendableCoins(ctx, account.GetAddress())
 		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT, err.Error()), nil, err
 		}
 
 		ownerAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
 			err = fmt.Errorf("account %s not found", ownerAddr)
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT, err.Error()), nil, err
 		}
 
 		tx := helpers.GenTx(
@@ -167,7 +167,7 @@ func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT, err.Error()), nil, err
 		}
 
 		return simtypes.NewOperationMsg(&msg, true, ""), nil, nil
@@ -195,13 +195,13 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		spendable := bk.SpendableCoins(ctx, account.GetAddress())
 		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT, err.Error()), nil, err
 		}
 
 		simAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
 			err = fmt.Errorf("account %s not found", msg.Sender)
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT, err.Error()), nil, err
 		}
 
 		tx := helpers.GenTx(
@@ -215,7 +215,7 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeMintNFT, err.Error()), nil, err
 		}
 
 		return simtypes.NewOperationMsg(&msg, true, ""), nil, nil
@@ -229,7 +229,7 @@ func SimulateMsgBurnNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		ownerAddr, denom, nftID := getRandomNFTFromOwner(ctx, k, r)
 		if ownerAddr.Empty() {
 			err = fmt.Errorf("invalid account")
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT, err.Error()), nil, err
 		}
 
 		msg := types.NewMsgBurnNFT(ownerAddr, nftID, denom)
@@ -238,13 +238,13 @@ func SimulateMsgBurnNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		spendable := bk.SpendableCoins(ctx, account.GetAddress())
 		fees, err := simtypes.RandomFees(r, ctx, spendable)
 		if err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT, err.Error()), nil, err
 		}
 
 		simAccount, found := simtypes.FindAccount(accs, msg.Sender)
 		if !found {
 			err = fmt.Errorf("account %s not found", msg.Sender)
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeBurnNFT, err.Error()), nil, err
 		}
 
 		tx := helpers.GenTx(
@@ -258,7 +258,7 @@ func SimulateMsgBurnNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		)
 
 		if _, _, err = app.Deliver(tx); err != nil {
-			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT,err.Error()), nil, err
+			return simtypes.NoOpMsg(types.ModuleName, types.EventTypeEditNFT, err.Error()), nil, err
 		}
 
 		return simtypes.NewOperationMsg(&msg, true, ""), nil, nil

@@ -2,6 +2,7 @@ package nft_test
 
 import (
 	"fmt"
+
 	keep "github.com/irismod/nft/keeper"
 
 	abci "github.com/tendermint/tendermint/abci/types"
