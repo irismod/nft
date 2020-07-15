@@ -51,12 +51,12 @@ $ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-
 		),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
+			clientCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 
 			denom := args[0]
 			schema := viper.GetString(FlagSchema)
 
-			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, schema)
+			msg := types.NewMsgIssueDenom(clientCtx.GetFromAddress(), denom, schema)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -82,14 +82,14 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 		),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
+			clientCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
 			tokenData := viper.GetString(FlagTokenData)
 
-			var recipient = cliCtx.GetFromAddress()
+			var recipient = clientCtx.GetFromAddress()
 			var err error
 			recipientStr := strings.TrimSpace(viper.GetString(FlagRecipient))
 			if len(recipientStr) > 0 {
@@ -99,7 +99,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 				}
 			}
 
-			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, tokenData)
+			msg := types.NewMsgMintNFT(clientCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -125,14 +125,14 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 		),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
+			clientCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 
 			denom := args[0]
 			tokenID := args[1]
 			tokenURI := viper.GetString(FlagTokenURI)
 			tokenData := viper.GetString(FlagTokenData)
 
-			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, tokenData)
+			msg := types.NewMsgEditNFT(clientCtx.GetFromAddress(), tokenID, denom, tokenURI, tokenData)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -158,9 +158,9 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 		),
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
+			clientCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 
-			sender := cliCtx.GetFromAddress()
+			sender := clientCtx.GetFromAddress()
 			recipient, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err
@@ -197,12 +197,12 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 		),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
+			clientCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 
 			denom := args[0]
 			tokenID := args[1]
 
-			msg := types.NewMsgBurnNFT(cliCtx.GetFromAddress(), tokenID, denom)
+			msg := types.NewMsgBurnNFT(clientCtx.GetFromAddress(), tokenID, denom)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
