@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -77,6 +78,8 @@ $ %s q nft supply [denom]`, version.AppName)),
 		},
 	}
 	cmd.Flags().AddFlagSet(FsQuerySupply)
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -111,6 +114,8 @@ $ %s q nft owner <address> --denom=<denom>`, version.AppName)),
 		},
 	}
 	cmd.Flags().AddFlagSet(FsQueryOwner)
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -141,6 +146,8 @@ $ %s q nft collection <denom>`, version.AppName)),
 			return cliCtx.PrintOutput(resp.Collection)
 		},
 	}
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -163,6 +170,8 @@ $ %s q nft denoms`, version.AppName)),
 			return cliCtx.PrintOutput(resp.Denoms)
 		},
 	}
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -193,6 +202,8 @@ $ %s q nft denom <denom>`, version.AppName)),
 			return cliCtx.PrintOutput(resp.Denom)
 		},
 	}
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -229,5 +240,7 @@ $ %s q nft token <denom> <tokenID>`, version.AppName)),
 			return cliCtx.PrintOutput(resp.NFT)
 		},
 	}
+	flags.AddQueryFlagsToCmd(cmd)
+
 	return cmd
 }

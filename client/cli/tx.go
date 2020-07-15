@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -63,6 +64,8 @@ $ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-
 		},
 	}
 	cmd.Flags().AddFlagSet(FsIssueDenom)
+	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -104,6 +107,8 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 		},
 	}
 	cmd.Flags().AddFlagSet(FsMintNFT)
+	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -135,6 +140,8 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 		},
 	}
 	cmd.Flags().AddFlagSet(FsEditNFT)
+	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -172,6 +179,8 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 		},
 	}
 	cmd.Flags().AddFlagSet(FsTransferNFT)
+	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }
 
@@ -200,5 +209,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
 		},
 	}
+	flags.AddTxFlagsToCmd(cmd)
+
 	return cmd
 }

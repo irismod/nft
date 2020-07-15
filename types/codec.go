@@ -14,11 +14,11 @@ import (
 
 // RegisterCodec concrete types on codec
 func RegisterCodec(cdc *codec.Codec) {
-	cdc.RegisterConcrete(MsgIssueDenom{}, "irismod/nft/MsgIssueDenom", nil)
-	cdc.RegisterConcrete(MsgTransferNFT{}, "irismod/nft/MsgTransferNFT", nil)
-	cdc.RegisterConcrete(MsgEditNFT{}, "irismod/nft/MsgEditNFT", nil)
-	cdc.RegisterConcrete(MsgMintNFT{}, "irismod/nft/MsgMintNFT", nil)
-	cdc.RegisterConcrete(MsgBurnNFT{}, "irismod/nft/MsgBurnNFT", nil)
+	cdc.RegisterConcrete(&MsgIssueDenom{}, "irismod/nft/MsgIssueDenom", nil)
+	cdc.RegisterConcrete(&MsgTransferNFT{}, "irismod/nft/MsgTransferNFT", nil)
+	cdc.RegisterConcrete(&MsgEditNFT{}, "irismod/nft/MsgEditNFT", nil)
+	cdc.RegisterConcrete(&MsgMintNFT{}, "irismod/nft/MsgMintNFT", nil)
+	cdc.RegisterConcrete(&MsgBurnNFT{}, "irismod/nft/MsgBurnNFT", nil)
 
 	cdc.RegisterInterface((*exported.NFT)(nil), nil)
 	cdc.RegisterConcrete(&BaseNFT{}, "irismod/nft/BaseNFT", nil)
@@ -41,12 +41,6 @@ func RegisterInterfaces(registry types.InterfaceRegistry) {
 var (
 	amino = codec.New()
 
-	// ModuleCdc references the global x/gov module codec. Note, the codec should
-	// ONLY be used in certain instances of tests and for JSON encoding as Amino is
-	// still used for that purpose.
-	//
-	// The actual codec used for serialization should be provided to x/gov and
-	// defined at the application level.
 	ModuleCdc = codec.NewHybridCodec(amino, types.NewInterfaceRegistry())
 )
 
