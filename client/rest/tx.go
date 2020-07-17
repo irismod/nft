@@ -64,7 +64,7 @@ func issueDenomHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }
 
@@ -89,7 +89,7 @@ func mintNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }
 
@@ -112,7 +112,7 @@ func editNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }
 
@@ -140,7 +140,7 @@ func transferNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }
 
@@ -164,6 +164,6 @@ func burnNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
-		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{&msg})
+		authclient.WriteGenerateStdTxResponse(w, cliCtx, baseReq, []sdk.Msg{msg})
 	}
 }

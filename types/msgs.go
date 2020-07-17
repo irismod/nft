@@ -24,8 +24,8 @@ var (
 )
 
 // NewMsgIssueDenom is a constructor function for MsgSetName
-func NewMsgIssueDenom(sender sdk.AccAddress, denom, schema string) MsgIssueDenom {
-	return MsgIssueDenom{
+func NewMsgIssueDenom(sender sdk.AccAddress, denom, schema string) *MsgIssueDenom {
+	return &MsgIssueDenom{
 		Sender: sender,
 		Denom:  strings.TrimSpace(denom),
 		Schema: strings.TrimSpace(schema),
@@ -64,8 +64,8 @@ func (msg MsgIssueDenom) GetSigners() []sdk.AccAddress {
 
 // NewMsgTransferNFT is a constructor function for MsgSetName
 func NewMsgTransferNFT(sender, recipient sdk.AccAddress,
-	denom, id, tokenURI, tokenData string) MsgTransferNFT {
-	return MsgTransferNFT{
+	denom, id, tokenURI, tokenData string) *MsgTransferNFT {
+	return &MsgTransferNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
@@ -110,8 +110,8 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 
 // NewMsgEditNFT is a constructor function for MsgSetName
 func NewMsgEditNFT(sender sdk.AccAddress, id,
-	denom, tokenURI, tokenData string) MsgEditNFT {
-	return MsgEditNFT{
+	denom, tokenURI, tokenData string) *MsgEditNFT {
+	return &MsgEditNFT{
 		Sender:    sender,
 		Denom:     strings.TrimSpace(denom),
 		ID:        strings.TrimSpace(id),
@@ -154,8 +154,8 @@ func (msg MsgEditNFT) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgMintNFT is a constructor function for MsgMintNFT
-func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI, tokenData string) MsgMintNFT {
-	return MsgMintNFT{
+func NewMsgMintNFT(sender, recipient sdk.AccAddress, id, denom, tokenURI, tokenData string) *MsgMintNFT {
+	return &MsgMintNFT{
 		Sender:    sender,
 		Recipient: recipient,
 		Denom:     strings.TrimSpace(denom),
@@ -201,8 +201,8 @@ func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgBurnNFT is a constructor function for MsgBurnNFT
-func NewMsgBurnNFT(sender sdk.AccAddress, id string, denom string) MsgBurnNFT {
-	return MsgBurnNFT{
+func NewMsgBurnNFT(sender sdk.AccAddress, id string, denom string) *MsgBurnNFT {
+	return &MsgBurnNFT{
 		Sender: sender,
 		Denom:  strings.TrimSpace(denom),
 		ID:     strings.TrimSpace(id),

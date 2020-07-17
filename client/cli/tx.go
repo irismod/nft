@@ -60,7 +60,7 @@ $ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTx(clientCtx, msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsIssueDenom)
@@ -103,7 +103,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTx(clientCtx, msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsMintNFT)
@@ -136,7 +136,7 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTx(clientCtx, msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsEditNFT)
@@ -175,7 +175,7 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTx(clientCtx, msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsTransferNFT)
@@ -206,7 +206,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, &msg)
+			return tx.GenerateOrBroadcastTx(clientCtx, msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)
