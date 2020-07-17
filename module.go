@@ -2,21 +2,18 @@ package nft
 
 import (
 	"encoding/json"
-
-	"github.com/gogo/protobuf/grpc"
-
 	"math/rand"
-
-	"github.com/gorilla/mux"
-	"github.com/spf13/cobra"
-
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
+	"github.com/gogo/protobuf/grpc"
+	"github.com/gorilla/mux"
+	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/irismod/nft/client/cli"
 	"github.com/irismod/nft/client/rest"
@@ -29,6 +26,7 @@ var (
 	_ module.AppModule           = AppModule{}
 	_ module.AppModuleBasic      = AppModuleBasic{}
 	_ module.AppModuleSimulation = AppModule{}
+	_ module.InterfaceModule     = AppModuleBasic{}
 )
 
 // AppModuleBasic app module basics object
@@ -74,6 +72,11 @@ func (AppModuleBasic) GetTxCmd(clientCtx client.Context) *cobra.Command {
 // GetQueryCmd gets the root query command of this module
 func (AppModuleBasic) GetQueryCmd(clientCtx client.Context) *cobra.Command {
 	return cli.GetQueryCmd(types.StoreKey, clientCtx.Codec)
+}
+
+// RegisterInterfaceTypes implements InterfaceModule.RegisterInterfaceTypes
+func (a AppModuleBasic) RegisterInterfaceTypes(registry codectypes.InterfaceRegistry) {
+	types.RegisterInterfaces(registry)
 }
 
 //____________________________________________________________________________
@@ -123,7 +126,7 @@ func (AppModule) QuerierRoute() string {
 }
 
 func (am AppModule) RegisterQueryService(server grpc.Server) {
-	//panic("implement me")
+	types.RegisterQueryServer(server, am.keeper)
 }
 
 // NewQuerierHandler module querier
