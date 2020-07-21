@@ -4,17 +4,13 @@ import (
 	"io"
 	"os"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	tmos "github.com/tendermint/tendermint/libs/os"
-	dbm "github.com/tendermint/tm-db"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/std"
+	"github.com/cosmos/cosmos-sdk/testutil/testdata"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
@@ -71,6 +67,10 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+	abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/tendermint/tendermint/libs/log"
+	tmos "github.com/tendermint/tendermint/libs/os"
+	dbm "github.com/tendermint/tm-db"
 
 	"github.com/irismod/nft"
 	nftkeeper "github.com/irismod/nft/keeper"
@@ -80,9 +80,6 @@ import (
 const appName = "SimApp"
 
 var (
-	// DefaultCLIHome default home directories for the application CLI
-	DefaultCLIHome = os.ExpandEnv("$HOME/.simapp")
-
 	// DefaultNodeHome default home directories for the application daemon
 	DefaultNodeHome = os.ExpandEnv("$HOME/.simapp")
 
@@ -341,6 +338,9 @@ func NewSimApp(
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter())
 	app.mm.RegisterQueryServices(app.GRPCQueryRouter())
 
+	// add test gRPC service for testing gRPC queries in isolation
+	testdata.RegisterTestServiceServer(app.GRPCQueryRouter(), testdata.TestServiceImpl{})
+
 	// create the simulation manager and define the order of the modules for deterministic simulations
 	//
 	// NOTE: this is not required apps that don't use the simulator for fuzz testing
@@ -372,7 +372,7 @@ func NewSimApp(
 
 	app.SetAnteHandler(
 		ante.NewAnteHandler(
-			app.AccountKeeper, app.BankKeeper, *app.IBCKeeper, ante.DefaultSigVerificationGasConsumer,
+			app.AccountKeeper, app.BankKeeper, ante.DefaultSigVerificationGasConsumer,
 			authtypes.LegacyAminoJSONHandler{},
 		),
 	)
