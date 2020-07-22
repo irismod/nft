@@ -2,17 +2,15 @@ package cli
 
 import (
 	"fmt"
-
 	"strings"
-
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/version"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/irismod/nft/types"
 )
@@ -64,7 +62,7 @@ $ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsIssueDenom)
@@ -110,7 +108,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsMintNFT)
@@ -147,7 +145,7 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsEditNFT)
@@ -190,7 +188,7 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsTransferNFT)
@@ -225,7 +223,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
-			return tx.GenerateOrBroadcastTx(clientCtx, msg)
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},
 	}
 	flags.AddTxFlagsToCmd(cmd)

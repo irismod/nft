@@ -3,7 +3,7 @@ module github.com/irismod/nft
 go 1.14
 
 require (
-	github.com/cosmos/cosmos-sdk v0.28.2-0.20200720202246-efa73c7edb31
+	github.com/cosmos/cosmos-sdk v0.34.4-0.20200721190130-5d71020270ae
 	github.com/gogo/protobuf v1.3.1
 	github.com/gorilla/mux v1.7.4
 	github.com/spf13/cobra v1.0.0
