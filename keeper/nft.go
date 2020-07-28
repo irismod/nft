@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"strings"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -42,8 +40,6 @@ func (k Keeper) GetNFTs(ctx sdk.Context, denom string) (nfts []exported.NFT) {
 func (k Keeper) Authorize(ctx sdk.Context,
 	denomID, tokenID string,
 	owner sdk.AccAddress) (types.BaseNFT, error) {
-	denomID = strings.ToLower(strings.TrimSpace(denomID))
-	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	nft, err := k.GetNFT(ctx, denomID, tokenID)
 	if err != nil {
 		return types.BaseNFT{}, err

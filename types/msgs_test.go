@@ -2,8 +2,9 @@ package types_test
 
 import (
 	"fmt"
-	"github.com/irismod/nft/types"
 	"testing"
+
+	"github.com/irismod/nft/types"
 
 	"github.com/stretchr/testify/require"
 )

@@ -11,9 +11,9 @@ import (
 // NewDenom return a new denom
 func NewDenom(id, name, schema string, creator sdk.AccAddress) Denom {
 	return Denom{
-		ID:      strings.ToLower(strings.TrimSpace(id)),
-		Name:    strings.TrimSpace(name),
-		Schema:  strings.TrimSpace(schema),
+		ID:      id,
+		Name:    name,
+		Schema:  schema,
 		Creator: creator,
 	}
 }

@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"fmt"
-	"strings"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/tendermint/tendermint/libs/log"
@@ -43,12 +42,10 @@ func (k Keeper) IssueDenom(ctx sdk.Context,
 func (k Keeper) MintNFT(ctx sdk.Context,
 	denomID, tokenID, tokenNm, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
-	denomID = strings.ToLower(strings.TrimSpace(denomID))
 	if !k.HasDenomID(ctx, denomID) {
 		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s not exists", denomID)
 	}
 
-	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	if k.HasNFT(ctx, denomID, tokenID) {
 		return sdkerrors.Wrapf(types.ErrNFTAlreadyExists, "NFT %s already exists in collection %s", tokenID, denomID)
 	}
@@ -69,23 +66,19 @@ func (k Keeper) MintNFT(ctx sdk.Context,
 func (k Keeper) EditNFT(ctx sdk.Context,
 	denomID, tokenID, tokenNm, tokenURI, tokenData string,
 	owner sdk.AccAddress) error {
-	denomID = strings.ToLower(strings.TrimSpace(denomID))
 	if !k.HasDenomID(ctx, denomID) {
 		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s not exists", denomID)
 	}
 
-	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	nft, err := k.Authorize(ctx, denomID, tokenID, owner)
 	if err != nil {
 		return err
 	}
 
-	tokenNm = strings.TrimSpace(tokenNm)
 	if tokenNm != types.DoNotModify {
 		nft.Name = tokenNm
 	}
 
-	tokenURI = strings.TrimSpace(tokenURI)
 	if tokenURI != types.DoNotModify {
 		nft.URI = tokenURI
 	}
@@ -102,12 +95,10 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 func (k Keeper) TransferOwner(ctx sdk.Context,
 	denomID, tokenID, tokenNm, tokenURI, tokenData string,
 	srcOwner, dstOwner sdk.AccAddress) error {
-	denomID = strings.ToLower(strings.TrimSpace(denomID))
 	if !k.HasDenomID(ctx, denomID) {
 		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s not exists", denomID)
 	}
 
-	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	nft, err := k.Authorize(ctx, denomID, tokenID, srcOwner)
 	if err != nil {
 		return err
@@ -115,15 +106,14 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 
 	nft.Owner = dstOwner
 
-	tokenNm = strings.TrimSpace(tokenNm)
 	if tokenNm != types.DoNotModify {
 		nft.Name = tokenNm
 	}
 
-	tokenURI = strings.TrimSpace(tokenURI)
 	if tokenURI != types.DoNotModify {
 		nft.URI = tokenURI
 	}
+
 	if tokenData != types.DoNotModify {
 		nft.Data = tokenData
 	}
@@ -137,12 +127,10 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 func (k Keeper) BurnNFT(ctx sdk.Context,
 	denomID, tokenID string,
 	owner sdk.AccAddress) error {
-	denomID = strings.ToLower(strings.TrimSpace(denomID))
 	if !k.HasDenomID(ctx, denomID) {
 		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s not exists", denomID)
 	}
 
-	tokenID = strings.ToLower(strings.TrimSpace(tokenID))
 	nft, err := k.Authorize(ctx, denomID, tokenID, owner)
 	if err != nil {
 		return err
