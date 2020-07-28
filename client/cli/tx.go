@@ -44,18 +44,18 @@ func GetCmdIssueDenom(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Issue a new denom.
 Example:
-$ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft issue [denomID] [denomName] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
-		Args: cobra.ExactArgs(1),
+		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
-
-			denom := args[0]
-			schema := viper.GetString(FlagSchema)
-
-			msg := types.NewMsgIssueDenom(cliCtx.GetFromAddress(), denom, schema)
+			msg := types.NewMsgIssueDenom(args[0],
+				args[1],
+				viper.GetString(FlagSchema),
+				cliCtx.GetFromAddress(),
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -69,23 +69,17 @@ $ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-
 // GetCmdMintNFT is the CLI command for a MintNFT transaction
 func GetCmdMintNFT(clientCtx client.Context) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "mint [denom] [tokenID]",
+		Use: "mint [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint an NFT and set the owner to the recipient.
 Example:
-$ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft mint [denomID] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
-
-			denom := args[0]
-			tokenID := args[1]
-			tokenURI := viper.GetString(FlagTokenURI)
-			tokenData := viper.GetString(FlagTokenData)
-
 			var recipient = cliCtx.GetFromAddress()
 			var err error
 			recipientStr := strings.TrimSpace(viper.GetString(FlagRecipient))
@@ -96,7 +90,15 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 				}
 			}
 
-			msg := types.NewMsgMintNFT(cliCtx.GetFromAddress(), recipient, tokenID, denom, tokenURI, tokenData)
+			msg := types.NewMsgMintNFT(
+				args[1],
+				args[0],
+				viper.GetString(FlagTokenName),
+				viper.GetString(FlagTokenURI),
+				viper.GetString(FlagTokenData),
+				cliCtx.GetFromAddress(),
+				recipient,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -110,7 +112,7 @@ $ %s tx nft mint [denom] [tokenID] --token-uri=<token-uri> --recipient=<recipien
 // GetCmdEditNFT is the CLI command for sending an MsgEditNFT transaction
 func GetCmdEditNFT(clientCtx client.Context) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "edit [denom] [tokenID]",
+		Use: "edit [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
@@ -121,13 +123,14 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
-
-			denom := args[0]
-			tokenID := args[1]
-			tokenURI := viper.GetString(FlagTokenURI)
-			tokenData := viper.GetString(FlagTokenData)
-
-			msg := types.NewMsgEditNFT(cliCtx.GetFromAddress(), tokenID, denom, tokenURI, tokenData)
+			msg := types.NewMsgEditNFT(
+				args[1],
+				args[0],
+				viper.GetString(FlagTokenName),
+				viper.GetString(FlagTokenURI),
+				viper.GetString(FlagTokenData),
+				cliCtx.GetFromAddress(),
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -141,7 +144,7 @@ $ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --c
 // GetCmdTransferNFT is the CLI command for sending a TransferNFT transaction
 func GetCmdTransferNFT(clientCtx client.Context) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "transfer [recipient] [denom] [tokenID]",
+		Use: "transfer [recipient] [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Transfer a NFT to a recipient.
 Example:
@@ -152,19 +155,20 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
-
-			sender := cliCtx.GetFromAddress()
 			recipient, err := sdk.AccAddressFromBech32(args[0])
 			if err != nil {
 				return err
 			}
 
-			denom := args[1]
-			tokenID := args[2]
-			tokenURI := viper.GetString(FlagTokenURI)
-			tokenData := viper.GetString(FlagTokenData)
-
-			msg := types.NewMsgTransferNFT(sender, recipient, denom, tokenID, tokenURI, tokenData)
+			msg := types.NewMsgTransferNFT(
+				args[2],
+				args[1],
+				viper.GetString(FlagTokenName),
+				viper.GetString(FlagTokenURI),
+				viper.GetString(FlagTokenData),
+				cliCtx.GetFromAddress(),
+				recipient,
+			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
@@ -178,7 +182,7 @@ $ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --fro
 // GetCmdBurnNFT is the CLI command for sending a BurnNFT transaction
 func GetCmdBurnNFT(clientCtx client.Context) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "burn [denom] [tokenID]",
+		Use: "burn [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Burn an NFT.
 Example:
@@ -189,11 +193,7 @@ $ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fee
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
-
-			denom := args[0]
-			tokenID := args[1]
-
-			msg := types.NewMsgBurnNFT(cliCtx.GetFromAddress(), tokenID, denom)
+			msg := types.NewMsgBurnNFT(cliCtx.GetFromAddress(), args[1], args[0])
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}

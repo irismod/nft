@@ -41,7 +41,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 // GetCmdQuerySupply queries the supply of a nft collection
 func GetCmdQuerySupply(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "supply [denom]",
+		Use: "supply [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`total supply of a collection or owner of NFTs.
 Example:
@@ -62,7 +62,7 @@ $ %s q nft supply [denom]`, version.AppName)),
 			}
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -118,7 +118,7 @@ $ %s q nft owner <address> --denom=<denom>`, version.AppName)),
 // GetCmdQueryCollection queries all the NFTs from a collection
 func GetCmdQueryCollection(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "collection [denom]",
+		Use: "collection [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Get all the NFTs from a given collection
 Example:
@@ -128,7 +128,7 @@ $ %s q nft collection <denom>`, version.AppName)),
 			cliCtx := client.NewContext().WithCodec(cdc).WithJSONMarshaler(cdc)
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -170,7 +170,7 @@ $ %s q nft denoms`, version.AppName)),
 // GetCmdQueryDenoms queries the specified denoms
 func GetCmdQueryDenom(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "denom <denom>",
+		Use: "denom [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query the denominations by the specified denmo name
 Example:
@@ -180,7 +180,7 @@ $ %s q nft denom <denom>`, version.AppName)),
 			cliCtx := client.NewContext().WithCodec(cdc).WithJSONMarshaler(cdc)
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -200,7 +200,7 @@ $ %s q nft denom <denom>`, version.AppName)),
 // GetCmdQueryNFT queries a single NFTs from a collection
 func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "token [denom] [tokenID]",
+		Use: "token [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query a single NFT from a collection
 Example:
@@ -210,7 +210,7 @@ $ %s q nft token <denom> <tokenID>`, version.AppName)),
 			cliCtx := client.NewContext().WithCodec(cdc).WithJSONMarshaler(cdc)
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 

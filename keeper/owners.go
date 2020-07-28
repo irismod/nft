@@ -6,7 +6,7 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// GetOwner gets all the TokenID Collections owned by an address and denom
+// GetOwner gets all the TokenID Collections owned by an address and denomID
 func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denom string) types.Owner {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, denom, ""))
@@ -63,28 +63,28 @@ func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 }
 
 func (k Keeper) deleteOwner(ctx sdk.Context,
-	denom, tokenID string,
+	denomID, tokenID string,
 	owner sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.KeyOwner(owner, denom, tokenID))
+	store.Delete(types.KeyOwner(owner, denomID, tokenID))
 }
 
 func (k Keeper) setOwner(ctx sdk.Context,
-	denom, tokenID string,
+	denomID, tokenID string,
 	owner sdk.AccAddress) {
 	store := ctx.KVStore(k.storeKey)
 
 	bz := types.MustMarshalTokenID(k.cdc, tokenID)
-	store.Set(types.KeyOwner(owner, denom, tokenID), bz)
+	store.Set(types.KeyOwner(owner, denomID, tokenID), bz)
 }
 
 func (k Keeper) swapOwner(ctx sdk.Context,
-	denom, tokenID string,
+	denomID, tokenID string,
 	srcOwner, dstOwner sdk.AccAddress) {
 
 	//delete old owner key
-	k.deleteOwner(ctx, denom, tokenID, srcOwner)
+	k.deleteOwner(ctx, denomID, tokenID, srcOwner)
 
 	//set new owner key
-	k.setOwner(ctx, denom, tokenID, dstOwner)
+	k.setOwner(ctx, denomID, tokenID, dstOwner)
 }

@@ -26,6 +26,7 @@ var (
 	PrefixOwners     = []byte{0x02} // key for a owner
 	PrefixCollection = []byte{0x03} // key for balance of NFTs held by the denom
 	PrefixDenom      = []byte{0x04} // key for denom of the nft
+	PrefixDenomNm    = []byte{0x05} // key for denom name of the nft
 
 	delimiter = []byte("/")
 )
@@ -45,47 +46,53 @@ func SplitKeyOwner(key []byte) (address sdk.AccAddress, denom, id string, err er
 }
 
 // KeyOwner gets the key of a collection owned by an account address
-func KeyOwner(address sdk.AccAddress, denom, id string) []byte {
+func KeyOwner(address sdk.AccAddress, denomID, tokenID string) []byte {
 	key := append(PrefixOwners, delimiter...)
 	if address != nil {
 		key = append(key, []byte(address.String())...)
 		key = append(key, delimiter...)
 	}
 
-	if address != nil && len(denom) > 0 {
-		key = append(key, []byte(denom)...)
+	if address != nil && len(denomID) > 0 {
+		key = append(key, []byte(denomID)...)
 		key = append(key, delimiter...)
 	}
 
-	if address != nil && len(denom) > 0 && len(id) > 0 {
+	if address != nil && len(denomID) > 0 && len(tokenID) > 0 {
 
-		key = append(key, []byte(id)...)
+		key = append(key, []byte(tokenID)...)
 	}
 	return key
 }
 
 // KeyNFT gets the key of nft stored by an denom and id
-func KeyNFT(denom, id string) []byte {
+func KeyNFT(denomID, tokenID string) []byte {
 	key := append(PrefixNFT, delimiter...)
-	if len(denom) > 0 {
-		key = append(key, []byte(denom)...)
+	if len(denomID) > 0 {
+		key = append(key, []byte(denomID)...)
 		key = append(key, delimiter...)
 	}
 
-	if len(denom) > 0 && len(id) > 0 {
-		key = append(key, []byte(id)...)
+	if len(denomID) > 0 && len(tokenID) > 0 {
+		key = append(key, []byte(tokenID)...)
 	}
 	return key
 }
 
 // KeyCollection gets the storeKey by the collection
-func KeyCollection(denom string) []byte {
+func KeyCollection(denomID string) []byte {
 	key := append(PrefixCollection, delimiter...)
-	return append(key, []byte(denom)...)
+	return append(key, []byte(denomID)...)
 }
 
-// KeyDenom gets the storeKey by the denom
-func KeyDenom(denom string) []byte {
+// KeyDenomID gets the storeKey by the denom id
+func KeyDenomID(id string) []byte {
 	key := append(PrefixDenom, delimiter...)
-	return append(key, []byte(denom)...)
+	return append(key, []byte(id)...)
+}
+
+// KeyDenomID gets the storeKey by the denom name
+func KeyDenomNm(name string) []byte {
+	key := append(PrefixDenomNm, delimiter...)
+	return append(key, []byte(name)...)
 }

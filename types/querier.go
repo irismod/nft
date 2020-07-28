@@ -63,13 +63,13 @@ func NewQueryCollectionParams(denom string) QueryCollectionParams {
 
 // QueryDenomParams defines the params for queries:
 type QueryDenomParams struct {
-	Denom string
+	ID string
 }
 
 // NewQueryDenomParams creates a new instance of QueryDenomParams
-func NewQueryDenomParams(denom string) QueryDenomParams {
+func NewQueryDenomParams(id string) QueryDenomParams {
 	return QueryDenomParams{
-		Denom: denom,
+		ID: id,
 	}
 }
 

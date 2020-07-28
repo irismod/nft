@@ -14,9 +14,10 @@ import (
 var _ exported.NFT = (*BaseNFT)(nil)
 
 // NewBaseNFT creates a new NFT instance
-func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, tokenData string) BaseNFT {
+func NewBaseNFT(id,name string, owner sdk.AccAddress, tokenURI, tokenData string) BaseNFT {
 	return BaseNFT{
 		ID:        strings.ToLower(strings.TrimSpace(id)),
+		Name:      strings.TrimSpace(name),
 		Owner:     owner,
 		TokenURI:  strings.TrimSpace(tokenURI),
 		TokenData: strings.TrimSpace(tokenData),
@@ -24,6 +25,10 @@ func NewBaseNFT(id string, owner sdk.AccAddress, tokenURI, tokenData string) Bas
 }
 
 func (bnft BaseNFT) GetID() string {
+	return bnft.ID
+}
+
+func (bnft BaseNFT) GetName() string {
 	return bnft.ID
 }
 
@@ -82,17 +87,17 @@ func (nfts NFTs) String() string {
 func ValidateTokenID(tokenID string) error {
 	tokenID = strings.TrimSpace(tokenID)
 	if len(tokenID) < MinDenomLen || len(tokenID) > MaxDenomLen {
-		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts value [%d, %d]", tokenID, MinDenomLen, MaxDenomLen)
 	}
 	if !IsBeginWithAlpha(tokenID) || !IsAlphaNumeric(tokenID) {
-		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts alphanumeric characters,and begin with an english letter", denom)
+		return sdkerrors.Wrapf(ErrInvalidTokenID, "invalid tokenID %s, only accepts alphanumeric characters,and begin with an english letter", tokenID)
 	}
 	return nil
 }
 
 func ValidateTokenURI(tokenURI string) error {
 	if len(tokenURI) > MaxTokenURILen {
-		return sdkerrors.Wrapf(ErrInvalidTokenURI, "invalid tokenURI %s, only accepts value [0, %d]", denom, MaxTokenURILen)
+		return sdkerrors.Wrapf(ErrInvalidTokenURI, "invalid tokenURI %s, only accepts value [0, %d]", tokenURI, MaxTokenURILen)
 	}
 	return nil
 }

@@ -5,6 +5,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"github.com/irismod/nft/keeper"
 	"github.com/irismod/nft/types"
+	"unicode/utf8"
 )
 
 // InitGenesis sets nft information for genesis.
@@ -37,9 +38,13 @@ func DefaultGenesisState() types.GenesisState {
 // error for any failed validation criteria.
 func ValidateGenesis(data types.GenesisState) error {
 	for _, c := range data.Collections {
-		if err := types.ValidateDenom(c.Denom.Name); err != nil {
+		if err := types.ValidateDenomID(c.Denom.Name); err != nil {
 			return err
 		}
+		if !utf8.ValidString(c.Denom.Name) {
+			return sdkerrors.Wrap(types.ErrInvalidDenom, "denom name is invalid")
+		}
+
 		for _, nft := range c.NFTs {
 			if nft.GetOwner().Empty() {
 				return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing owner")

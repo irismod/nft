@@ -32,7 +32,8 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 func HandleMsgIssueDenom(ctx sdk.Context, msg *types.MsgIssueDenom, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.IssueDenom(ctx, msg.Denom,
+	if err := k.IssueDenom(ctx, msg.ID,
+		msg.Name,
 		msg.Schema,
 		msg.Sender); err != nil {
 		return nil, err
@@ -41,7 +42,7 @@ func HandleMsgIssueDenom(ctx sdk.Context, msg *types.MsgIssueDenom, k keeper.Kee
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeIssueDenom,
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
+			sdk.NewAttribute(types.AttributeKeyDenom, msg.ID),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -58,6 +59,7 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg *types.MsgTransferNFT, k keeper.K
 	if err := k.TransferOwner(ctx,
 		msg.Denom,
 		msg.ID,
+		msg.Name,
 		msg.TokenURI,
 		msg.TokenData,
 		msg.Sender,
@@ -86,6 +88,7 @@ func HandleMsgEditNFT(ctx sdk.Context, msg *types.MsgEditNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
 	if err := k.EditNFT(ctx, msg.Denom,
 		msg.ID,
+		msg.Name,
 		msg.TokenURI,
 		msg.TokenData,
 		msg.Sender); err != nil {
@@ -114,6 +117,7 @@ func HandleMsgMintNFT(ctx sdk.Context, msg *types.MsgMintNFT, k keeper.Keeper,
 	if err := k.MintNFT(ctx,
 		msg.Denom,
 		msg.ID,
+		msg.Name,
 		msg.TokenURI,
 		msg.TokenData,
 		msg.Recipient); err != nil {

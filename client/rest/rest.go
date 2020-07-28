@@ -23,7 +23,8 @@ const (
 type issueDenomReq struct {
 	BaseReq rest.BaseReq   `json:"base_req"`
 	Owner   sdk.AccAddress `json:"owner"`
-	Denom   string         `json:"denom"`
+	ID      string         `json:"id"`
+	Name    string         `json:"name"`
 	Schema  string         `json:"schema"`
 }
 
@@ -33,6 +34,7 @@ type mintNFTReq struct {
 	Recipient sdk.AccAddress `json:"recipient"`
 	Denom     string         `json:"denom"`
 	TokenID   string         `json:"token_id"`
+	TokenName string         `json:"token_name"`
 	TokenURI  string         `json:"token_uri"`
 	TokenData string         `json:"token_data"`
 }
@@ -40,6 +42,7 @@ type mintNFTReq struct {
 type editNFTReq struct {
 	BaseReq   rest.BaseReq   `json:"base_req"`
 	Owner     sdk.AccAddress `json:"owner"`
+	TokenName string         `json:"token_name"`
 	TokenURI  string         `json:"token_uri"`
 	TokenData string         `json:"token_data"`
 }
@@ -48,6 +51,7 @@ type transferNFTReq struct {
 	BaseReq   rest.BaseReq   `json:"base_req"`
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient string         `json:"recipient"`
+	TokenName string         `json:"token_name"`
 	TokenURI  string         `json:"token_uri"`
 	TokenData string         `json:"token_data"`
 }

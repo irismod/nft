@@ -9,29 +9,32 @@ import (
 )
 
 // NewDenom return a new denom
-func NewDenom(name, schema string, creator sdk.AccAddress) Denom {
+func NewDenom(id, name, schema string, creator sdk.AccAddress) Denom {
 	return Denom{
+		ID:      strings.ToLower(strings.TrimSpace(id)),
 		Name:    strings.TrimSpace(name),
 		Schema:  strings.TrimSpace(schema),
 		Creator: creator,
 	}
 }
 
-func ValidateDenom(denom string) error {
-	denom = strings.TrimSpace(denom)
-	if len(denom) < MinDenomLen || len(denom) > MaxDenomLen {
-		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts value [%d, %d]", denom, MinDenomLen, MaxDenomLen)
+func ValidateDenomID(denomID string) error {
+	denomID = strings.TrimSpace(denomID)
+	if len(denomID) < MinDenomLen || len(denomID) > MaxDenomLen {
+		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts value [%d, %d]", denomID, MinDenomLen, MaxDenomLen)
 	}
-	if !IsBeginWithAlpha(denom) || !IsAlphaNumeric(denom) {
-		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts alphanumeric characters,and begin with an english letter", denom)
+	if !IsBeginWithAlpha(denomID) || !IsAlphaNumeric(denomID) {
+		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts alphanumeric characters,and begin with an english letter", denomID)
 	}
 	return nil
 }
 
 func (d Denom) String() string {
-	return fmt.Sprintf(`Name:				%s
+	return fmt.Sprintf(`ID:				%s
+Name:			%s
 Schema:			%s
 Creator:		%s`,
+		d.ID,
 		d.Name,
 		d.Schema,
 		d.Creator.String(),
