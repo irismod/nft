@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	FlagTokenName  = "token-name"
-	FlagTokenURI  = "token-uri"
-	FlagTokenData = "token-data"
+	FlagTokenName = "name"
+	FlagTokenURI  = "uri"
+	FlagTokenData = "data"
 	FlagRecipient = "recipient"
 	FlagOwner     = "owner"
 	FlagDenom     = "denom"

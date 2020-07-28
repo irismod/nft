@@ -14,8 +14,8 @@ func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) erro
 			collection.Denom.ID,
 			nft.GetID(),
 			nft.GetName(),
-			nft.GetTokenURI(),
-			nft.GetTokenData(),
+			nft.GetURI(),
+			nft.GetData(),
 			nft.GetOwner(),
 		); err != nil {
 			return err

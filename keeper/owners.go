@@ -6,7 +6,7 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// GetOwner gets all the TokenID Collections owned by an address and denomID
+// GetOwner gets all the ID Collections owned by an address and denomID
 func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denom string) types.Owner {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, types.KeyOwner(address, denom, ""))
@@ -36,7 +36,7 @@ func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denom string) 
 	return owner
 }
 
-// GetOwner gets all the TokenID Collections
+// GetOwner gets all the ID Collections
 func (k Keeper) GetOwners(ctx sdk.Context) (owners types.Owners) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStoreReversePrefixIterator(store, types.KeyOwner(nil, "", ""))

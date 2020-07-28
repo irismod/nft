@@ -87,18 +87,18 @@ func (k Keeper) EditNFT(ctx sdk.Context,
 
 	tokenURI = strings.TrimSpace(tokenURI)
 	if tokenURI != types.DoNotModify {
-		nft.TokenURI = tokenURI
+		nft.URI = tokenURI
 	}
 
 	if tokenData != types.DoNotModify {
-		nft.TokenData = tokenData
+		nft.Data = tokenData
 	}
 
 	k.setNFT(ctx, denomID, nft)
 	return nil
 }
 
-// TransferOwner gets all the TokenID Collections owned by an address
+// TransferOwner gets all the ID Collections owned by an address
 func (k Keeper) TransferOwner(ctx sdk.Context,
 	denomID, tokenID, tokenNm, tokenURI, tokenData string,
 	srcOwner, dstOwner sdk.AccAddress) error {
@@ -122,10 +122,10 @@ func (k Keeper) TransferOwner(ctx sdk.Context,
 
 	tokenURI = strings.TrimSpace(tokenURI)
 	if tokenURI != types.DoNotModify {
-		nft.TokenURI = tokenURI
+		nft.URI = tokenURI
 	}
 	if tokenData != types.DoNotModify {
-		nft.TokenData = tokenData
+		nft.Data = tokenData
 	}
 
 	k.setNFT(ctx, denomID, nft)

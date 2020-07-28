@@ -16,7 +16,7 @@ func RegisterRoutes(cliCtx client.Context, r *mux.Router, queryRoute string) {
 
 const (
 	RestParamDenom   = "denom"
-	RestParamTokenID = "token-id"
+	RestParamTokenID = "id"
 	RestParamOwner   = "owner"
 )
 
@@ -33,27 +33,27 @@ type mintNFTReq struct {
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient sdk.AccAddress `json:"recipient"`
 	Denom     string         `json:"denom"`
-	TokenID   string         `json:"token_id"`
-	TokenName string         `json:"token_name"`
-	TokenURI  string         `json:"token_uri"`
-	TokenData string         `json:"token_data"`
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	URI       string         `json:"uri"`
+	Data      string         `json:"data"`
 }
 
 type editNFTReq struct {
-	BaseReq   rest.BaseReq   `json:"base_req"`
-	Owner     sdk.AccAddress `json:"owner"`
-	TokenName string         `json:"token_name"`
-	TokenURI  string         `json:"token_uri"`
-	TokenData string         `json:"token_data"`
+	BaseReq rest.BaseReq   `json:"base_req"`
+	Owner   sdk.AccAddress `json:"owner"`
+	Name    string         `json:"name"`
+	URI     string         `json:"uri"`
+	Data    string         `json:"data"`
 }
 
 type transferNFTReq struct {
 	BaseReq   rest.BaseReq   `json:"base_req"`
 	Owner     sdk.AccAddress `json:"owner"`
 	Recipient string         `json:"recipient"`
-	TokenName string         `json:"token_name"`
-	TokenURI  string         `json:"token_uri"`
-	TokenData string         `json:"token_data"`
+	Name      string         `json:"name"`
+	URI       string         `json:"uri"`
+	Data      string         `json:"data"`
 }
 
 type burnNFTReq struct {

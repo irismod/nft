@@ -185,7 +185,7 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		randomRecipient, _ := simtypes.RandomAcc(r, accs)
 
 		msg := types.NewMsgMintNFT(
-			simtypes.RandStringOfLength(r, 5), // nft TokenID
+			simtypes.RandStringOfLength(r, 5), // nft ID
 			getRandomDenom(ctx, k, r),         // denom
 			"",
 			simtypes.RandStringOfLength(r, 45), // tokenURI

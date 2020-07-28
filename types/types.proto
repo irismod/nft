@@ -22,10 +22,10 @@ message MsgTransferNFT {
     option (gogoproto.equal) = true;
 
     string id = 1 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
-    string denom_id = 2 [(gogoproto.moretags) = "yaml:\"denom_id\""];
+    string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
     string name = 3 [(gogoproto.moretags) = "yaml:\"name\""];
-    string token_uri = 4 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
-    string token_data = 5 [(gogoproto.moretags) = "yaml:\"token_data\""];
+    string uri = 4 [(gogoproto.moretags) = "yaml:\"uri\"",(gogoproto.customname)  ="URI"];
+    string data = 5 [(gogoproto.moretags) = "yaml:\"data\""];
     bytes sender = 6 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     bytes recipient = 7 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
@@ -37,8 +37,8 @@ message MsgEditNFT {
     string id = 1 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
     string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
     string name = 3 [(gogoproto.moretags) = "yaml:\"name\""];
-    string token_uri = 4 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
-    string token_data = 5 [(gogoproto.moretags) = "yaml:\"token_data\""];
+    string uri = 4 [(gogoproto.moretags) = "yaml:\"uri\"",(gogoproto.customname)  ="URI"];
+    string data = 5 [(gogoproto.moretags) = "yaml:\"data\""];
     bytes sender = 6 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 
@@ -49,8 +49,8 @@ message MsgMintNFT {
     string id = 1 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
     string denom = 2 [(gogoproto.moretags) = "yaml:\"denom\""];
     string name = 3 [(gogoproto.moretags) = "yaml:\"name\""];
-    string token_uri = 4 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
-    string token_data = 5 [(gogoproto.moretags) = "yaml:\"token_data\""];
+    string uri = 4 [(gogoproto.moretags) = "yaml:\"uri\"",(gogoproto.customname)  ="URI"];
+    string data = 5 [(gogoproto.moretags) = "yaml:\"data\""];
     bytes sender = 6 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
     bytes recipient = 7 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
@@ -72,8 +72,8 @@ message BaseNFT {
 
     string id = 1 [(gogoproto.moretags) = "yaml:\"id\"",(gogoproto.customname)  ="ID"];
     string name = 2 [(gogoproto.moretags) = "yaml:\"name\""];
-    string token_uri = 3 [(gogoproto.moretags) = "yaml:\"token_uri\"",(gogoproto.customname)  ="TokenURI"];
-    string token_data = 4 [(gogoproto.moretags) = "yaml:\"token_data\""];
+    string uri = 3 [(gogoproto.moretags) = "yaml:\"uri\"",(gogoproto.customname)  ="URI"];
+    string data = 4 [(gogoproto.moretags) = "yaml:\"data\""];
     bytes owner = 5 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.AccAddress"];
 }
 

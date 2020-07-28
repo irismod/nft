@@ -68,11 +68,11 @@ func (suite *KeeperSuite) SetupTest() {
 	types.RegisterQueryServer(queryHelper, app.NFTKeeper)
 	suite.queryClient = types.NewQueryClient(queryHelper)
 
-	err := suite.keeper.IssueDenom(suite.ctx, denomID, denomNm,schema,address)
+	err := suite.keeper.IssueDenom(suite.ctx, denomID, denomNm, schema, address)
 	suite.NoError(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.IssueDenom(suite.ctx, denomID2, denomNm2,schema,address)
+	err = suite.keeper.IssueDenom(suite.ctx, denomID2, denomNm2, schema, address)
 	suite.NoError(err)
 
 	// collections should equal 1
@@ -87,63 +87,63 @@ func TestKeeperSuite(t *testing.T) {
 
 func (suite *KeeperSuite) TestMintNFT() {
 	// MintNFT shouldn't fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// MintNFT shouldn't fail when collection exists
-	err = suite.keeper.MintNFT(suite.ctx, denomID, tokenID2,tokenNm2, tokenURI, tokenData, address)
+	err = suite.keeper.MintNFT(suite.ctx, denomID, tokenID2, tokenNm2, tokenURI, tokenData, address)
 	suite.NoError(err)
 }
 
 func (suite *KeeperSuite) TestUpdateNFT() {
 	// EditNFT should fail when NFT doesn't exists
-	err := suite.keeper.EditNFT(suite.ctx, denomID, tokenID,tokenNm3, tokenURI, tokenData, address)
+	err := suite.keeper.EditNFT(suite.ctx, denomID, tokenID, tokenNm3, tokenURI, tokenData, address)
 	suite.Error(err)
 
 	// MintNFT shouldn't fail when collection does not exist
-	err = suite.keeper.MintNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI, tokenData, address)
+	err = suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// EditNFT should fail when NFT doesn't exists
-	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID2,tokenNm2, tokenURI, tokenData, address)
+	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID2, tokenNm2, tokenURI, tokenData, address)
 	suite.Error(err)
 
 	// EditNFT shouldn't fail when NFT exists
-	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI2, tokenData, address)
+	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI2, tokenData, address)
 	suite.NoError(err)
 
 	// GetNFT should get the NFT with new tokenURI
 	receivedNFT, err := suite.keeper.GetNFT(suite.ctx, denomID, tokenID)
 	suite.NoError(err)
-	suite.Equal(receivedNFT.GetTokenURI(), tokenURI2)
+	suite.Equal(receivedNFT.GetURI(), tokenURI2)
 
 	// EditNFT shouldn't fail when NFT exists
-	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI2, tokenData, address2)
+	err = suite.keeper.EditNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI2, tokenData, address2)
 	suite.Error(err)
 }
 
 func (suite *KeeperSuite) TestTransferOwner() {
 
 	// MintNFT shouldn't fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	//invalid owner
-	err = suite.keeper.TransferOwner(suite.ctx, denomID, tokenID,tokenNm, tokenURI, tokenData, address2, address3)
+	err = suite.keeper.TransferOwner(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address2, address3)
 	suite.Error(err)
 
 	//right
-	err = suite.keeper.TransferOwner(suite.ctx, denomID, tokenID,tokenNm2, tokenURI2, tokenData, address, address2)
+	err = suite.keeper.TransferOwner(suite.ctx, denomID, tokenID, tokenNm2, tokenURI2, tokenData, address, address2)
 	suite.NoError(err)
 
 	nft, err := suite.keeper.GetNFT(suite.ctx, denomID, tokenID)
 	suite.NoError(err)
-	suite.Equal(tokenURI2, nft.GetTokenURI())
+	suite.Equal(tokenURI2, nft.GetURI())
 }
 
 func (suite *KeeperSuite) TestBurnNFT() {
 	// MintNFT should not fail when collection does not exist
-	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID,tokenNm, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	// BurnNFT should fail when NFT doesn't exist but collection does exist

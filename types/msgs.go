@@ -80,8 +80,8 @@ func NewMsgTransferNFT(
 		ID:        strings.ToLower(strings.TrimSpace(id)),
 		Denom:     strings.TrimSpace(denom),
 		Name:      strings.TrimSpace(name),
-		TokenURI:  strings.TrimSpace(tokenURI),
-		TokenData: strings.TrimSpace(tokenData),
+		URI:       strings.TrimSpace(tokenURI),
+		Data:      strings.TrimSpace(tokenData),
 		Sender:    sender,
 		Recipient: recipient,
 	}
@@ -124,12 +124,12 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 func NewMsgEditNFT(
 	id, denom, name, tokenURI, tokenData string, sender sdk.AccAddress) MsgEditNFT {
 	return MsgEditNFT{
-		ID:        strings.ToLower(strings.TrimSpace(id)),
-		Denom:     strings.TrimSpace(denom),
-		Name:      strings.TrimSpace(name),
-		TokenURI:  strings.TrimSpace(tokenURI),
-		TokenData: strings.TrimSpace(tokenData),
-		Sender:    sender,
+		ID:     strings.ToLower(strings.TrimSpace(id)),
+		Denom:  strings.TrimSpace(denom),
+		Name:   strings.TrimSpace(name),
+		URI:    strings.TrimSpace(tokenURI),
+		Data:   strings.TrimSpace(tokenData),
+		Sender: sender,
 	}
 }
 
@@ -149,7 +149,7 @@ func (msg MsgEditNFT) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokenURI(msg.TokenURI); err != nil {
+	if err := ValidateTokenURI(msg.URI); err != nil {
 		return err
 	}
 	return ValidateTokenID(msg.ID)
@@ -174,8 +174,8 @@ func NewMsgMintNFT(
 		ID:        strings.ToLower(strings.TrimSpace(id)),
 		Denom:     strings.TrimSpace(denom),
 		Name:      strings.TrimSpace(name),
-		TokenURI:  strings.TrimSpace(tokenURI),
-		TokenData: strings.TrimSpace(tokenData),
+		URI:       strings.TrimSpace(tokenURI),
+		Data:      strings.TrimSpace(tokenData),
 		Sender:    sender,
 		Recipient: recipient,
 	}
@@ -199,7 +199,7 @@ func (msg MsgMintNFT) ValidateBasic() error {
 		return err
 	}
 
-	if err := ValidateTokenURI(msg.TokenURI); err != nil {
+	if err := ValidateTokenURI(msg.URI); err != nil {
 		return err
 	}
 	return ValidateTokenID(msg.ID)

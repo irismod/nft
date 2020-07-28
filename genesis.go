@@ -54,7 +54,7 @@ func ValidateGenesis(data types.GenesisState) error {
 				return err
 			}
 
-			if err := types.ValidateTokenURI(nft.GetTokenURI()); err != nil {
+			if err := types.ValidateTokenURI(nft.GetURI()); err != nil {
 				return err
 			}
 		}

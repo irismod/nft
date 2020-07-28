@@ -73,7 +73,7 @@ func GetCmdMintNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint an NFT and set the owner to the recipient.
 Example:
-$ %s tx nft mint [denomID] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft mint [denomID] [tokenID] --uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
@@ -116,7 +116,7 @@ func GetCmdEditNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
-$ %s tx nft edit [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft edit [denom] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
@@ -148,7 +148,7 @@ func GetCmdTransferNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Transfer a NFT to a recipient.
 Example:
-$ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft transfer [recipient] [denom] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
@@ -186,7 +186,7 @@ func GetCmdBurnNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Burn an NFT.
 Example:
-$ %s tx nft burn [denom] [tokenID] --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft burn [denomID] [tokenID] --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
