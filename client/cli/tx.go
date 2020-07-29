@@ -45,15 +45,15 @@ func GetCmdIssueDenom(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Issue a new denom.
 Example:
-$ %s tx nft issue [denomID] [denomName] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft issue [denomID] --from=<key-name> --name=<name> --schema=<schema> --name=<name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
-		Args: cobra.ExactArgs(2),
+		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := clientCtx.InitWithInput(cmd.InOrStdin())
 			msg := types.NewMsgIssueDenom(args[0],
-				args[1],
+				viper.GetString(FlagDenomName),
 				viper.GetString(FlagSchema),
 				cliCtx.GetFromAddress(),
 			)
@@ -74,7 +74,7 @@ func GetCmdMintNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint an NFT and set the owner to the recipient.
 Example:
-$ %s tx nft mint [denomID] [tokenID] --uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft mint [denomID] [tokenID] --uri=<uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
@@ -117,7 +117,7 @@ func GetCmdEditNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
-$ %s tx nft edit [denom] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft edit [denomID] [tokenID] --uri=<uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),
@@ -149,7 +149,7 @@ func GetCmdTransferNFT(clientCtx client.Context) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Transfer a NFT to a recipient.
 Example:
-$ %s tx nft transfer [recipient] [denom] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft transfer [recipient] [denomID] [tokenID] --uri=<uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.AppName,
 			),
 		),

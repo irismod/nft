@@ -15,8 +15,11 @@ func (k Keeper) HasDenomID(ctx sdk.Context, id string) bool {
 
 // HasDenomNm returns whether the specified denomNm exists
 func (k Keeper) HasDenomNm(ctx sdk.Context, name string) bool {
+	if len(name) == 0 {
+		return false
+	}
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.KeyDenomNm(name))
+	return store.Has(types.KeyDenomName(name))
 }
 
 // SetDenom is responsible for saving the definition of denomID
@@ -32,7 +35,9 @@ func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryBare(&denom)
 	store.Set(types.KeyDenomID(denom.ID), bz)
-	store.Set(types.KeyDenomNm(denom.Name), []byte(denom.ID))
+	if len(denom.Name) == 0 {
+		store.Set(types.KeyDenomName(denom.Name), []byte(denom.ID))
+	}
 	return nil
 }
 

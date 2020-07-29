@@ -25,11 +25,11 @@ var (
 )
 
 // NewMsgIssueDenom is a constructor function for MsgSetName
-func NewMsgIssueDenom(id, denom, schema string, sender sdk.AccAddress) MsgIssueDenom {
+func NewMsgIssueDenom(id, name, schema string, sender sdk.AccAddress) MsgIssueDenom {
 	return MsgIssueDenom{
 		Sender: sender,
 		ID:     strings.ToLower(strings.TrimSpace(id)),
-		Name:   strings.TrimSpace(denom),
+		Name:   strings.TrimSpace(name),
 		Schema: strings.TrimSpace(schema),
 	}
 }
@@ -47,11 +47,7 @@ func (m MsgIssueDenom) ValidateBasic() error {
 	}
 
 	name := strings.TrimSpace(m.Name)
-	if len(name) == 0 {
-		return sdkerrors.Wrap(ErrInvalidDenom, "denom name should not be empty")
-	}
-
-	if !utf8.ValidString(name) {
+	if len(name) > 0 && !utf8.ValidString(name) {
 		return sdkerrors.Wrap(ErrInvalidDenom, "denom name is invalid")
 	}
 
