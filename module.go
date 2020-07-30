@@ -2,6 +2,7 @@ package nft
 
 import (
 	"encoding/json"
+
 	"github.com/gogo/protobuf/grpc"
 
 	"math/rand"

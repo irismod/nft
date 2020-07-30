@@ -105,7 +105,7 @@ func queryDenom(ctx sdk.Context, req abci.RequestQuery, k Keeper) ([]byte, error
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
 	}
 
-	denom, err := k.GetDenom(ctx, params.Denom)
+	denom, err := k.GetDenom(ctx, params.ID)
 
 	bz, err := codec.MarshalJSONIndent(k.cdc, denom)
 	if err != nil {
