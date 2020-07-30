@@ -1,4 +1,4 @@
-package types
+package types_test
 
 import (
 	"bytes"
@@ -9,8 +9,10 @@ import (
 
 // nolint: deadcode unused
 var (
+	denomID   = "denom"
 	denom     = "denom"
 	id        = "id1"
+	nftName   = "report"
 	address   = CreateTestAddrs(1)[0]
 	address2  = CreateTestAddrs(2)[1]
 	tokenURI  = "https://google.com/token-1.json"

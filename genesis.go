@@ -35,7 +35,7 @@ func DefaultGenesisState() GenesisState {
 // error for any failed validation criteria.
 func ValidateGenesis(data GenesisState) error {
 	for _, c := range data.Collections {
-		if err := ValidateDenom(c.Denom.Name); err != nil {
+		if err := ValidateDenomID(c.Denom.Name); err != nil {
 			return err
 		}
 		for _, nft := range c.NFTs {
@@ -47,7 +47,7 @@ func ValidateGenesis(data GenesisState) error {
 				return err
 			}
 
-			if err := ValidateTokenURI(nft.GetTokenURI()); err != nil {
+			if err := ValidateTokenURI(nft.GetURI()); err != nil {
 				return err
 			}
 		}

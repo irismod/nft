@@ -45,7 +45,7 @@ var (
 	NewQueryNFTParams        = types.NewQueryNFTParams
 
 	//validate field function
-	ValidateDenom    = types.ValidateDenom
+	ValidateDenomID  = types.ValidateDenomID
 	ValidateTokenID  = types.ValidateTokenID
 	ValidateTokenURI = types.ValidateTokenURI
 

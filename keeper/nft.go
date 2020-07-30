@@ -9,12 +9,12 @@ import (
 )
 
 // GetNFT gets the entire NFT tokenData struct
-func (k Keeper) GetNFT(ctx sdk.Context, denom, tokenID string) (nft exported.NFT, err error) {
+func (k Keeper) GetNFT(ctx sdk.Context, denomID, tokenID string) (nft exported.NFT, err error) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.KeyNFT(denom, tokenID))
+	bz := store.Get(types.KeyNFT(denomID, tokenID))
 	if bz == nil {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "not found NFT: %s", denom)
+		return nil, sdkerrors.Wrapf(types.ErrUnknownCollection, "not found NFT: %s", denomID)
 	}
 
 	var baseNFT types.BaseNFT
@@ -22,7 +22,7 @@ func (k Keeper) GetNFT(ctx sdk.Context, denom, tokenID string) (nft exported.NFT
 	return baseNFT, nil
 }
 
-// GetNFTs return the all NFT by the specified denom
+// GetNFTs return the all NFT by the specified denomID
 func (k Keeper) GetNFTs(ctx sdk.Context, denom string) (nfts []exported.NFT) {
 	store := ctx.KVStore(k.storeKey)
 
@@ -38,9 +38,9 @@ func (k Keeper) GetNFTs(ctx sdk.Context, denom string) (nfts []exported.NFT) {
 
 //Authorize check if the sender is the issuer of nft, if it returns nft, if not, return an error
 func (k Keeper) Authorize(ctx sdk.Context,
-	denom, tokenID string,
+	denomID, tokenID string,
 	owner sdk.AccAddress) (types.BaseNFT, error) {
-	nft, err := k.GetNFT(ctx, denom, tokenID)
+	nft, err := k.GetNFT(ctx, denomID, tokenID)
 	if err != nil {
 		return types.BaseNFT{}, err
 	}
@@ -52,20 +52,20 @@ func (k Keeper) Authorize(ctx sdk.Context,
 }
 
 //HasNFT determine if nft exists
-func (k Keeper) HasNFT(ctx sdk.Context, denom, tokenID string) bool {
+func (k Keeper) HasNFT(ctx sdk.Context, denomID, tokenID string) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.KeyNFT(denom, tokenID))
+	return store.Has(types.KeyNFT(denomID, tokenID))
 }
 
-func (k Keeper) setNFT(ctx sdk.Context, denom string, nft types.BaseNFT) {
+func (k Keeper) setNFT(ctx sdk.Context, denomID string, nft types.BaseNFT) {
 	store := ctx.KVStore(k.storeKey)
 
 	bz := k.cdc.MustMarshalBinaryBare(&nft)
-	store.Set(types.KeyNFT(denom, nft.GetID()), bz)
+	store.Set(types.KeyNFT(denomID, nft.GetID()), bz)
 }
 
 // deleteNFT deletes an existing NFT from store
-func (k Keeper) deleteNFT(ctx sdk.Context, denom string, nft exported.NFT) {
+func (k Keeper) deleteNFT(ctx sdk.Context, denomID string, nft exported.NFT) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(types.KeyNFT(denom, nft.GetID()))
+	store.Delete(types.KeyNFT(denomID, nft.GetID()))
 }

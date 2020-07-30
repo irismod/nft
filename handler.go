@@ -3,6 +3,7 @@ package nft
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"strings"
 
 	"github.com/irismod/nft/keeper"
 	"github.com/irismod/nft/types"
@@ -32,7 +33,12 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 func HandleMsgIssueDenom(ctx sdk.Context, msg types.MsgIssueDenom, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.IssueDenom(ctx, msg.Denom,
+	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	name := strings.ToLower(strings.TrimSpace(msg.Name))
+
+	if err := k.IssueDenom(ctx,
+		id,
+		name,
 		msg.Schema,
 		msg.Sender); err != nil {
 		return nil, err
@@ -41,7 +47,7 @@ func HandleMsgIssueDenom(ctx sdk.Context, msg types.MsgIssueDenom, k keeper.Keep
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeIssueDenom,
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
+			sdk.NewAttribute(types.AttributeKeyDenom, id),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -55,11 +61,15 @@ func HandleMsgIssueDenom(ctx sdk.Context, msg types.MsgIssueDenom, k keeper.Keep
 // HandleMsgTransferNFT handler for MsgTransferNFT
 func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
+	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
+
 	if err := k.TransferOwner(ctx,
-		msg.Denom,
-		msg.ID,
-		msg.TokenURI,
-		msg.TokenData,
+		denom,
+		id,
+		strings.TrimSpace(msg.Name),
+		strings.TrimSpace(msg.URI),
+		msg.Data,
 		msg.Sender,
 		msg.Recipient); err != nil {
 		return nil, err
@@ -69,8 +79,8 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 		sdk.NewEvent(
 			types.EventTypeTransfer,
 			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient.String()),
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyDenom, denom),
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -84,10 +94,15 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg types.MsgTransferNFT, k keeper.Ke
 // HandleMsgEditNFT handler for MsgEditNFT
 func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.EditNFT(ctx, msg.Denom,
-		msg.ID,
-		msg.TokenURI,
-		msg.TokenData,
+	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
+
+	if err := k.EditNFT(ctx,
+		denom,
+		id,
+		strings.TrimSpace(msg.Name),
+		strings.TrimSpace(msg.URI),
+		msg.Data,
 		msg.Sender); err != nil {
 		return nil, err
 	}
@@ -95,9 +110,9 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeEditNFT,
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
-			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.TokenURI),
+			sdk.NewAttribute(types.AttributeKeyDenom, denom),
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
+			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.URI),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -111,11 +126,15 @@ func HandleMsgEditNFT(ctx sdk.Context, msg types.MsgEditNFT, k keeper.Keeper,
 // HandleMsgMintNFT handles MsgMintNFT
 func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
+	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
+
 	if err := k.MintNFT(ctx,
-		msg.Denom,
-		msg.ID,
-		msg.TokenURI,
-		msg.TokenData,
+		denom,
+		id,
+		strings.TrimSpace(msg.Name),
+		strings.TrimSpace(msg.URI),
+		msg.Data,
 		msg.Recipient); err != nil {
 		return nil, err
 	}
@@ -124,9 +143,9 @@ func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 		sdk.NewEvent(
 			types.EventTypeMintNFT,
 			sdk.NewAttribute(types.AttributeKeyRecipient, msg.Recipient.String()),
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
-			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.TokenURI),
+			sdk.NewAttribute(types.AttributeKeyDenom, denom),
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
+			sdk.NewAttribute(types.AttributeKeyTokenURI, msg.URI),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
@@ -140,15 +159,22 @@ func HandleMsgMintNFT(ctx sdk.Context, msg types.MsgMintNFT, k keeper.Keeper,
 // HandleMsgBurnNFT handles MsgBurnNFT
 func HandleMsgBurnNFT(ctx sdk.Context, msg types.MsgBurnNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	if err := k.BurnNFT(ctx, msg.Denom, msg.ID, msg.Sender); err != nil {
+	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
+
+	if err := k.BurnNFT(ctx,
+		denom,
+		id,
+		msg.Sender,
+	); err != nil {
 		return nil, err
 	}
 
 	ctx.EventManager().EmitEvents(sdk.Events{
 		sdk.NewEvent(
 			types.EventTypeBurnNFT,
-			sdk.NewAttribute(types.AttributeKeyDenom, msg.Denom),
-			sdk.NewAttribute(types.AttributeKeyTokenID, msg.ID),
+			sdk.NewAttribute(types.AttributeKeyDenom, denom),
+			sdk.NewAttribute(types.AttributeKeyTokenID, id),
 		),
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
