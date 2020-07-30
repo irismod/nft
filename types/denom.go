@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -27,16 +26,4 @@ func ValidateDenomID(denomID string) error {
 		return sdkerrors.Wrapf(ErrInvalidDenom, "invalid denom %s, only accepts alphanumeric characters,and begin with an english letter", denomID)
 	}
 	return nil
-}
-
-func (d Denom) String() string {
-	return fmt.Sprintf(`ID:				%s
-Name:			%s
-Schema:			%s
-Creator:		%s`,
-		d.ID,
-		d.Name,
-		d.Schema,
-		d.Creator.String(),
-	)
 }

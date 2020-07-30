@@ -1,8 +1,6 @@
 package types
 
 import (
-	"bytes"
-	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,7 +9,7 @@ import (
 	"github.com/irismod/nft/exported"
 )
 
-var _ exported.NFT = (*BaseNFT)(nil)
+var _ exported.NFT = BaseNFT{}
 
 // NewBaseNFT creates a new NFT instance
 func NewBaseNFT(id, name string, owner sdk.AccAddress, tokenURI, tokenData string) BaseNFT {
@@ -44,18 +42,6 @@ func (bnft BaseNFT) GetData() string {
 	return bnft.Data
 }
 
-func (bnft BaseNFT) String() string {
-	return fmt.Sprintf(`ID:				%s
-Name:			%s
-Owner:			%s
-URI:		%s`,
-		bnft.ID,
-		bnft.Name,
-		bnft.Owner,
-		bnft.URI,
-	)
-}
-
 // ----------------------------------------------------------------------------
 // NFT
 
@@ -68,22 +54,6 @@ func NewNFTs(nfts ...exported.NFT) NFTs {
 		return NFTs{}
 	}
 	return NFTs(nfts)
-}
-
-// String follows stringer interface
-func (nfts NFTs) String() string {
-	if len(nfts) == 0 {
-		return ""
-	}
-
-	var buf bytes.Buffer
-	for _, nft := range nfts {
-		if buf.Len() > 0 {
-			buf.WriteString("\n")
-		}
-		buf.WriteString(nft.String())
-	}
-	return buf.String()
 }
 
 func ValidateTokenID(tokenID string) error {
