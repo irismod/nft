@@ -44,11 +44,11 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 // GetCmdMintNFT is the CLI command for a MintNFT transaction
 func GetCmdIssueDenom(cdc *codec.Codec) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "issue [denom]",
+		Use: "issue [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Issue a new denom.
 Example:
-$ %s tx nft issue [denom] --from=<key-name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft issue [denomID] --from=<key-name> --name=<name> --schema=<schema> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),
@@ -80,7 +80,7 @@ func GetCmdMintNFT(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Mint an NFT and set the owner to the recipient.
 Example:
-$ %s tx nft mint [denomID] [tokenID] --token-uri=<token-uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft mint [denomID] [tokenID] --uri=<uri> --recipient=<recipient> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),
@@ -126,7 +126,7 @@ func GetCmdEditNFT(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Edit the tokenData of an NFT.
 Example:
-$ %s tx nft edit [denomID] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft edit [denomID] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),
@@ -161,7 +161,7 @@ func GetCmdTransferNFT(cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Transfer a NFT to a recipient.
 Example:
-$ %s tx nft transfer [recipient] [denom] [tokenID] --token-uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
+$ %s tx nft transfer [recipient] [denomID] [tokenID] --uri=<token-uri> --from=<key-name> --chain-id=<chain-id> --fees=<fee>`,
 				version.ClientName,
 			),
 		),

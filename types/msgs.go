@@ -3,7 +3,6 @@ package types
 import (
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -44,11 +43,6 @@ func (m MsgIssueDenom) Type() string { return "issue_denom" }
 func (m MsgIssueDenom) ValidateBasic() error {
 	if err := ValidateDenomID(m.ID); err != nil {
 		return err
-	}
-
-	name := strings.TrimSpace(m.Name)
-	if len(name) > 0 && !utf8.ValidString(name) {
-		return sdkerrors.Wrap(ErrInvalidDenom, "denom name is invalid")
 	}
 
 	if m.Sender.Empty() {

@@ -201,7 +201,7 @@ func GetCmdQueryDenom(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query the denominations by the specified denmo name
 Example:
-$ %s q nft denom <denom>`, version.ClientName)),
+$ %s q nft denom <denomID>`, version.ClientName)),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -240,7 +240,7 @@ func GetCmdQueryNFT(queryRoute string, cdc *codec.Codec) *cobra.Command {
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query a single NFT from a collection
 Example:
-$ %s q nft token <denom> <tokenID>`, version.ClientName)),
+$ %s q nft token <denomID> <tokenID>`, version.ClientName)),
 		Args: cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
