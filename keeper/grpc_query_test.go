@@ -7,11 +7,11 @@ import (
 )
 
 func (suite *KeeperSuite) TestSupply() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.Supply(gocontext.Background(), &types.QuerySupplyRequest{
-		Denom: denom,
+		Denom: denomID,
 		Owner: address,
 	})
 
@@ -20,67 +20,67 @@ func (suite *KeeperSuite) TestSupply() {
 }
 
 func (suite *KeeperSuite) TestOwner() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.Owner(gocontext.Background(), &types.QueryOwnerRequest{
-		Denom: denom,
+		Denom: denomID,
 		Owner: nil,
 	})
 
 	suite.NoError(err)
 	suite.NotNil(response.Owner)
-	suite.Contains(response.Owner.IDCollections[0].IDs, id)
+	suite.Contains(response.Owner.IDCollections[0].IDs, tokenID)
 }
 
 func (suite *KeeperSuite) TestCollection() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.Collection(gocontext.Background(), &types.QueryCollectionRequest{
-		Denom: denom,
+		Denom: denomID,
 	})
 
 	suite.NoError(err)
 	suite.NotNil(response.Collection)
 	suite.Len(response.Collection.NFTs, 1)
-	suite.Equal(response.Collection.NFTs[0].ID, id)
+	suite.Equal(response.Collection.NFTs[0].ID, tokenID)
 }
 
 func (suite *KeeperSuite) TestDenom() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.Denom(gocontext.Background(), &types.QueryDenomRequest{
-		Denom: denom,
+		Denom: denomID,
 	})
 
 	suite.NoError(err)
 	suite.NotNil(response.Denom)
-	suite.Equal(response.Denom.Name, denom)
+	suite.Equal(response.Denom.ID, denomID)
 }
 
 func (suite *KeeperSuite) TestDenoms() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.Denoms(gocontext.Background(), &types.QueryDenomsRequest{})
 
 	suite.NoError(err)
 	suite.NotEmpty(response.Denoms)
-	suite.Equal(response.Denoms[0].Name, denom)
+	suite.Equal(response.Denoms[0].ID, denomID)
 }
 
 func (suite *KeeperSuite) TestNFT() {
-	err := suite.keeper.MintNFT(suite.ctx, denom, id, tokenURI, tokenData, address)
+	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
 	response, err := suite.queryClient.NFT(gocontext.Background(), &types.QueryNFTRequest{
-		Denom:   denom,
-		TokenID: id,
+		Denom:   denomID,
+		TokenID: tokenID,
 	})
 
 	suite.NoError(err)
 	suite.NotEmpty(response.NFT)
-	suite.Equal(response.NFT.ID, id)
+	suite.Equal(response.NFT.ID, tokenID)
 }

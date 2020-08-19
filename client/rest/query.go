@@ -56,7 +56,7 @@ func registerQueryRoutes(cliCtx client.Context, r *mux.Router, queryRoute string
 func querySupply(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := strings.TrimSpace(mux.Vars(r)[RestParamDenom])
-		if err := types.ValidateDenom(denom); err != nil {
+		if err := types.ValidateDenomID(denom); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
@@ -133,7 +133,7 @@ func queryOwner(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 func queryCollection(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		denom := mux.Vars(r)[RestParamDenom]
-		if err := types.ValidateDenom(denom); err != nil {
+		if err := types.ValidateDenomID(denom); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
@@ -169,7 +169,7 @@ func queryDenom(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 		}
 
 		denom := mux.Vars(r)[RestParamDenom]
-		if err := types.ValidateDenom(denom); err != nil {
+		if err := types.ValidateDenomID(denom); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 
@@ -216,7 +216,7 @@ func queryNFT(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 		vars := mux.Vars(r)
 
 		denom := vars[RestParamDenom]
-		if err := types.ValidateDenom(denom); err != nil {
+		if err := types.ValidateDenomID(denom); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 		}
 

@@ -59,7 +59,7 @@ func issueDenomHandlerFn(cliCtx client.Context) http.HandlerFunc {
 		}
 
 		// create the message
-		msg := types.NewMsgIssueDenom(req.Owner, req.Denom, req.Schema)
+		msg := types.NewMsgIssueDenom(req.ID, req.Name, req.Schema, req.Owner)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -84,7 +84,15 @@ func mintNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 			req.Recipient = req.Owner
 		}
 		// create the message
-		msg := types.NewMsgMintNFT(req.Owner, req.Recipient, req.TokenID, req.Denom, req.TokenURI, req.TokenData)
+		msg := types.NewMsgMintNFT(
+			req.ID,
+			req.Denom,
+			req.Name,
+			req.URI,
+			req.Data,
+			req.Owner,
+			req.Recipient,
+		)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -107,7 +115,13 @@ func editNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgEditNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.TokenData)
+		msg := types.NewMsgEditNFT(
+			vars[RestParamTokenID],
+			vars[RestParamDenom],
+			req.Name,
+			req.URI,
+			req.Data, req.Owner,
+		)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -135,7 +149,15 @@ func transferNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 
 		vars := mux.Vars(r)
 		// create the message
-		msg := types.NewMsgTransferNFT(req.Owner, recipient, vars[RestParamTokenID], vars[RestParamDenom], req.TokenURI, req.TokenData)
+		msg := types.NewMsgTransferNFT(
+			vars[RestParamTokenID],
+			vars[RestParamDenom],
+			req.Name,
+			req.URI,
+			req.Data,
+			req.Owner,
+			recipient,
+		)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -159,7 +181,11 @@ func burnNFTHandlerFn(cliCtx client.Context) http.HandlerFunc {
 		vars := mux.Vars(r)
 
 		// create the message
-		msg := types.NewMsgBurnNFT(req.Owner, vars[RestParamTokenID], vars[RestParamDenom])
+		msg := types.NewMsgBurnNFT(
+			req.Owner,
+			vars[RestParamTokenID],
+			vars[RestParamDenom],
+		)
 		if err := msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

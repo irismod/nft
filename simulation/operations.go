@@ -87,12 +87,13 @@ func SimulateMsgTransferNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.Ba
 
 		recipientAccount, _ := simtypes.RandomAcc(r, accs)
 		msg := types.NewMsgTransferNFT(
-			ownerAddr,                // sender
-			recipientAccount.Address, // recipient
-			denom,
 			nftID,
+			denom,
+			"",
 			"",
 			simtypes.RandStringOfLength(r, 10), // tokenData
+			ownerAddr,                          // sender
+			recipientAccount.Address,           // recipient
 		)
 		account := ak.GetAccount(ctx, msg.Sender)
 
@@ -142,11 +143,12 @@ func SimulateMsgEditNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		}
 
 		msg := types.NewMsgEditNFT(
-			ownerAddr,
 			nftID,
 			denom,
+			"",
 			simtypes.RandStringOfLength(r, 45), // tokenURI
 			simtypes.RandStringOfLength(r, 10), // tokenData
+			ownerAddr,
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)
@@ -194,12 +196,13 @@ func SimulateMsgMintNFT(k keeper.Keeper, ak types.AccountKeeper, bk types.BankKe
 		randomRecipient, _ := simtypes.RandomAcc(r, accs)
 
 		msg := types.NewMsgMintNFT(
-			randomSender.Address,               // sender
-			randomRecipient.Address,            // recipient
-			simtypes.RandStringOfLength(r, 5),  // nft TokenID
-			getRandomDenom(ctx, k, r),          // denom
+			simtypes.RandStringOfLength(r, 5), // nft ID
+			getRandomDenom(ctx, k, r),         // denom
+			"",
 			simtypes.RandStringOfLength(r, 45), // tokenURI
 			simtypes.RandStringOfLength(r, 10), // tokenData
+			randomSender.Address,               // sender
+			randomRecipient.Address,            // recipient
 		)
 
 		account := ak.GetAccount(ctx, msg.Sender)

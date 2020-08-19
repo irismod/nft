@@ -7,31 +7,47 @@ import (
 	"github.com/irismod/nft/types"
 )
 
-// HasDenom returns whether the specified denom exists
-func (k Keeper) HasDenom(ctx sdk.Context, denom string) bool {
+// HasDenomID returns whether the specified denomID exists
+func (k Keeper) HasDenomID(ctx sdk.Context, id string) bool {
 	store := ctx.KVStore(k.storeKey)
-	return store.Has(types.KeyDenom(denom))
+	return store.Has(types.KeyDenomID(id))
 }
 
-// SetDenom is responsible for saving the definition of denom
+// HasDenomNm returns whether the specified denomNm exists
+func (k Keeper) HasDenomNm(ctx sdk.Context, name string) bool {
+	if len(name) == 0 {
+		return false
+	}
+	store := ctx.KVStore(k.storeKey)
+	return store.Has(types.KeyDenomName(name))
+}
+
+// SetDenom is responsible for saving the definition of denomID
 func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
-	if k.HasDenom(ctx, denom.Name) {
-		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denom %s has already exists", denom.Name)
+	if k.HasDenomID(ctx, denom.ID) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s has already exists", denom.ID)
+	}
+
+	if k.HasDenomNm(ctx, denom.Name) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomName %s has already exists", denom.Name)
 	}
 
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryBare(&denom)
-	store.Set(types.KeyDenom(denom.Name), bz)
+	store.Set(types.KeyDenomID(denom.ID), bz)
+	if len(denom.Name) > 0 {
+		store.Set(types.KeyDenomName(denom.Name), []byte(denom.ID))
+	}
 	return nil
 }
 
-// SetDenom is responsible for saving the definition of denom
-func (k Keeper) GetDenom(ctx sdk.Context, name string) (denom types.Denom, err error) {
+// SetDenom is responsible for saving the definition of denomID
+func (k Keeper) GetDenom(ctx sdk.Context, id string) (denom types.Denom, err error) {
 	store := ctx.KVStore(k.storeKey)
 
-	bz := store.Get(types.KeyDenom(name))
+	bz := store.Get(types.KeyDenomID(id))
 	if bz == nil || len(bz) == 0 {
-		return denom, sdkerrors.Wrapf(types.ErrInvalidDenom, "not found denom: %s", name)
+		return denom, sdkerrors.Wrapf(types.ErrInvalidDenom, "not found denomID: %s", id)
 	}
 
 	k.cdc.MustUnmarshalBinaryBare(bz, &denom)
@@ -41,7 +57,7 @@ func (k Keeper) GetDenom(ctx sdk.Context, name string) (denom types.Denom, err e
 // GetDenoms return all the denoms
 func (k Keeper) GetDenoms(ctx sdk.Context) (denoms []types.Denom) {
 	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, types.KeyDenom(""))
+	iterator := sdk.KVStorePrefixIterator(store, types.KeyDenomID(""))
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {

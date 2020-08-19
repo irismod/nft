@@ -40,7 +40,7 @@ func GetQueryCmd() *cobra.Command {
 // GetCmdQuerySupply queries the supply of a nft collection
 func GetCmdQuerySupply() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "supply [denom]",
+		Use: "supply [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`total supply of a collection or owner of NFTs.
 Example:
@@ -64,7 +64,7 @@ $ %s query nft supply [denom]`, version.AppName)),
 			}
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -128,7 +128,7 @@ $ %s query nft owner <address> --denom=<denom>`, version.AppName)),
 // GetCmdQueryCollection queries all the NFTs from a collection
 func GetCmdQueryCollection() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "collection [denom]",
+		Use: "collection [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Get all the NFTs from a given collection
 Example:
@@ -142,7 +142,7 @@ $ %s query nft collection <denom>`, version.AppName)),
 			}
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -192,7 +192,7 @@ $ %s query nft denoms`, version.AppName)),
 // GetCmdQueryDenoms queries the specified denoms
 func GetCmdQueryDenom() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "denom <denom>",
+		Use: "denom [denomID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query the denominations by the specified denmo name
 Example:
@@ -206,7 +206,7 @@ $ %s query nft denom <denom>`, version.AppName)),
 			}
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 
@@ -228,7 +228,7 @@ $ %s query nft denom <denom>`, version.AppName)),
 // GetCmdQueryNFT queries a single NFTs from a collection
 func GetCmdQueryNFT() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "token [denom] [tokenID]",
+		Use: "token [denomID] [tokenID]",
 		Long: strings.TrimSpace(
 			fmt.Sprintf(`Query a single NFT from a collection
 Example:
@@ -242,7 +242,7 @@ $ %s query nft token <denom> <tokenID>`, version.AppName)),
 			}
 
 			denom := strings.TrimSpace(args[0])
-			if err := types.ValidateDenom(denom); err != nil {
+			if err := types.ValidateDenomID(denom); err != nil {
 				return err
 			}
 

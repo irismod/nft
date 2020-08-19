@@ -126,7 +126,7 @@ func (AppModule) QuerierRoute() string {
 }
 
 func (am AppModule) RegisterQueryService(server grpc.Server) {
-	types.RegisterQueryServer(server, am.keeper)
+	//panic("implement me")
 }
 
 // NewQuerierHandler module querier

@@ -19,11 +19,13 @@ const (
 func RandomizedGenState(simState *module.SimulationState) {
 	collections := types.NewCollections(
 		types.NewCollection(types.Denom{
+			ID:      doggos,
 			Name:    doggos,
 			Schema:  "",
 			Creator: nil,
 		}, types.NFTs{}),
 		types.NewCollection(types.Denom{
+			ID:      kitties,
 			Name:    kitties,
 			Schema:  "",
 			Creator: nil,
@@ -32,7 +34,8 @@ func RandomizedGenState(simState *module.SimulationState) {
 		// 10% of accounts own an NFT
 		if simState.Rand.Intn(100) < 10 {
 			baseNFT := types.NewBaseNFT(
-				simtypes.RandStringOfLength(simState.Rand, 5), // id
+				simtypes.RandStringOfLength(simState.Rand, 20), // id
+				simtypes.RandStringOfLength(simState.Rand, 10),
 				acc.Address,
 				simtypes.RandStringOfLength(simState.Rand, 45), // tokenURI
 				simtypes.RandStringOfLength(simState.Rand, 10),

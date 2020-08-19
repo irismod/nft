@@ -2,7 +2,6 @@ package types
 
 import (
 	"bytes"
-	"fmt"
 	"strings"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -21,26 +20,17 @@ func (idc IDCollection) Supply() int {
 	return len(idc.IDs)
 }
 
-// AddID adds an TokenID to the idCollection
+// AddID adds an ID to the idCollection
 func (idc IDCollection) AddID(id string) IDCollection {
 	idc.IDs = append(idc.IDs, id)
 	return idc
 }
 
-// String follows stringer interface
-func (idc IDCollection) String() string {
-	return fmt.Sprintf(`Denom: 			%s
-IDs:        	%s`,
-		idc.Denom,
-		strings.Join(idc.IDs, ","),
-	)
-}
-
 // ----------------------------------------------------------------------------
-// IDCollections is an array of TokenID Collections
+// IDCollections is an array of ID Collections
 type IDCollections []IDCollection
 
-// Add adds an TokenID to the idCollection
+// Add adds an ID to the idCollection
 func (idcs IDCollections) Add(denom, id string) IDCollections {
 	for i, idc := range idcs {
 		if idc.Denom == denom {
@@ -82,23 +72,6 @@ func NewOwner(owner sdk.AccAddress, idCollections ...IDCollection) Owner {
 		Address:       owner,
 		IDCollections: idCollections,
 	}
-}
-
-// String follows stringer interface
-func (owner Owner) String() string {
-	var buf bytes.Buffer
-	for _, idCollection := range owner.IDCollections {
-		if buf.Len() > 0 {
-			buf.WriteString("\n")
-		}
-		buf.WriteString(idCollection.String())
-	}
-	return fmt.Sprintf(`
-	Address: 				%s
-	IDCollections:        	%s`,
-		owner.Address,
-		buf.String(),
-	)
 }
 
 type Owners []Owner
