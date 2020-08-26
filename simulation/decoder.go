@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	tmkv "github.com/tendermint/tendermint/libs/kv"
+	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/irismod/nft/types"
 )
 
 // DecodeStore unmarshals the KVPair's Value to the corresponding gov type
-func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB tmkv.Pair) string {
-	return func(kvA, kvB tmkv.Pair) string {
+func NewDecodeStore(cdc codec.Marshaler) func(kvA, kvB kv.Pair) string {
+	return func(kvA, kvB kv.Pair) string {
 		switch {
 		case bytes.Equal(kvA.Key[:1], types.PrefixNFT):
 			var nftA, nftB types.BaseNFT

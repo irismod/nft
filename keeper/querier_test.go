@@ -11,7 +11,7 @@ import (
 )
 
 func (suite *KeeperSuite) TestNewQuerier() {
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 	query := abci.RequestQuery{
 		Path: "",
 		Data: []byte{},
@@ -25,7 +25,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -66,7 +66,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -110,7 +110,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	err = suite.keeper.MintNFT(suite.ctx, denomID2, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 	query := abci.RequestQuery{
 		Path: "/custom/nft/owner",
 		Data: []byte{},
@@ -146,7 +146,7 @@ func (suite *KeeperSuite) TestQueryNFT() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -194,7 +194,7 @@ func (suite *KeeperSuite) TestQueryDenoms() {
 	err = suite.keeper.MintNFT(suite.ctx, denomID2, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper)
+	querier := keep.NewQuerier(suite.keeper, suite.cdc)
 
 	query := abci.RequestQuery{
 		Path: "",

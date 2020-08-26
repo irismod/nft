@@ -5,13 +5,11 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/stretchr/testify/suite"
-
-	abci "github.com/tendermint/tendermint/abci/types"
-
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/suite"
+	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	simapp "github.com/irismod/nft/app"
 	"github.com/irismod/nft/keeper"
@@ -47,7 +45,7 @@ var (
 type KeeperSuite struct {
 	suite.Suite
 
-	cdc    *codec.Codec
+	cdc    codec.JSONMarshaler
 	ctx    sdk.Context
 	keeper keeper.Keeper
 	app    *simapp.SimApp
@@ -60,8 +58,8 @@ func (suite *KeeperSuite) SetupTest() {
 	app := simapp.Setup(isCheckTx)
 
 	suite.app = app
-	suite.cdc = app.Codec()
-	suite.ctx = app.BaseApp.NewContext(isCheckTx, abci.Header{})
+	suite.cdc = codec.NewAminoCodec(app.LegacyAmino())
+	suite.ctx = app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
 	suite.keeper = app.NFTKeeper
 
 	queryHelper := baseapp.NewQueryServerTestHelper(suite.ctx, app.InterfaceRegistry())

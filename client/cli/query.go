@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"fmt"
-
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -76,7 +75,7 @@ $ %s query nft supply [denom]`, version.AppName)),
 			if err != nil {
 				return err
 			}
-			return clientCtx.PrintOutput(resp.Amount)
+			return clientCtx.PrintOutput(resp)
 		},
 	}
 	cmd.Flags().AddFlagSet(FsQuerySupply)
@@ -181,7 +180,7 @@ $ %s query nft denoms`, version.AppName)),
 			if err != nil {
 				return err
 			}
-			return clientCtx.PrintOutput(resp.Denoms)
+			return clientCtx.PrintOutput(resp)
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
