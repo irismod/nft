@@ -131,6 +131,7 @@ func (AppModule) QuerierRoute() string {
 }
 
 func (am AppModule) RegisterQueryService(server grpc.Server) {
+	types.RegisterQueryServer(server, am.keeper)
 }
 
 // LegacyQuerierHandler returns the nft module sdk.Querier.
