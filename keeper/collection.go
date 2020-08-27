@@ -36,7 +36,7 @@ func (k Keeper) GetCollection(ctx sdk.Context, denomID string) (types.Collection
 }
 
 // GetCollections returns all the collection
-func (k Keeper) GetCollections(ctx sdk.Context) (cs types.Collections) {
+func (k Keeper) GetCollections(ctx sdk.Context) (cs []types.Collection) {
 	for _, denom := range k.GetDenoms(ctx) {
 		nfts := k.GetNFTs(ctx, denom.ID)
 		cs = append(cs, types.NewCollection(denom, nfts))

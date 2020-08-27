@@ -27,13 +27,13 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, data types.GenesisState) {
 }
 
 // ExportGenesis returns a GenesisState for a given context and keeper.
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
+func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	return types.NewGenesisState(k.GetCollections(ctx))
 }
 
 // DefaultGenesisState returns a default genesis state
-func DefaultGenesisState() types.GenesisState {
-	return types.NewGenesisState(types.Collections{})
+func DefaultGenesisState() *types.GenesisState {
+	return types.NewGenesisState([]types.Collection{})
 }
 
 // ValidateGenesis performs basic validation of nfts genesis data returning an
