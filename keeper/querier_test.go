@@ -213,6 +213,6 @@ func (suite *KeeperSuite) TestQueryDenoms() {
 	suite.cdc.MustUnmarshalJSON(res, &out)
 
 	for key, denomInQuestion := range out {
-		suite.Equal(denomInQuestion.ID, denoms[key])
+		suite.Equal(denomInQuestion.Id, denoms[key])
 	}
 }

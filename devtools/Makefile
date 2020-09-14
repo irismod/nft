@@ -39,6 +39,11 @@ mkfile_dir := $(shell cd $(shell dirname $(mkfile_path)); pwd)
 # tools
 ###
 
+PREFIX ?= /usr/local
+BIN ?= $(PREFIX)/bin
+UNAME_S ?= $(shell uname -s)
+UNAME_M ?= $(shell uname -m)
+
 TOOLS_DESTDIR  ?= $(GOPATH)/bin
 
 GOLANGCI_LINT = $(TOOLS_DESTDIR)/golangci-lint
@@ -47,7 +52,7 @@ MISSPELL      = $(TOOLS_DESTDIR)/misspell
 
 all: tools
 
-tools: runsim golangci-lint misspell
+tools: runsim golangci-lint misspell proto-tools
 
 golangci-lint: $(GOLANGCI_LINT)
 $(GOLANGCI_LINT): $(mkfile_dir)/install-golangci-lint.sh
@@ -57,7 +62,7 @@ $(GOLANGCI_LINT): $(mkfile_dir)/install-golangci-lint.sh
 # Install the runsim binary with a temporary workaround of entering an outside
 # directory as the "go get" command ignores the -mod option and will polute the
 # go.{mod, sum} files.
-#
+# 
 # ref: https://github.com/golang/go/issues/30515
 runsim: $(RUNSIM)
 $(RUNSIM):
@@ -68,8 +73,57 @@ misspell:
 	@echo "Installing misspell..."
 	@go get github.com/client9/misspell/cmd/misspell
 
+PROTOC_VERSION ?= 3.13.0
+PROTOC_GRPC_GATEWAY_VERSION = 1.14.7
+ifeq ($(UNAME_S),Linux)
+  PROTOC_ZIP ?= protoc-3.13.0-linux-x86_64.zip
+  PROTOC_GRPC_GATEWAY_BIN ?= protoc-gen-grpc-gateway-v1.14.7-linux-x86_64
+endif
+ifeq ($(UNAME_S),Darwin)
+  PROTOC_ZIP ?= protoc-3.13.0-osx-x86_64.zip
+  PROTOC_GRPC_GATEWAY_BIN ?= protoc-gen-grpc-gateway-v1.14.7-darwin-x86_64
+endif
+
+proto-tools: buf
+ifeq (, $(shell which protoc))
+	@echo "Installing protoc compiler..."
+	@(cd /tmp; \
+	curl -OL "https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/${PROTOC_ZIP}"; \
+	unzip -o ${PROTOC_ZIP} -d $(PREFIX) bin/protoc; \
+	unzip -o ${PROTOC_ZIP} -d $(PREFIX) 'include/*'; \
+	rm -f ${PROTOC_ZIP})
+else
+	@echo "protoc already installed; skipping..."
+endif
+
+ifeq (, $(shell which protoc-gen-gocosmos))
+	@echo "Installing protoc-gen-gocosmos..."
+	@go install github.com/regen-network/cosmos-proto/protoc-gen-gocosmos
+else
+	@echo "protoc-gen-gocosmos already installed; skipping..."
+endif
+
+ifeq (, $(shell which protoc-gen-grpc-gateway))
+	@echo "Installing protoc-gen-grpc-gateway..."
+	@curl -o "${BIN}/protoc-gen-grpc-gateway" -L "https://github.com/grpc-ecosystem/grpc-gateway/releases/download/v${PROTOC_GRPC_GATEWAY_VERSION}/${PROTOC_GRPC_GATEWAY_BIN}"
+	@chmod +x "${BIN}/protoc-gen-grpc-gateway"
+else
+	@echo "protoc-gen-grpc-gateway already installed; skipping..."
+endif
+
+buf: buf-stamp
+
+buf-stamp:
+	@echo "Installing buf..."
+	@curl -sSL \
+    "https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/buf-${UNAME_S}-${UNAME_M}" \
+    -o "${BIN}/buf" && \
+	chmod +x "${BIN}/buf"
+
+	touch $@
+
 tools-clean:
 	rm -f $(GOLANGCI_LINT) $(RUNSIM) $(MISSPELL)
-	rm -f tools-stamp
+	rm -f tools-stamp buf-stamp
 
 .PHONY: all tools tools-clean

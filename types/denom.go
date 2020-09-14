@@ -10,7 +10,7 @@ import (
 // NewDenom return a new denom
 func NewDenom(id, name, schema string, creator sdk.AccAddress) Denom {
 	return Denom{
-		ID:      id,
+		Id:      id,
 		Name:    name,
 		Schema:  schema,
 		Creator: creator,

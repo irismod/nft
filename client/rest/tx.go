@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/cosmos/cosmos-sdk/client/tx"
-
 	"github.com/gorilla/mux"
 
 	"github.com/cosmos/cosmos-sdk/client"
+	"github.com/cosmos/cosmos-sdk/client/tx"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/rest"
 

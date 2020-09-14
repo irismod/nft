@@ -73,17 +73,17 @@ func (k Keeper) Denoms(c context.Context, request *types.QueryDenomsRequest) (*t
 
 func (k Keeper) NFT(c context.Context, request *types.QueryNFTRequest) (*types.QueryNFTResponse, error) {
 	denom := strings.ToLower(strings.TrimSpace(request.Denom))
-	tokenID := strings.ToLower(strings.TrimSpace(request.TokenID))
+	tokenID := strings.ToLower(strings.TrimSpace(request.Id))
 	ctx := sdk.UnwrapSDKContext(c)
 
 	nft, err := k.GetNFT(ctx, denom, tokenID)
 	if err != nil {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid NFT %s from collection %s", request.TokenID, request.Denom)
+		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid NFT %s from collection %s", request.Id, request.Denom)
 	}
 
 	baseNFT, ok := nft.(types.BaseNFT)
 	if !ok {
-		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid type NFT %s from collection %s", request.TokenID, request.Denom)
+		return nil, sdkerrors.Wrapf(types.ErrUnknownNFT, "invalid type NFT %s from collection %s", request.Id, request.Denom)
 	}
 
 	return &types.QueryNFTResponse{

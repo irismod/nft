@@ -31,7 +31,7 @@ func (k Keeper) GetOwner(ctx sdk.Context, address sdk.AccAddress, denom string) 
 	}
 
 	for i := 0; i < len(owner.IDCollections); i++ {
-		owner.IDCollections[i].IDs = idsMap[owner.IDCollections[i].Denom]
+		owner.IDCollections[i].Ids = idsMap[owner.IDCollections[i].Denom]
 	}
 	return owner
 }

@@ -24,8 +24,8 @@ func (k Keeper) HasDenomNm(ctx sdk.Context, name string) bool {
 
 // SetDenom is responsible for saving the definition of denomID
 func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
-	if k.HasDenomID(ctx, denom.ID) {
-		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s has already exists", denom.ID)
+	if k.HasDenomID(ctx, denom.Id) {
+		return sdkerrors.Wrapf(types.ErrInvalidDenom, "denomID %s has already exists", denom.Id)
 	}
 
 	if k.HasDenomNm(ctx, denom.Name) {
@@ -34,9 +34,9 @@ func (k Keeper) SetDenom(ctx sdk.Context, denom types.Denom) error {
 
 	store := ctx.KVStore(k.storeKey)
 	bz := k.cdc.MustMarshalBinaryBare(&denom)
-	store.Set(types.KeyDenomID(denom.ID), bz)
+	store.Set(types.KeyDenomID(denom.Id), bz)
 	if len(denom.Name) > 0 {
-		store.Set(types.KeyDenomName(denom.Name), []byte(denom.ID))
+		store.Set(types.KeyDenomName(denom.Name), []byte(denom.Id))
 	}
 	return nil
 }

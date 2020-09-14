@@ -252,8 +252,8 @@ $ %s query nft token <denom> <tokenID>`, version.AppName)),
 
 			queryClient := types.NewQueryClient(clientCtx)
 			resp, err := queryClient.NFT(context.Background(), &types.QueryNFTRequest{
-				Denom:   denom,
-				TokenID: tokenID,
+				Denom: denom,
+				Id:    tokenID,
 			})
 			if err != nil {
 				return err

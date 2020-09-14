@@ -4,8 +4,6 @@ import (
 	"io"
 	"os"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
-
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmos "github.com/tendermint/tendermint/libs/os"
@@ -17,6 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
+	"github.com/cosmos/cosmos-sdk/simapp"
 	simappparams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"github.com/cosmos/cosmos-sdk/std"
 	"github.com/cosmos/cosmos-sdk/testutil/testdata"

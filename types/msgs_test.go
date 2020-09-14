@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/irismod/nft/types"
-
 	"github.com/stretchr/testify/require"
+
+	"github.com/irismod/nft/types"
 )
 
 // ---------------------------------------- Msgs ---------------------------------------------------
@@ -19,7 +19,7 @@ func TestNewMsgTransferNFT(t *testing.T) {
 	require.Equal(t, newMsgTransferNFT.Sender, address)
 	require.Equal(t, newMsgTransferNFT.Recipient, address2)
 	require.Equal(t, newMsgTransferNFT.Denom, denom)
-	require.Equal(t, newMsgTransferNFT.ID, denomID)
+	require.Equal(t, newMsgTransferNFT.Id, denomID)
 }
 
 func TestMsgTransferNFTValidateBasicMethod(t *testing.T) {
@@ -61,7 +61,7 @@ func TestNewMsgEditNFT(t *testing.T) {
 		fmt.Sprintf("     %s     ", tokenURI), tokenData, address)
 
 	require.Equal(t, newMsgEditNFT.Sender.String(), address.String())
-	require.Equal(t, newMsgEditNFT.ID, id)
+	require.Equal(t, newMsgEditNFT.Id, id)
 	require.Equal(t, newMsgEditNFT.Denom, denom)
 	require.Equal(t, newMsgEditNFT.URI, tokenURI)
 }
@@ -107,7 +107,7 @@ func TestNewMsgMintNFT(t *testing.T) {
 
 	require.Equal(t, newMsgMintNFT.Sender.String(), address.String())
 	require.Equal(t, newMsgMintNFT.Recipient.String(), address2.String())
-	require.Equal(t, newMsgMintNFT.ID, id)
+	require.Equal(t, newMsgMintNFT.Id, id)
 	require.Equal(t, newMsgMintNFT.Denom, denom)
 	require.Equal(t, newMsgMintNFT.URI, tokenURI)
 }
@@ -142,7 +142,7 @@ func TestNewMsgBurnNFT(t *testing.T) {
 		fmt.Sprintf("     %s     ", denom))
 
 	require.Equal(t, newMsgBurnNFT.Sender.String(), address.String())
-	require.Equal(t, newMsgBurnNFT.ID, id)
+	require.Equal(t, newMsgBurnNFT.Id, id)
 	require.Equal(t, newMsgBurnNFT.Denom, denom)
 }
 

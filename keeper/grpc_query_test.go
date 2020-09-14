@@ -30,7 +30,7 @@ func (suite *KeeperSuite) TestOwner() {
 
 	suite.NoError(err)
 	suite.NotNil(response.Owner)
-	suite.Contains(response.Owner.IDCollections[0].IDs, tokenID)
+	suite.Contains(response.Owner.IDCollections[0].Ids, tokenID)
 }
 
 func (suite *KeeperSuite) TestCollection() {
@@ -44,7 +44,7 @@ func (suite *KeeperSuite) TestCollection() {
 	suite.NoError(err)
 	suite.NotNil(response.Collection)
 	suite.Len(response.Collection.NFTs, 1)
-	suite.Equal(response.Collection.NFTs[0].ID, tokenID)
+	suite.Equal(response.Collection.NFTs[0].Id, tokenID)
 }
 
 func (suite *KeeperSuite) TestDenom() {
@@ -57,7 +57,7 @@ func (suite *KeeperSuite) TestDenom() {
 
 	suite.NoError(err)
 	suite.NotNil(response.Denom)
-	suite.Equal(response.Denom.ID, denomID)
+	suite.Equal(response.Denom.Id, denomID)
 }
 
 func (suite *KeeperSuite) TestDenoms() {
@@ -68,7 +68,7 @@ func (suite *KeeperSuite) TestDenoms() {
 
 	suite.NoError(err)
 	suite.NotEmpty(response.Denoms)
-	suite.Equal(response.Denoms[0].ID, denomID)
+	suite.Equal(response.Denoms[0].Id, denomID)
 }
 
 func (suite *KeeperSuite) TestNFT() {
@@ -76,11 +76,11 @@ func (suite *KeeperSuite) TestNFT() {
 	suite.NoError(err)
 
 	response, err := suite.queryClient.NFT(gocontext.Background(), &types.QueryNFTRequest{
-		Denom:   denomID,
-		TokenID: tokenID,
+		Denom: denomID,
+		Id:    tokenID,
 	})
 
 	suite.NoError(err)
 	suite.NotEmpty(response.NFT)
-	suite.Equal(response.NFT.ID, tokenID)
+	suite.Equal(response.NFT.Id, tokenID)
 }

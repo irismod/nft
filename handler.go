@@ -34,7 +34,7 @@ func NewHandler(k keeper.Keeper) sdk.Handler {
 
 func HandleMsgIssueDenom(ctx sdk.Context, msg *types.MsgIssueDenom, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	id := strings.ToLower(strings.TrimSpace(msg.Id))
 	name := strings.ToLower(strings.TrimSpace(msg.Name))
 
 	if err := k.IssueDenom(ctx,
@@ -62,7 +62,7 @@ func HandleMsgIssueDenom(ctx sdk.Context, msg *types.MsgIssueDenom, k keeper.Kee
 // HandleMsgTransferNFT handler for MsgTransferNFT
 func HandleMsgTransferNFT(ctx sdk.Context, msg *types.MsgTransferNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	id := strings.ToLower(strings.TrimSpace(msg.Id))
 	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
 
 	if err := k.TransferOwner(ctx,
@@ -95,7 +95,7 @@ func HandleMsgTransferNFT(ctx sdk.Context, msg *types.MsgTransferNFT, k keeper.K
 // HandleMsgEditNFT handler for MsgEditNFT
 func HandleMsgEditNFT(ctx sdk.Context, msg *types.MsgEditNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	id := strings.ToLower(strings.TrimSpace(msg.Id))
 	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
 
 	if err := k.EditNFT(ctx,
@@ -127,7 +127,7 @@ func HandleMsgEditNFT(ctx sdk.Context, msg *types.MsgEditNFT, k keeper.Keeper,
 // HandleMsgMintNFT handles MsgMintNFT
 func HandleMsgMintNFT(ctx sdk.Context, msg *types.MsgMintNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	id := strings.ToLower(strings.TrimSpace(msg.Id))
 	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
 
 	if err := k.MintNFT(ctx,
@@ -160,7 +160,7 @@ func HandleMsgMintNFT(ctx sdk.Context, msg *types.MsgMintNFT, k keeper.Keeper,
 // HandleMsgBurnNFT handles MsgBurnNFT
 func HandleMsgBurnNFT(ctx sdk.Context, msg *types.MsgBurnNFT, k keeper.Keeper,
 ) (*sdk.Result, error) {
-	id := strings.ToLower(strings.TrimSpace(msg.ID))
+	id := strings.ToLower(strings.TrimSpace(msg.Id))
 	denom := strings.ToLower(strings.TrimSpace(msg.Denom))
 
 	if err := k.BurnNFT(ctx,

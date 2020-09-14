@@ -19,13 +19,13 @@ const (
 func RandomizedGenState(simState *module.SimulationState) {
 	collections := types.NewCollections(
 		types.NewCollection(types.Denom{
-			ID:      doggos,
+			Id:      doggos,
 			Name:    doggos,
 			Schema:  "",
 			Creator: nil,
 		}, types.NFTs{}),
 		types.NewCollection(types.Denom{
-			ID:      kitties,
+			Id:      kitties,
 			Name:    kitties,
 			Schema:  "",
 			Creator: nil,
