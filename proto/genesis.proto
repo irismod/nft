@@ -1,8 +1,8 @@
 syntax = "proto3";
 package irismod.nft;
 
-import "types/types.proto";
-import "third_party/proto/gogoproto/gogo.proto";
+import "gogoproto/gogo.proto";
+import "types.proto";
 
 option go_package = "github.com/irismod/nft/types";
 

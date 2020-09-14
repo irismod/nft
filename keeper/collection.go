@@ -11,7 +11,7 @@ import (
 func (k Keeper) SetCollection(ctx sdk.Context, collection types.Collection) error {
 	for _, nft := range collection.NFTs {
 		if err := k.MintNFT(ctx,
-			collection.Denom.ID,
+			collection.Denom.Id,
 			nft.GetID(),
 			nft.GetName(),
 			nft.GetURI(),
@@ -38,7 +38,7 @@ func (k Keeper) GetCollection(ctx sdk.Context, denomID string) (types.Collection
 // GetCollections returns all the collection
 func (k Keeper) GetCollections(ctx sdk.Context) (cs []types.Collection) {
 	for _, denom := range k.GetDenoms(ctx) {
-		nfts := k.GetNFTs(ctx, denom.ID)
+		nfts := k.GetNFTs(ctx, denom.Id)
 		cs = append(cs, types.NewCollection(denom, nfts))
 	}
 	return cs

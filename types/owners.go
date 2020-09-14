@@ -11,18 +11,18 @@ import (
 func NewIDCollection(denom string, ids []string) IDCollection {
 	return IDCollection{
 		Denom: strings.TrimSpace(denom),
-		IDs:   ids,
+		Ids:   ids,
 	}
 }
 
 // Supply return the amount of the denom
 func (idc IDCollection) Supply() int {
-	return len(idc.IDs)
+	return len(idc.Ids)
 }
 
 // AddID adds an ID to the idCollection
 func (idc IDCollection) AddID(id string) IDCollection {
-	idc.IDs = append(idc.IDs, id)
+	idc.Ids = append(idc.Ids, id)
 	return idc
 }
 
@@ -40,7 +40,7 @@ func (idcs IDCollections) Add(denom, id string) IDCollections {
 	}
 	return append(idcs, IDCollection{
 		Denom: denom,
-		IDs:   []string{id},
+		Ids:   []string{id},
 	})
 }
 

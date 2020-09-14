@@ -14,7 +14,7 @@ var _ exported.NFT = BaseNFT{}
 // NewBaseNFT creates a new NFT instance
 func NewBaseNFT(id, name string, owner sdk.AccAddress, tokenURI, tokenData string) BaseNFT {
 	return BaseNFT{
-		ID:    strings.ToLower(strings.TrimSpace(id)),
+		Id:    strings.ToLower(strings.TrimSpace(id)),
 		Name:  strings.TrimSpace(name),
 		Owner: owner,
 		URI:   strings.TrimSpace(tokenURI),
@@ -23,11 +23,11 @@ func NewBaseNFT(id, name string, owner sdk.AccAddress, tokenURI, tokenData strin
 }
 
 func (bnft BaseNFT) GetID() string {
-	return bnft.ID
+	return bnft.Id
 }
 
 func (bnft BaseNFT) GetName() string {
-	return bnft.ID
+	return bnft.Id
 }
 
 func (bnft BaseNFT) GetOwner() sdk.AccAddress {

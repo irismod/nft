@@ -28,7 +28,7 @@ var (
 func NewMsgIssueDenom(id, name, schema string, sender sdk.AccAddress) *MsgIssueDenom {
 	return &MsgIssueDenom{
 		Sender: sender,
-		ID:     strings.ToLower(strings.TrimSpace(id)),
+		Id:     strings.ToLower(strings.TrimSpace(id)),
 		Name:   strings.TrimSpace(name),
 		Schema: strings.TrimSpace(schema),
 	}
@@ -42,7 +42,7 @@ func (m MsgIssueDenom) Type() string { return "issue_denom" }
 
 // ValidateBasic Implements Msg.
 func (m MsgIssueDenom) ValidateBasic() error {
-	if err := ValidateDenomID(m.ID); err != nil {
+	if err := ValidateDenomID(m.Id); err != nil {
 		return err
 	}
 
@@ -73,7 +73,7 @@ func NewMsgTransferNFT(
 	id, denom, name, tokenURI, tokenData string,
 	sender, recipient sdk.AccAddress) *MsgTransferNFT {
 	return &MsgTransferNFT{
-		ID:        strings.ToLower(strings.TrimSpace(id)),
+		Id:        strings.ToLower(strings.TrimSpace(id)),
 		Denom:     strings.TrimSpace(denom),
 		Name:      strings.TrimSpace(name),
 		URI:       strings.TrimSpace(tokenURI),
@@ -102,7 +102,7 @@ func (msg MsgTransferNFT) ValidateBasic() error {
 	if msg.Recipient.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing recipient address")
 	}
-	return ValidateTokenID(msg.ID)
+	return ValidateTokenID(msg.Id)
 }
 
 // GetSignBytes Implements Msg.
@@ -120,7 +120,7 @@ func (msg MsgTransferNFT) GetSigners() []sdk.AccAddress {
 func NewMsgEditNFT(
 	id, denom, name, tokenURI, tokenData string, sender sdk.AccAddress) *MsgEditNFT {
 	return &MsgEditNFT{
-		ID:     strings.ToLower(strings.TrimSpace(id)),
+		Id:     strings.ToLower(strings.TrimSpace(id)),
 		Denom:  strings.TrimSpace(denom),
 		Name:   strings.TrimSpace(name),
 		URI:    strings.TrimSpace(tokenURI),
@@ -148,7 +148,7 @@ func (msg MsgEditNFT) ValidateBasic() error {
 	if err := ValidateTokenURI(msg.URI); err != nil {
 		return err
 	}
-	return ValidateTokenID(msg.ID)
+	return ValidateTokenID(msg.Id)
 }
 
 // GetSignBytes Implements Msg.
@@ -167,7 +167,7 @@ func NewMsgMintNFT(
 	id, denom, name, tokenURI, tokenData string,
 	sender, recipient sdk.AccAddress) *MsgMintNFT {
 	return &MsgMintNFT{
-		ID:        strings.ToLower(strings.TrimSpace(id)),
+		Id:        strings.ToLower(strings.TrimSpace(id)),
 		Denom:     strings.TrimSpace(denom),
 		Name:      strings.TrimSpace(name),
 		URI:       strings.TrimSpace(tokenURI),
@@ -198,7 +198,7 @@ func (msg MsgMintNFT) ValidateBasic() error {
 	if err := ValidateTokenURI(msg.URI); err != nil {
 		return err
 	}
-	return ValidateTokenID(msg.ID)
+	return ValidateTokenID(msg.Id)
 }
 
 // GetSignBytes Implements Msg.
@@ -216,7 +216,7 @@ func (msg MsgMintNFT) GetSigners() []sdk.AccAddress {
 func NewMsgBurnNFT(sender sdk.AccAddress, id string, denom string) *MsgBurnNFT {
 	return &MsgBurnNFT{
 		Sender: sender,
-		ID:     strings.ToLower(strings.TrimSpace(id)),
+		Id:     strings.ToLower(strings.TrimSpace(id)),
 		Denom:  strings.TrimSpace(denom),
 	}
 }
@@ -236,7 +236,7 @@ func (msg MsgBurnNFT) ValidateBasic() error {
 	if err := ValidateDenomID(msg.Denom); err != nil {
 		return err
 	}
-	return ValidateTokenID(msg.ID)
+	return ValidateTokenID(msg.Id)
 }
 
 // GetSignBytes Implements Msg.
