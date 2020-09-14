@@ -11,7 +11,7 @@ import (
 )
 
 func (suite *KeeperSuite) TestNewQuerier() {
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 	query := abci.RequestQuery{
 		Path: "",
 		Data: []byte{},
@@ -25,7 +25,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -40,7 +40,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	suite.Nil(res)
 
 	queryCollectionParams := types.NewQuerySupplyParams(denomID2, nil)
-	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
+	bz, errRes := suite.legacyAmino.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 	query.Data = bz
 	res, err = querier(suite.ctx, []string{"supply"}, query)
@@ -49,7 +49,7 @@ func (suite *KeeperSuite) TestQuerySupply() {
 	suite.Equal(0, int(supplyResp))
 
 	queryCollectionParams = types.NewQuerySupplyParams(denomID, nil)
-	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
+	bz, errRes = suite.legacyAmino.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 	query.Data = bz
 
@@ -66,7 +66,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -81,7 +81,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	suite.Nil(res)
 
 	queryCollectionParams := types.NewQuerySupplyParams(denomID2, nil)
-	bz, errRes := suite.cdc.MarshalJSON(queryCollectionParams)
+	bz, errRes := suite.legacyAmino.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 
 	query.Data = bz
@@ -89,7 +89,7 @@ func (suite *KeeperSuite) TestQueryCollection() {
 	suite.NoError(err)
 
 	queryCollectionParams = types.NewQuerySupplyParams(denomID, nil)
-	bz, errRes = suite.cdc.MarshalJSON(queryCollectionParams)
+	bz, errRes = suite.legacyAmino.MarshalJSON(queryCollectionParams)
 	suite.Nil(errRes)
 
 	query.Data = bz
@@ -110,7 +110,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	err = suite.keeper.MintNFT(suite.ctx, denomID2, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 	query := abci.RequestQuery{
 		Path: "/custom/nft/owner",
 		Data: []byte{},
@@ -122,7 +122,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 
 	// query the balance using no denomID so that all denoms will be returns
 	params := types.NewQuerySupplyParams("", address)
-	bz, err2 := suite.cdc.MarshalJSON(params)
+	bz, err2 := suite.legacyAmino.MarshalJSON(params)
 	suite.Nil(err2)
 	query.Data = bz
 
@@ -131,7 +131,7 @@ func (suite *KeeperSuite) TestQueryOwner() {
 	suite.NoError(err)
 	suite.NotNil(res)
 
-	suite.cdc.MustUnmarshalJSON(res, &out)
+	suite.legacyAmino.MustUnmarshalJSON(res, &out)
 
 	// build the owner using both denoms
 	idCollection1 := types.NewIDCollection(denomID, []string{tokenID})
@@ -146,7 +146,7 @@ func (suite *KeeperSuite) TestQueryNFT() {
 	err := suite.keeper.MintNFT(suite.ctx, denomID, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -161,7 +161,7 @@ func (suite *KeeperSuite) TestQueryNFT() {
 	suite.Nil(res)
 
 	params := types.NewQueryNFTParams(denomID2, tokenID2)
-	bz, err2 := suite.cdc.MarshalJSON(params)
+	bz, err2 := suite.legacyAmino.MarshalJSON(params)
 	suite.Nil(err2)
 
 	query.Data = bz
@@ -170,7 +170,7 @@ func (suite *KeeperSuite) TestQueryNFT() {
 	suite.Nil(res)
 
 	params = types.NewQueryNFTParams(denomID, tokenID)
-	bz, err2 = suite.cdc.MarshalJSON(params)
+	bz, err2 = suite.legacyAmino.MarshalJSON(params)
 	suite.Nil(err2)
 
 	query.Data = bz
@@ -179,7 +179,7 @@ func (suite *KeeperSuite) TestQueryNFT() {
 	suite.NotNil(res)
 
 	var out exported.NFT
-	suite.cdc.MustUnmarshalJSON(res, &out)
+	suite.legacyAmino.MustUnmarshalJSON(res, &out)
 
 	suite.Equal(out.GetID(), tokenID)
 	suite.Equal(out.GetURI(), tokenURI)
@@ -194,7 +194,7 @@ func (suite *KeeperSuite) TestQueryDenoms() {
 	err = suite.keeper.MintNFT(suite.ctx, denomID2, tokenID, tokenNm, tokenURI, tokenData, address)
 	suite.NoError(err)
 
-	querier := keep.NewQuerier(suite.keeper, suite.cdc)
+	querier := keep.NewQuerier(suite.keeper, suite.legacyAmino)
 
 	query := abci.RequestQuery{
 		Path: "",
@@ -210,7 +210,7 @@ func (suite *KeeperSuite) TestQueryDenoms() {
 	denoms := []string{denomID, denomID2}
 
 	var out []types.Denom
-	suite.cdc.MustUnmarshalJSON(res, &out)
+	suite.legacyAmino.MustUnmarshalJSON(res, &out)
 
 	for key, denomInQuestion := range out {
 		suite.Equal(denomInQuestion.Id, denoms[key])

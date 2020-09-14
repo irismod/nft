@@ -8,8 +8,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/rest"
 )
 
-// RegisterRoutes register distribution REST routes.
-func RegisterRoutes(cliCtx client.Context, r *mux.Router, queryRoute string) {
+// RegisterHandlers register distribution REST routes.
+func RegisterHandlers(cliCtx client.Context, r *mux.Router, queryRoute string) {
 	registerQueryRoutes(cliCtx, r, queryRoute)
 	registerTxRoutes(cliCtx, r, queryRoute)
 }

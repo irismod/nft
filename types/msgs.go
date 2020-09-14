@@ -35,37 +35,37 @@ func NewMsgIssueDenom(id, name, schema string, sender sdk.AccAddress) *MsgIssueD
 }
 
 // Route Implements Msg
-func (m MsgIssueDenom) Route() string { return RouterKey }
+func (msg MsgIssueDenom) Route() string { return RouterKey }
 
 // Type Implements Msg
-func (m MsgIssueDenom) Type() string { return "issue_denom" }
+func (msg MsgIssueDenom) Type() string { return "issue_denom" }
 
 // ValidateBasic Implements Msg.
-func (m MsgIssueDenom) ValidateBasic() error {
-	if err := ValidateDenomID(m.Id); err != nil {
+func (msg MsgIssueDenom) ValidateBasic() error {
+	if err := ValidateDenomID(msg.Id); err != nil {
 		return err
 	}
 
-	name := strings.TrimSpace(m.Name)
+	name := strings.TrimSpace(msg.Name)
 	if len(name) > 0 && !utf8.ValidString(name) {
 		return sdkerrors.Wrap(ErrInvalidDenom, "denom name is invalid")
 	}
 
-	if m.Sender.Empty() {
+	if msg.Sender.Empty() {
 		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing sender address")
 	}
 	return nil
 }
 
 // GetSignBytes Implements Msg.
-func (m MsgIssueDenom) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(m)
+func (msg MsgIssueDenom) GetSignBytes() []byte {
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
 // GetSigners Implements Msg.
-func (m MsgIssueDenom) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{m.Sender}
+func (msg MsgIssueDenom) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{msg.Sender}
 }
 
 // NewMsgTransferNFT is a constructor function for MsgSetName
@@ -107,7 +107,7 @@ func (msg MsgTransferNFT) ValidateBasic() error {
 
 // GetSignBytes Implements Msg.
 func (msg MsgTransferNFT) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -153,7 +153,7 @@ func (msg MsgEditNFT) ValidateBasic() error {
 
 // GetSignBytes Implements Msg.
 func (msg MsgEditNFT) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -203,7 +203,7 @@ func (msg MsgMintNFT) ValidateBasic() error {
 
 // GetSignBytes Implements Msg.
 func (msg MsgMintNFT) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
@@ -241,7 +241,7 @@ func (msg MsgBurnNFT) ValidateBasic() error {
 
 // GetSignBytes Implements Msg.
 func (msg MsgBurnNFT) GetSignBytes() []byte {
-	bz := ModuleCdc.MustMarshalJSON(msg)
+	bz := ModuleCdc.MustMarshalJSON(&msg)
 	return sdk.MustSortJSON(bz)
 }
 
