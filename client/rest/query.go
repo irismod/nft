@@ -68,7 +68,7 @@ func querySupply(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 		}
 
 		params := types.NewQuerySupplyParams(denom, owner)
-		bz, err := cliCtx.JSONMarshaler.MarshalJSON(params)
+		bz, err := cliCtx.LegacyAmino.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -107,7 +107,7 @@ func queryOwner(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 
 		denom := r.FormValue(RestParamDenom)
 		params := types.NewQueryOwnerParams(denom, address)
-		bz, err := cliCtx.JSONMarshaler.MarshalJSON(params)
+		bz, err := cliCtx.LegacyAmino.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -138,7 +138,7 @@ func queryCollection(cliCtx client.Context, queryRoute string) http.HandlerFunc 
 		}
 
 		params := types.NewQueryCollectionParams(denom)
-		bz, err := cliCtx.JSONMarshaler.MarshalJSON(params)
+		bz, err := cliCtx.LegacyAmino.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -174,7 +174,7 @@ func queryDenom(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 		}
 
 		params := types.NewQueryDenomParams(denom)
-		bz, err := cliCtx.JSONMarshaler.MarshalJSON(params)
+		bz, err := cliCtx.LegacyAmino.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
@@ -226,7 +226,7 @@ func queryNFT(cliCtx client.Context, queryRoute string) http.HandlerFunc {
 		}
 
 		params := types.NewQueryNFTParams(denom, tokenID)
-		bz, err := cliCtx.JSONMarshaler.MarshalJSON(params)
+		bz, err := cliCtx.LegacyAmino.MarshalJSON(params)
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

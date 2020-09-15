@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/suite"
-	
+
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -47,10 +47,10 @@ var (
 type KeeperSuite struct {
 	suite.Suite
 
-	cdc    codec.JSONMarshaler
-	ctx    sdk.Context
-	keeper keeper.Keeper
-	app    *simapp.SimApp
+	legacyAmino *codec.LegacyAmino
+	ctx         sdk.Context
+	keeper      keeper.Keeper
+	app         *simapp.SimApp
 
 	queryClient types.QueryClient
 }
@@ -60,7 +60,7 @@ func (suite *KeeperSuite) SetupTest() {
 	app := simapp.Setup(isCheckTx)
 
 	suite.app = app
-	suite.cdc = codec.NewAminoCodec(app.LegacyAmino())
+	suite.legacyAmino = app.LegacyAmino()
 	suite.ctx = app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
 	suite.keeper = app.NFTKeeper
 
